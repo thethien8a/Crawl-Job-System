@@ -36,13 +36,11 @@ class TopcvCrawler:
     def __init__(
         self,
         keyword: str = "data analyst",
-        max_pages: int = 2,
-        concurrency: int = 4,
-        request_delay: tuple[float, float] = (4.0, 8.0),
-        max_retries: int = 6,
+        max_pages: int = 5,
+        concurrency: int = 1,
+        request_delay: tuple[float, float] = (4.0, 6.0),
+        max_retries: int = 5,
         timeout: float = 30.0,
-        headless: bool = False,
-        warmup_wait: float = 8.0,
     ) -> None:
         self.keyword = keyword
         self.max_pages = max_pages
@@ -52,8 +50,6 @@ class TopcvCrawler:
             request_delay=request_delay,
             max_retries=max_retries,
             timeout=timeout,
-            headless=headless,
-            warmup_wait=warmup_wait,
         )
         self.parser = TopcvParser()
 

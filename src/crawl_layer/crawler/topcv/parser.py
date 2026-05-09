@@ -15,7 +15,6 @@ from datetime import datetime, timedelta
 from parsel import Selector
 
 from src.crawl_layer.data_model.data_class import JobItem
-
 from .config import SOURCE_NAME, UNWANTED_TITLE_FRAGMENTS
 from .utils import join_clean, sanitize_title
 
