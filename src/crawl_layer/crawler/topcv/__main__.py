@@ -23,8 +23,8 @@ async def _run(keyword: str, max_pages: int) -> None:
     crawler = TopcvCrawler(
         keyword=keyword, 
         max_pages=max_pages,
-        concurrency=1,  # Phải hạ xuống 1 để tránh Cloudflare phát hiện
-        request_delay=(7.0, 12.0)  # Tăng delay lên cao hơn nữa
+        concurrency=5,  
+        request_delay=(4.0, 6.0) 
     )
     
     items = await crawler.crawl()

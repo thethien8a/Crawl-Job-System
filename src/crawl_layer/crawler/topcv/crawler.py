@@ -37,7 +37,7 @@ class TopcvCrawler:
         self,
         keyword: str = "data analyst",
         max_pages: int = 5,
-        concurrency: int = 1,
+        concurrency: int = 5,
         request_delay: tuple[float, float] = (4.0, 6.0),
         max_retries: int = 5,
         timeout: float = 30.0,
@@ -60,7 +60,7 @@ class TopcvCrawler:
         async with self.http:
             job_urls = await self._collect_job_urls()
             logger.info("Collected %d unique job URLs", len(job_urls))
-
+            
             tasks = [self._scrape_detail(url) for url in job_urls]
             results = await asyncio.gather(*tasks, return_exceptions=True)
 

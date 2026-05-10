@@ -5,6 +5,7 @@ from typing import Optional
 class JobItem:
     job_title: Optional[str] = None
     company_name: Optional[str] = None
+    company_size: Optional[str] = None
     salary: Optional[str] = None
     location: str | None = None
     job_type: str | None = None

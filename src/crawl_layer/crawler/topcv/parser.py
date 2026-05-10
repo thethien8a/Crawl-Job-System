@@ -50,6 +50,7 @@ class TopcvParser:
             self._extract_title(sel, is_brand), UNWANTED_TITLE_FRAGMENTS
         )
         item.company_name = self._extract_company(sel, is_brand)
+        item.company_size = self._extract_company_size(sel, is_brand)
         item.salary = self._extract_salary(sel, is_brand)
         item.location = self._extract_location(sel, is_brand)
         item.job_type = self._extract_label(sel, "Hình thức làm việc", is_brand)
@@ -58,8 +59,8 @@ class TopcvParser:
         experience = self._extract_from_js(sel, "experience")
         if not experience and is_brand:
             experience = self._extract_label(sel, "Kinh nghiệm", True)
-        item.experience_level = experience or "Không tìm thấy thông tin kinh nghiệm"
-
+        item.experience_level = experience or None
+        
         item.education_level = self._extract_label(sel, "Học vấn", is_brand)
         item.job_industry = self._extract_industry(sel)
         item.job_position = self._extract_label(sel, "Cấp bậc", is_brand)
@@ -72,17 +73,20 @@ class TopcvParser:
 
     # -- field extractors ---------------------------------------------------
     def _extract_title(self, sel: Selector, is_brand: bool) -> str | None:
-        if is_brand:
-            parts = sel.css('h2[class*="title"] ::text').getall()
-            if not parts:
-                parts = sel.css(
-                    "h2.premium-job-basic-information__content--title"
-                ).getall()
-            return join_clean(parts)
-
         title = self._extract_from_js(sel, "job_title")
         if title:
             return title.strip()
+
+        if is_brand:
+            # Lấy chính xác h2 chứa title của job để không bị nhầm lẫn với các thẻ khác
+            title = sel.css('h2.job-title::text').get()
+            if not title:
+                title = sel.css('div.job-detail__info--title h1::text').get()
+            if not title:
+                parts = sel.css("h2.premium-job-basic-information__content--title::text").getall()
+                title = join_clean(parts)
+            return title
+
         parts = sel.css("h1.box-header-job__title ::text").getall()
         return join_clean(parts)
 
@@ -95,6 +99,8 @@ class TopcvParser:
                 company = sel.css(
                     'h1[class="company-content__title--name"]::text'
                 ).get()
+            if not company:
+                company = sel.css('a.company-content__name h1.title::text').get()
             return company.strip() if company else None
 
         company = self._extract_from_js(sel, "recruiter_company")
@@ -104,6 +110,20 @@ class TopcvParser:
         if not parts:
             parts = sel.css('a[class="name"][href*="cong-ty"] ::text').getall()
         return join_clean(parts)
+
+    def _extract_company_size(self, sel: Selector, is_brand: bool) -> str | None:
+        if is_brand:
+            xp = (
+                '//*[contains(text(), "Quy mô")]'
+                '/following-sibling::*[position()<=2]//text()'
+            )
+            return join_clean(sel.xpath(xp).getall())
+
+        xp = (
+            '//*[contains(@class, "company-title") and contains(normalize-space(), "Quy mô")]'
+            '/following-sibling::*[contains(@class, "company-value")]//text()'
+        )
+        return join_clean(sel.xpath(xp).getall())
 
     def _extract_salary(self, sel: Selector, is_brand: bool) -> str | None:
         if is_brand:
