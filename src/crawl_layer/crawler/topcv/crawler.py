@@ -2,7 +2,7 @@
 
 Wires together:
   * `TopcvHttpClient` — owns the curl_cffi session and nodriver warm-up.
-  * `TopcvParser`     — turns HTML into JobItem instances.
+  * `TopcvParser`     — turns HTML into TopCVJobItem instances.
 
 Keeps only the high-level flow here: paginate search results, dedupe URLs,
 fan out detail-page fetches, gather results.
@@ -13,7 +13,7 @@ from __future__ import annotations
 import asyncio
 import logging
 
-from src.crawl_layer.data_model.data_class import JobItem
+from src.crawl_layer.data_model.data_class import TopCVTopCVJobItem
 
 from .config import BASE_URL
 from .http_client import TopcvHttpClient
@@ -56,7 +56,7 @@ class TopcvCrawler:
         self._seen_urls: set[str] = set()
 
     # -- public entry point -------------------------------------------------
-    async def crawl(self) -> list[JobItem]:
+    async def crawl(self) -> list[TopCVJobItem]:
         async with self.http:
             job_urls = await self._collect_job_urls()
             logger.info("Collected %d unique job URLs", len(job_urls))
@@ -64,7 +64,7 @@ class TopcvCrawler:
             tasks = [self._scrape_detail(url) for url in job_urls]
             results = await asyncio.gather(*tasks, return_exceptions=True)
 
-        items: list[JobItem] = []
+        items: list[TopCVJobItem] = []
         for url, result in zip(job_urls, results):
             if isinstance(result, Exception):
                 logger.warning("Detail crawl failed for %s: %s", url, result)
@@ -95,7 +95,7 @@ class TopcvCrawler:
         return urls
 
     # -- detail page --------------------------------------------------------
-    async def _scrape_detail(self, url: str) -> JobItem | None:
+    async def _scrape_detail(self, url: str) -> TopCVJobItem | None:
         html = await self.http.fetch(url, referer=BASE_URL)
         if not html:
             return None

@@ -1,6 +1,5 @@
 # Environment
 .env
-.env.*
 .serena/
 
 # Python
@@ -27,7 +26,6 @@ dist/
 htmlcov/
 .tox/
 .mypy_cache/
-
 # IDEs
 .vscode/
 .idea/

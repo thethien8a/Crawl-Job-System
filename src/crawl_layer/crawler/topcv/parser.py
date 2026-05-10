@@ -1,4 +1,4 @@
-"""HTML → JobItem extraction for TopCV pages.
+"""HTML → TopCVJobItem extraction for TopCV pages.
 
 Pure parsing layer: takes raw HTML strings, returns dataclass instances. No
 HTTP, no I/O. Selectors and brand vs non-brand branching are ported verbatim
@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 
 from parsel import Selector
 
-from src.crawl_layer.data_model.data_class import JobItem
+from src.crawl_layer.data_model.data_class import TopCVTopCVJobItem
 from .config import SOURCE_NAME, UNWANTED_TITLE_FRAGMENTS
 from .utils import join_clean, sanitize_title
 
@@ -35,11 +35,11 @@ class TopcvParser:
         next_url = sel.css('a[data-href*="?page="]::attr(data-href)').get()
         return page_urls, next_url
 
-    def parse_job_detail(self, html: str, url: str, keyword: str) -> JobItem:
+    def parse_job_detail(self, html: str, url: str, keyword: str) -> TopCVJobItem:
         sel = Selector(text=html)
         is_brand = "brand" in url
 
-        item = JobItem(
+        item = TopCVJobItem(
             job_url=url,
             search_keyword=keyword,
             scraped_at=datetime.now().isoformat(),
