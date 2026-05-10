@@ -5,7 +5,6 @@ from typing import Optional
 class JobItem:
     job_title: Optional[str] = None
     company_name: Optional[str] = None
-    company_size: Optional[str] = None
     salary: Optional[str] = None
     location: str | None = None
     job_industry: str | None = None
@@ -19,6 +18,7 @@ class JobItem:
 
 @dataclass
 class TopCVJobItem(JobItem):
+    company_size: Optional[str] = None
     job_type: str | None = None
     experience_level: str | None = None
     education_level: str | None = None
@@ -27,5 +27,13 @@ class TopCVJobItem(JobItem):
 
 @dataclass
 class ITViecJobItem(JobItem):
+    company_size: Optional[str] = None
     pass
 
+@dataclass
+class VietnamWorksJobItem(JobItem):
+    job_type: str | None = None
+    experience_level: str | None = None
+    education_level: str | None = None
+    job_position: str | None = None
+    job_deadline: str | None = None
