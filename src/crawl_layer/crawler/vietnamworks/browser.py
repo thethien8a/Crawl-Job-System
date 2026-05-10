@@ -135,27 +135,30 @@ class VietnamWorksBrowser:
             return None
 
     async def _scroll_to_bottom(self) -> None:
-        """Scroll gradually to the bottom to trigger lazy loading."""
         try:
-            script_get_height = "document.body.scrollHeight"
-            last_height = await self.tab.evaluate(script_get_height)
-            
+            # Wait until body has real content
+            for _ in range(20):
+                h = await self.tab.evaluate("document.body.scrollHeight", return_by_value=True)
+                if isinstance(h, int) and h > 200:
+                    break
+                await asyncio.sleep(0.5)
+            else:
+                logger.warning("Body never grew; aborting scroll")
+                return
+
+            last_height = h
             current_pos = 0
-            while current_pos < last_height:
-                current_pos += SCROLL_INCREMENT
+            stable_rounds = 0
+            while stable_rounds < 2:                         # need 2 stable checks, not 1
+                current_pos = min(current_pos + SCROLL_INCREMENT, last_height + SCROLL_INCREMENT)
                 await self.tab.evaluate(f"window.scrollTo(0, {current_pos});")
-                await asyncio.sleep(random.uniform(0.5, 1.5))
-                
-                new_height = await self.tab.evaluate(script_get_height)
-                if new_height > last_height:
+                await asyncio.sleep(random.uniform(0.8, 1.5))
+                new_height = await self.tab.evaluate("document.body.scrollHeight", return_by_value=True)
+                if isinstance(new_height, int) and new_height > last_height:
                     last_height = new_height
-                    
-                if current_pos >= last_height:
-                    await asyncio.sleep(2)
-                    final_height = await self.tab.evaluate(script_get_height)
-                    if final_height > last_height:
-                        last_height = final_height
-                    else:
-                        break
+                    stable_rounds = 0
+                elif current_pos >= last_height:
+                    stable_rounds += 1
+                    await asyncio.sleep(1.5)
         except Exception as e:
-            logger.warning("Error during scrolling: %s", e)
+            logger.exception("Error during scrolling: %s", e)   # use exception, not warning

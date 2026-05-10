@@ -46,6 +46,8 @@ class VietnamWorksCrawler:
                 
                 urls = await self.browser.get_job_urls_on_page()
                 for url in urls:
+                    if not url.startswith("http"):
+                        url = "https://www.vietnamworks.com" + url
                     if url not in self._seen_urls:
                         self._seen_urls.add(url)
                         job_urls.append(url)
@@ -60,6 +62,7 @@ class VietnamWorksCrawler:
             # Phase 2: Visit each URL and parse
             for i, url in enumerate(job_urls, 1):
                 logger.info("Scraping detail %d/%d: %s", i, len(job_urls), url)
+
                 html = await self.browser.get_job_detail_html(url)
                 if not html:
                     continue
