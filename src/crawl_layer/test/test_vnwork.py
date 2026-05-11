@@ -42,8 +42,8 @@ def pretty_html(html: str) -> str:
 
 
 async def main():
-    async with VietnamWorksBrowser() as browser:
-        html = await browser.get_job_detail_html("https://www.vietnamworks.com/chuyen-vien-quan-tri-co-so-du-lieu-va-ung-dung-cntt-database-administrator-dba-ma-so-vhqt-01-2030615-jv?source=searchResults&searchType=2&placement=2030615&sortBy=date&qs=0")
+    async with VietnamWorksBrowser(headless=False) as browser:
+        html = await browser.get_job_detail_html("https://www.vietnamworks.com/chuyen-vien-phan-tich-du-lieu-data-analyst-2041115-jv?source=searchResults&searchType=2&placement=2041115&sortBy=date&qs=0")
         with open("test.html", "w", encoding="utf-8") as f:
             if html:
                 f.write(pretty_html(html))

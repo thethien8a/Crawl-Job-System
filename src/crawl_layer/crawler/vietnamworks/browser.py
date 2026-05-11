@@ -114,17 +114,22 @@ class VietnamWorksBrowser:
             await asyncio.sleep(1)
             await self.tab.evaluate("window.scrollBy(0, 1000);")
             await asyncio.sleep(1)
-            await self.tab.evaluate("window.scrollTo(0, 0);")
-            await asyncio.sleep(1)
 
-            # Try to click the "Xem thêm" button to expand content
+            # Try to click the "Xem thêm" button(s) to expand content
             try:
-                expand_btn = await self.tab.query_selector(EXPAND_CONTENT_SELECTOR)
-                if expand_btn:
-                    await expand_btn.scroll_into_view()
-                    await asyncio.sleep(0.5)
-                    await expand_btn.click()
-                    await asyncio.sleep(0.7) # Wait for expansion animation
+                expand_btns = await self.tab.select_all(EXPAND_CONTENT_SELECTOR)
+                if len(expand_btns) >= 2:
+                    target_btn = expand_btns[1]
+                elif len(expand_btns) == 1:
+                    target_btn = expand_btns[0]
+                else:
+                    target_btn = None
+
+                if target_btn:
+                    await target_btn.scroll_into_view()
+                    await target_btn.click()
+                    await asyncio.sleep(1)
+
             except Exception as e:
                 logger.debug("Could not click expand button: %s", e)
                 
