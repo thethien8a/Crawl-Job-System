@@ -129,7 +129,9 @@ class VietnamWorksBrowser:
                     await target_btn.scroll_into_view()
                     await target_btn.click()
                     await asyncio.sleep(1)
-
+                else:
+                    logger.warning("No expand button found")
+                    
             except Exception as e:
                 logger.debug("Could not click expand button: %s", e)
                 
