@@ -289,6 +289,17 @@ async def press_tab(tab) -> None:
     await _press_special_key(tab, key="Tab", code="Tab", vk_code=9)
 
 
+
+async def press_enter(tab) -> None:
+    """Move focus to the next form field the way a real user would.
+
+    React's state machine respects native Tab navigation, so this is the
+    most reliable way to hop from the username field to the password
+    field on LinkedIn's login form.
+    """
+    await _press_special_key(tab, key="Enter", code="Enter", vk_code=13)
+
+
 async def type_into_focused(
     tab,
     text: str,

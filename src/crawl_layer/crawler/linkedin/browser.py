@@ -53,7 +53,7 @@ from .config import (
     USERNAME_INPUT_SELECTOR,
     )
     
-from .utils import human_like_typing, press_tab, type_into_focused
+from .utils import human_like_typing, press_tab, press_enter, type_into_focused
 
 logger = logging.getLogger(__name__)
 
@@ -155,12 +155,12 @@ class LinkedinBrowser:
 
             await asyncio.sleep(random.uniform(0.3, 0.7))
 
-            submit_buttons = await tab.xpath(SUBMIT_BUTTON_XPATH)
-            if not submit_buttons:
-                raise LinkedinLoginError("Sign-in submit button not found")
-            # mouse_click thay vì click() để cùng lý do: React intercept
-            # JS-level click nhưng không cản được CDP mouse event.
-            await submit_buttons[0].mouse_click()
+            # Click nút đăng nhập thay vì dùng phím Tab và Enter
+            submit_btn = await tab.wait_for(
+                selector="button[type='submit']", timeout=LOGIN_TIMEOUT
+            )
+            await submit_btn.click()
+            
             logger.info("Submitted login form")
         except LinkedinLoginError:
             raise
