@@ -94,41 +94,55 @@ class LinkedinParser:
         match = sel.css(css)
         if not match:
             return None
-        return match[0].attrib.get("href")
+        return "https://www.linkedin.com" + match[0].attrib.get("href")
     
     @staticmethod
     def _extract_industry(sel: Selector) -> str | None:
         info = sel.css(INDUSTRY_INFO_SELECTOR)
-        if not info:
-            return None
-
-        # Lấy text nằm trực tiếp dưới div, bỏ qua thẻ span con
-        direct_texts = info[0].xpath("./text()").getall()
-        for text in direct_texts:
-            cleaned = text.strip()
-            if cleaned and cleaned not in (",", "·", "•", "-"):
-                return cleaned
+        if info:
+            # Lấy text nằm trực tiếp dưới div, bỏ qua thẻ span con
+            direct_texts = info[0].xpath("./text()").getall()
+            for text in direct_texts:
+                cleaned = text.strip()
+                if cleaned and cleaned not in (",", "·", "•", "-"):
+                    return cleaned
         
+        # Fallback: Tìm trong các thẻ top card insight
+        insights = sel.css("li.job-details-jobs-unified-top-card__job-insight span::text").getall()
+        for text in insights:
+            cleaned = text.strip()
+            # Industry thường không chứa số
+            if cleaned and not re.search(r"\d", cleaned) and "·" not in cleaned:
+                lower = cleaned.lower()
+                if lower not in ("on-site", "remote", "hybrid", "full-time", "part-time", "contract", "internship"):
+                    return cleaned
+                    
         return None
 
     @staticmethod
     def _extract_company_size(sel: Selector) -> str | None:
         """Trích xuất quy mô công ty bằng cách tìm chuỗi có chứa số và 'nhân viên' hoặc 'employees'."""
         info = sel.css(INDUSTRY_INFO_SELECTOR)
-        if not info:
-            return None
-
-        # Các thông tin phụ (company size, followers) nằm trong span.jobs-company__inline-information
-        inline_infos = info[0].css("span.jobs-company__inline-information::text").getall()
+        if info:
+            # Các thông tin phụ (company size, followers) nằm trong span.jobs-company__inline-information
+            inline_infos = info[0].css("span.jobs-company__inline-information::text").getall()
+            
+            for text in inline_infos:
+                cleaned = text.strip()
+                if not cleaned:
+                    continue
+                lower_text = cleaned.lower()
+                # Tìm số nhân viên, loại trừ số lượng người theo dõi trên linkedin
+                if "nhân viên" in lower_text or "employees" in lower_text or re.search(r"\d", cleaned):
+                    if "linkedin" not in lower_text and "followers" not in lower_text and "trên" not in lower_text:
+                        return cleaned
         
-        for text in inline_infos:
+        # Fallback: Quét rộng ra các insight card khác trên đầu trang
+        insights = sel.css("li.job-details-jobs-unified-top-card__job-insight span::text").getall()
+        for text in insights:
             cleaned = text.strip()
-            if not cleaned:
-                continue
             lower_text = cleaned.lower()
-            # Tìm số nhân viên, loại trừ số lượng người theo dõi trên linkedin
-            if "nhân viên" in lower_text or "employees" in lower_text or re.search(r"\d", cleaned):
-                if "linkedin" not in lower_text and "followers" not in lower_text and "trên" not in lower_text:
-                    return cleaned
-        
+            if ("nhân viên" in lower_text or "employees" in lower_text) and re.search(r"\d", cleaned):
+                return cleaned
+                
         return None

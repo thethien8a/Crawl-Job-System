@@ -7,6 +7,7 @@ on purpose; do not "tidy" them without checking the live page.
 """
 
 from __future__ import annotations
+import os
 
 SOURCE_NAME = "linkedin.com"
 
@@ -66,6 +67,8 @@ INDUSTRY_SKIP_KEYWORDS: tuple[str, ...] = (
 DEFAULT_KEYWORD = "Data Analyst"
 DEFAULT_LOCATION = "Vietnam"
 DEFAULT_MAX_PAGES = 2
+
+USER_DATA_DIR = os.path.abspath(os.path.join(os.getcwd(), ".linkedin_profile"))
 
 LOGIN_TIMEOUT = 10
 PAGE_LOAD_TIMEOUT = 15.0

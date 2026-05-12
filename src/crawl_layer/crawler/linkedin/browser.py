@@ -48,10 +48,12 @@ from .config import (
     SEARCH_URL_TEMPLATE,
     SUBMIT_BUTTON_XPATH,
     TYPING_DELAY_RANGE,
+    USER_DATA_DIR,
     USERNAME_ENV,
     USERNAME_INPUT_SELECTOR,
-)
-from .utils import human_like_typing
+    )
+    
+from .utils import human_like_typing, press_tab, type_into_focused
 
 logger = logging.getLogger(__name__)
 
@@ -84,6 +86,7 @@ class LinkedinBrowser:
             headless=self.headless,
             browser_args=args,
             lang=DEFAULT_ACCEPT_LANGUAGE.split(",")[0],
+            user_data_dir=USER_DATA_DIR,
         )
         # nodriver starts with one tab open already; reuse it.
         self._tab = self._browser.main_tab
@@ -122,33 +125,42 @@ class LinkedinBrowser:
         tab = self.tab
         await tab.get(LOGIN_URL)
         logger.info("Navigated to login page")
-       
         
-        try: 
-            # Đăng nhập pass trước username (đ hiểu lắm nhưng cách này đăng nhập được)
-            pass_input = await tab.wait_for(
-                selector=PASSWORD_INPUT_SELECTOR, timeout=LOGIN_TIMEOUT
-            )
-            
-            # Click thay vì Tab - đảm bảo focus vào password field
-            await pass_input.click()
-            await pass_input.clear_input()
-            await human_like_typing(pass_input, password, TYPING_DELAY_RANGE)
+        # Chờ 3s xem có được tự động chuyển hướng không (nếu đã lưu phiên trước đó)
+        await asyncio.sleep(3)
+        if LOGIN_SUCCESS_MARKERS in tab.target.url or ("login" not in tab.target.url and "checkpoint" not in tab.target.url):
+            logger.info("Session restored from previous login. Skipping credential entry.")
+            return
 
-            await asyncio.sleep(0.3)
-
+        try:
             user_input = await tab.wait_for(
                 selector=USERNAME_INPUT_SELECTOR, timeout=LOGIN_TIMEOUT
             )
-
-            await user_input.click()
-            await user_input.clear_input()
+            # human_like_typing thực hiện CDP-level mouse click + CDP key events.
+            # React không bắt được focus thực từ chuột nên username sẽ vào đúng ô.
             await human_like_typing(user_input, username, TYPING_DELAY_RANGE)
+
+            await asyncio.sleep(random.uniform(0.3, 0.7))
+
+            # Đảm bảo ô password đã render xong trước khi gõ Tab.
+            await tab.wait_for(
+                selector=PASSWORD_INPUT_SELECTOR, timeout=LOGIN_TIMEOUT
+            )
             
+            await press_tab(tab)
+            await asyncio.sleep(random.uniform(0.3, 0.5))
+
+            # Gõ thẳng vào element đang focus (password field sau khi Tab).
+            await type_into_focused(tab, password, TYPING_DELAY_RANGE)
+
+            await asyncio.sleep(random.uniform(0.3, 0.7))
+
             submit_buttons = await tab.xpath(SUBMIT_BUTTON_XPATH)
             if not submit_buttons:
                 raise LinkedinLoginError("Sign-in submit button not found")
-            await submit_buttons[0].click()
+            # mouse_click thay vì click() để cùng lý do: React intercept
+            # JS-level click nhưng không cản được CDP mouse event.
+            await submit_buttons[0].mouse_click()
             logger.info("Submitted login form")
         except LinkedinLoginError:
             raise
