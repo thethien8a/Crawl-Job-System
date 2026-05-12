@@ -27,7 +27,7 @@ DEFAULT_ACCEPT_LANGUAGE = "vi,en;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6"
 # -- Login page selectors -----------------------------------------------------
 USERNAME_INPUT_SELECTOR = 'input[type="email"][autocomplete="username webauthn"]'
 PASSWORD_INPUT_SELECTOR = 'input[type="password"][autocomplete="current-password"]'
-SUBMIT_BUTTON_XPATH = "//button[@type='submit']"
+SUBMIT_BUTTON_XPATH = "//button[@type='submit'][componentkey='6eb697b9-3a7c-4680-a02b-ce9a5182909a']"
 
 # Substrings that mean LinkedIn blocked the login attempt.
 LOGIN_CHALLENGE_MARKERS: tuple[str, ...] = (

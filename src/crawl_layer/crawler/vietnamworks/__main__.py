@@ -8,10 +8,10 @@ from __future__ import annotations
 
 import argparse
 import asyncio
-import json
 import logging
 import sys
 from dataclasses import asdict
+from src.crawl_layer.utils.loader import save_to_temp
 
 # --- Patch for Windows asyncio ProactorEventLoop cleanup issues ---
 if sys.platform == "win32":
@@ -52,10 +52,9 @@ async def _run(keyword: str, max_pages: int, headless: bool) -> None:
 
     items = await crawler.crawl()
 
-    with open("vietnamworks_items.json", "w", encoding="utf-8") as f:
-        json.dump([asdict(item) for item in items], f, ensure_ascii=False, indent=2)
+    save_to_temp([asdict(i) for i in items], "vietnamworks", "jobs")
 
-    logging.info("Exported %d items to vietnamworks_items.json", len(items))
+    logging.info("Exported %d items to vietnamworks_jobs.jsonl", len(items))
 
 
 def main() -> None:

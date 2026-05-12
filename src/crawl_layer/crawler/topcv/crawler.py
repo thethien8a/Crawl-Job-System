@@ -13,7 +13,7 @@ from __future__ import annotations
 import asyncio
 import logging
 
-from src.crawl_layer.data_model.data_class import TopCVTopCVJobItem
+from src.crawl_layer.data_model.data_class import TopCVJobItem
 
 from .config import BASE_URL
 from .http_client import TopcvHttpClient

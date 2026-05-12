@@ -8,12 +8,10 @@ from __future__ import annotations
 
 import argparse
 import asyncio
-import json
 import logging
 from dataclasses import asdict
-
+from src.crawl_layer.utils.loader import save_to_temp
 from .crawler import TopcvCrawler
-
 
 async def _run(keyword: str, max_pages: int) -> None:
     logging.basicConfig(
@@ -29,10 +27,9 @@ async def _run(keyword: str, max_pages: int) -> None:
     
     items = await crawler.crawl()
     
-    with open("topcv_items.json", "w", encoding="utf-8") as f:
-        json.dump([asdict(item) for item in items], f, ensure_ascii=False, indent=2)
+    save_to_temp([asdict(i) for i in items], "topcv", "jobs")
     
-    logging.info("Exported %d items to topcv_items.json", len(items))
+    logging.info("Exported %d items to topcv_jobs.jsonl", len(items))
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="TopCV async crawler")
