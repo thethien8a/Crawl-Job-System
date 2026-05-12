@@ -1,12 +1,10 @@
 from dataclasses import asdict
 import json
 from datetime import datetime
-from pathlib import Path
 from typing import Union, List, Dict
 
 # Xác định đường dẫn tương đối để luôn trỏ đúng về thư mục temp
-BASE_DIR = Path(__file__).parents[2]
-TEMP_DIR = BASE_DIR / 'temp'
+from src.crawl_layer.config.path import TEMP_DIR
 
 def save_to_temp(data: Union[Dict, List[Dict]], source_name: str, entity_name: str = 'jobs'):
     """
@@ -19,7 +17,6 @@ def save_to_temp(data: Union[Dict, List[Dict]], source_name: str, entity_name: s
     """
     TEMP_DIR.mkdir(parents=True, exist_ok=True)
     
-    #
     # Lấy ngày hiện tại (YYYYMMDD) để gom file theo ngày ngay từ local
     today_str = datetime.now().strftime("%Y%m%d")
     

@@ -56,6 +56,6 @@ data/
 warehouse/
 storage/
 tmp/
-temp/
+temp*/
 
 .linkedin_profile/
