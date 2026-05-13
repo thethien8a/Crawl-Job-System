@@ -11,8 +11,11 @@ dedupe URLs, harvest items.
 from __future__ import annotations
 
 import logging
+from dataclasses import asdict
 
 from src.crawl_layer.data_model.data_class import ITViecJobItem
+from src.crawl_layer.utils.loader import save_to_temp
+from src.crawl_layer.crawler.itviec.config import SOURCE_NAME, ENTITY_NAME
 
 from .browser import ItviecBrowser, ItviecLoginError
 from .parser import ItviecParser
@@ -61,10 +64,15 @@ class ItviecCrawler:
 
             pages_done = 0
             while pages_done < self.max_pages:
+                temp_items: list[ITViecJobItem] = []
                 pages_done += 1
                 logger.info("Scraping page %d/%d", pages_done, self.max_pages)
                 page_items = await self._scrape_current_page()
+                # Append total jobs scrape
                 items.extend(page_items)
+                # Current page jobs
+                temp_items.extend(page_items)
+                self._flush_batch(temp_items, pages_done)
 
                 if pages_done >= self.max_pages:
                     break
@@ -92,3 +100,19 @@ class ItviecCrawler:
 
             page_items.append(item)
         return page_items
+
+    # -- incremental batch save --------------------------------------------
+    def _flush_batch(self, page_items: list[ITViecJobItem], page_num: int) -> None:
+        """Persist one page's worth of items to the local temp file.
+
+        Streaming page-by-page avoids losing all progress if a later page
+        crashes mid-crawl, and keeps memory bounded for long runs.
+        """
+        if not page_items:
+            return
+        save_to_temp(
+            [asdict(item) for item in page_items], SOURCE_NAME, ENTITY_NAME
+        )
+        logger.info(
+            "Flushed %d items from page %d to temp", len(page_items), page_num
+        )

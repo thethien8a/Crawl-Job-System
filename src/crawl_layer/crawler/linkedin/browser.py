@@ -21,7 +21,6 @@ import nodriver as uc
 from dotenv import load_dotenv
 
 load_dotenv()
-
 from .config import (
     BROWSER_ARGS,
     CARD_CLICK_DELAY,
@@ -31,7 +30,6 @@ from .config import (
     DEFAULT_VIEWPORTS,
     DETAIL_PANEL_SELECTOR,
     JOB_CARD_SELECTOR,
-    JOB_CONTAINER_SELECTOR,
     JOB_LINK_SELECTOR,
     LOGIN_AFTER_SUBMIT_DELAY_RANGE,
     LOGIN_CHALLENGE_MARKERS,
@@ -51,9 +49,14 @@ from .config import (
     USER_DATA_DIR,
     USERNAME_ENV,
     USERNAME_INPUT_SELECTOR,
-    )
+)
     
-from .utils import human_like_typing, press_tab, press_enter, type_into_focused
+from .utils import (
+    human_like_typing,
+    press_tab,
+    type_into_focused,
+    scroll_panel_to_bottom,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -211,7 +214,7 @@ class LinkedinBrowser:
                 return None
             await asyncio.sleep(0.5)
 
-    # -- search navigation --------------------------------------------------
+
     async def open_search(self, keyword: str, location: str) -> None:
         """Navigate to the search results page for `keyword` + `location`."""
         url = SEARCH_URL_TEMPLATE.format(keyword=keyword, location=location)
@@ -226,15 +229,15 @@ class LinkedinBrowser:
         Each iteration scrolls a card into view, clicks it, waits for the
         side panel to refresh, then snapshots its HTML for parsing.
         """
-        container_matches = await self._wait_for_selector(
-            JOB_CONTAINER_SELECTOR, PAGE_LOAD_TIMEOUT
-        )
-        if container_matches is None:
-            logger.error("Job container not found on current page (Timeout)")
-            return
 
+        try:
+            await self.tab.wait_for(JOB_CARD_SELECTOR, timeout=PAGE_LOAD_TIMEOUT)
+        except Exception:
+            logger.warning("Timeout waiting for job cards to load")
+            return
+        
         # Tìm các job card CHỈ nằm bên trong container_matches
-        cards = await container_matches.query_selector_all(JOB_CARD_SELECTOR)
+        cards = await self.tab.query_selector_all(JOB_CARD_SELECTOR)
         logger.info("Found %d job cards on current page", len(cards))
 
         for card in cards:
@@ -257,6 +260,11 @@ class LinkedinBrowser:
                 if panel is None:
                     logger.warning("Detail panel missing")
                     continue
+
+                # Lazy sections (related jobs, company box, "show more"
+                # description) only render after the panel itself is scrolled.
+                await scroll_panel_to_bottom(panel)
+
                 panel_html = await panel.get_html()
                 yield panel_html
 

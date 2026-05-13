@@ -12,8 +12,10 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from dataclasses import asdict
 
 from src.crawl_layer.data_model.data_class import TopCVJobItem
+from src.crawl_layer.utils.loader import save_to_temp
 
 from .config import BASE_URL
 from .http_client import TopcvHttpClient
@@ -21,6 +23,9 @@ from .parser import TopcvParser
 from .utils import encode_input
 
 logger = logging.getLogger(__name__)
+
+SOURCE_NAME = "topcv"
+ENTITY_NAME = "jobs"
 
 
 class TopcvCrawler:
@@ -57,42 +62,68 @@ class TopcvCrawler:
 
     # -- public entry point -------------------------------------------------
     async def crawl(self) -> list[TopCVJobItem]:
-        async with self.http:
-            job_urls = await self._collect_job_urls()
-            logger.info("Collected %d unique job URLs", len(job_urls))
-            
-            tasks = [self._scrape_detail(url) for url in job_urls]
-            results = await asyncio.gather(*tasks, return_exceptions=True)
+        """Walk search pages one at a time, fetching + saving details per page.
 
+        Per-page streaming means each search page's detail items are flushed
+        to the temp file before we move on — so a crash on page 5 still
+        leaves pages 1..4 safely on disk.
+        """
         items: list[TopCVJobItem] = []
-        for url, result in zip(job_urls, results):
+        slug = encode_input(self.keyword)
+        url: str | None = f"{BASE_URL}-{slug}"
+
+        async with self.http:
+            for page_num in range(1, self.max_pages + 1):
+                temp_items: list[TopCVJobItem] = []
+                if not url:
+                    break
+
+                page_urls, next_url = await self._collect_page_urls(url)
+                if not page_urls:
+                    url = next_url
+                    continue
+
+                page_items = await self._scrape_details_batch(page_urls)
+                
+                # Append total jobs scrape
+                items.extend(page_items)
+
+                # Current page jobs
+                temp_items.extend(page_items)
+                self._flush_batch(temp_items, page_num)
+
+                url = next_url
+
+        return items
+
+    # -- search pagination (single page) -----------------------------------
+    async def _collect_page_urls(self, url: str) -> tuple[list[str], str | None]:
+        """Fetch one search page and return its new (deduped) job URLs + next page URL."""
+        html = await self.http.fetch(url, referer=None)
+        if not html:
+            return [], None
+
+        page_urls, next_url = self.parser.parse_search_page(html)
+        new_urls: list[str] = []
+        for u in page_urls:
+            if u and u not in self._seen_urls:
+                self._seen_urls.add(u)
+                new_urls.append(u)
+        return new_urls, next_url
+
+    # -- batch detail fetch -------------------------------------------------
+    async def _scrape_details_batch(self, urls: list[str]) -> list[TopCVJobItem]:
+        """Concurrently fetch + parse a batch of detail URLs from one search page."""
+        tasks = [self._scrape_detail(u) for u in urls]
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        page_items: list[TopCVJobItem] = []
+        for url, result in zip(urls, results):
             if isinstance(result, Exception):
                 logger.warning("Detail crawl failed for %s: %s", url, result)
             elif result is not None:
-                items.append(result)
-        return items
-
-    # -- search pagination --------------------------------------------------
-    async def _collect_job_urls(self) -> list[str]:
-        slug = encode_input(self.keyword)
-        url: str | None = f"{BASE_URL}-{slug}"
-        urls: list[str] = []
-
-        for _ in range(self.max_pages):
-            if not url:
-                break
-            html = await self.http.fetch(url, referer=None)
-            if not html:
-                break
-
-            page_urls, next_url = self.parser.parse_search_page(html)
-            for u in page_urls:
-                if u and u not in self._seen_urls:
-                    self._seen_urls.add(u)
-                    urls.append(u)
-            url = next_url
-
-        return urls
+                page_items.append(result)
+        return page_items
 
     # -- detail page --------------------------------------------------------
     async def _scrape_detail(self, url: str) -> TopCVJobItem | None:
@@ -100,3 +131,15 @@ class TopcvCrawler:
         if not html:
             return None
         return self.parser.parse_job_detail(html, url, self.keyword)
+
+    # -- incremental batch save --------------------------------------------
+    def _flush_batch(self, page_items: list[TopCVJobItem], page_num: int) -> None:
+        """Persist one search page's detail items to the local temp file."""
+        if not page_items:
+            return
+        save_to_temp(
+            [asdict(item) for item in page_items], SOURCE_NAME, ENTITY_NAME
+        )
+        logger.info(
+            "Flushed %d items from page %d to temp", len(page_items), page_num
+        )

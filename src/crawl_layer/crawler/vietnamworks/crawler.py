@@ -3,14 +3,20 @@
 from __future__ import annotations
 
 import logging
+from dataclasses import asdict
 
 from src.crawl_layer.data_model.data_class import VietnamWorksJobItem as JobItem
+from src.crawl_layer.utils.loader import save_to_temp
 
 from .browser import VietnamWorksBrowser
 from .parser import VietnamWorksParser
 from .config import DEFAULT_KEYWORD
 
 logger = logging.getLogger(__name__)
+
+SOURCE_NAME = "vietnamworks"
+ENTITY_NAME = "jobs"
+BATCH_SIZE = 10
 
 
 class VietnamWorksCrawler:
@@ -59,19 +65,42 @@ class VietnamWorksCrawler:
             
             logger.info("Finished URL collection. Total unique URLs: %d", len(job_urls))
 
-            # Phase 2: Visit each URL and parse
+            # Phase 2: Visit each URL and parse, flushing in batches
+            batch: list[JobItem] = []
             for i, url in enumerate(job_urls, 1):
                 logger.info("Scraping detail %d/%d: %s", i, len(job_urls), url)
 
                 html = await self.browser.get_job_detail_html(url)
                 if not html:
                     continue
-                
+
                 try:
                     item = self.parser.parse_job_detail(html, url, self.keyword)
                     items.append(item)
+                    batch.append(item)
                 except Exception as e:
                     logger.error("Failed to parse %s: %s", url, e)
+                    continue
+
+                if len(batch) >= BATCH_SIZE:
+                    self._flush_batch(batch)
+                    batch = []
+
+            self._flush_batch(batch)
 
         logger.info("Crawl finished — collected %d items", len(items))
         return items
+
+    # -- incremental batch save --------------------------------------------
+    def _flush_batch(self, batch: list[JobItem]) -> None:
+        """Persist a batch of detail-page items to the local temp file.
+
+        Streaming in batches avoids losing all progress if a later detail
+        page crashes mid-crawl, and keeps memory bounded for long runs.
+        """
+        if not batch:
+            return
+        save_to_temp(
+            [asdict(item) for item in batch], SOURCE_NAME, ENTITY_NAME
+        )
+        logger.info("Flushed %d items to temp", len(batch))

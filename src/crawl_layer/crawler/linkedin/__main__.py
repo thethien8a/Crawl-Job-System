@@ -13,8 +13,6 @@ import argparse
 import asyncio
 import logging
 import sys
-from dataclasses import asdict
-from src.crawl_layer.utils.loader import save_to_temp
 # --- Patch for Windows asyncio ProactorEventLoop cleanup issues ---
 if sys.platform == "win32":
     try:
@@ -61,8 +59,6 @@ async def _run(
     )
 
     items = await crawler.crawl()
-
-    save_to_temp([asdict(i) for i in items], "linkedin", "jobs")
 
     logging.info("Exported %d items to linkedin_jobs.jsonl", len(items))
 

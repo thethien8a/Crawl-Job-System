@@ -9,8 +9,6 @@ from __future__ import annotations
 import argparse
 import asyncio
 import logging
-from dataclasses import asdict
-from src.crawl_layer.utils.loader import save_to_temp
 from .crawler import TopcvCrawler
 
 async def _run(keyword: str, max_pages: int) -> None:
@@ -26,9 +24,7 @@ async def _run(keyword: str, max_pages: int) -> None:
     )
     
     items = await crawler.crawl()
-    
-    save_to_temp([asdict(i) for i in items], "topcv", "jobs")
-    
+
     logging.info("Exported %d items to topcv_jobs.jsonl", len(items))
 
 def main() -> None:

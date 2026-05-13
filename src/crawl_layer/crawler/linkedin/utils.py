@@ -13,7 +13,12 @@ import re
 from typing import Iterable
 from urllib.parse import urljoin
 
-from .config import BASE_URL
+from .config import (
+    BASE_URL,
+    PANEL_SCROLL_MAX_ROUNDS,
+    PANEL_SCROLL_PAUSE,
+    PANEL_SCROLL_STABLE_ROUNDS,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -316,3 +321,65 @@ async def type_into_focused(
     for char in text:
         await tab.send(uc.cdp.input_.dispatch_key_event("char", text=char))
         await asyncio.sleep(random.uniform(*delay_range))
+
+
+# -- search navigation --------------------------------------------------
+async def scroll_panel_to_bottom(self, panel) -> None:
+    """Scroll inside the side panel until lazy-loaded sections stop growing.
+
+    The detail panel is its own scroll container (or wraps one); scrolling
+    the page body does nothing useful here. We resolve the actual
+    scrollable node in JS, jump to the bottom, and stop once the height
+    is stable for ``PANEL_SCROLL_STABLE_ROUNDS`` consecutive rounds.
+    """
+    scroll_js = """
+        function (el) {
+            function isScrollable(node) {
+                if (!node || node.nodeType !== 1) return false;
+                const cs = window.getComputedStyle(node);
+                const oy = cs.overflowY;
+                return (oy === 'auto' || oy === 'scroll')
+                    && node.scrollHeight > node.clientHeight + 1;
+            }
+            let target = null;
+            if (isScrollable(el)) target = el;
+            let p = el.parentElement;
+            while (!target && p) {
+                if (isScrollable(p)) { target = p; break; }
+                p = p.parentElement;
+            }
+            if (!target) {
+                const all = el.querySelectorAll('*');
+                for (const n of all) {
+                    if (isScrollable(n)) { target = n; break; }
+                }
+            }
+            if (!target) {
+                window.scrollTo(0, document.body.scrollHeight);
+                return document.documentElement.scrollHeight;
+            }
+            target.scrollTop = target.scrollHeight;
+            return target.scrollHeight;
+        }
+    """
+
+    last_height = -1
+    stable_rounds = 0
+    for _ in range(PANEL_SCROLL_MAX_ROUNDS):
+        try:
+            current_height = await panel.apply(scroll_js)
+        except Exception as exc:
+            # CDP can flake when the panel re-renders mid-scroll; treat as
+            # "done" rather than aborting the whole card.
+            logger.debug("Panel scroll iteration failed: %s", exc)
+            break
+
+        if current_height == last_height:
+            stable_rounds += 1
+            if stable_rounds >= PANEL_SCROLL_STABLE_ROUNDS:
+                break
+        else:
+            stable_rounds = 0
+            last_height = current_height
+
+        await asyncio.sleep(PANEL_SCROLL_PAUSE)

@@ -9,6 +9,7 @@ ITviec class names are partially hashed and look noisy on purpose.
 from __future__ import annotations
 
 SOURCE_NAME = "itviec"
+ENTITY_NAME = "jobs"
 
 BASE_URL = "https://itviec.com"
 LOGIN_URL = "https://itviec.com/sign_in"
@@ -51,7 +52,7 @@ BENEFITS_SELECTOR = "section[class='job-why-love-working']"
 INDUSTRY_SELECTOR = "div[class='d-inline-flex text-wrap']"
 COMPANY_SIZE_SELECTOR = "small[class='normal-text text-it-black col']"
 # -- Timing -------------------------------------------------------------------
-DEFAULT_KEYWORD = "data analyst"
+DEFAULT_KEYWORD = "data"
 LOGIN_TIMEOUT = 20.0
 PAGE_LOAD_TIMEOUT = 15.0
 PANEL_LOAD_TIMEOUT = 10.0

@@ -40,8 +40,8 @@ LOGIN_CHALLENGE_MARKERS: tuple[str, ...] = (
 LOGIN_SUCCESS_MARKERS = "feed"
 
 # -- Search page selectors ----------------------------------------------------
-JOB_CONTAINER_SELECTOR = "ul[class='PpKhBdXDfdFmGlMHnIaXEnHrCNpaaa']"
-JOB_CARD_SELECTOR = "li[id*='ember']"
+# JOB_CONTAINER_SELECTOR = "ul[class*='nYLoocUsKesdXXoEOGVLjAJWUsyzvYjWFTTF']"
+JOB_CARD_SELECTOR = "li[id*='ember'][class*='occludable-update']"
 JOB_LINK_SELECTOR = "a[href*='/jobs/view/']"
 DETAIL_PANEL_SELECTOR = 'div[class*="jobs-search__job-details"]'
 NEXT_PAGE_SELECTOR = "button[class*='jobs-search-pagination__button--next']"
@@ -78,6 +78,13 @@ NEXT_BUTTON_TIMEOUT = 5.0
 
 # Pause before a click on a freshly scrolled card so the page settles.
 CARD_CLICK_DELAY = 0.5
+
+# Side-panel lazy-load knobs. LinkedIn renders related-jobs / company box only
+# after the user scrolls inside the detail panel; we mimic that to capture all
+# DOM before snapshotting innerHTML.
+PANEL_SCROLL_PAUSE = 0.6
+PANEL_SCROLL_MAX_ROUNDS = 12
+PANEL_SCROLL_STABLE_ROUNDS = 2
 
 # Per-character delay for human-like typing in the login form.
 TYPING_DELAY_RANGE = (0.05, 0.15)
