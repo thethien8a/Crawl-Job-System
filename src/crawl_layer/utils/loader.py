@@ -1,37 +1,108 @@
-from dataclasses import asdict
 import json
+import gzip
+from socket import TCP_NODELAY
+import boto3
 from datetime import datetime
+from src.crawl_layer.config.key import MINIO_ACCESS_KEY,MINIO_ENDPOINT,MINIO_SECRET_KEY
 from typing import Union, List, Dict
-
-# Xác định đường dẫn tương đối để luôn trỏ đúng về thư mục temp
 from src.crawl_layer.config.path import TEMP_DIR
+from src.crawl_layer.utils.clean_temp import clean_temp_directory
+import logging
+logger = logging.getLogger(__name__)
+
+def get_s3_client():
+    return boto3.client(
+        's3',
+        endpoint_url=MINIO_ENDPOINT,
+        aws_access_key_id=MINIO_ACCESS_KEY,
+        aws_secret_access_key=MINIO_SECRET_KEY,
+        region_name='ap-southeast-1'
+    )
 
 def save_to_temp(data: Union[Dict, List[Dict]], source_name: str, entity_name: str = 'jobs'):
     """
-    Lưu dữ liệu cào được vào thư mục temp cục bộ dưới dạng JSON Lines (.jsonl).
-    Dữ liệu sẽ được tự động gom nhóm theo ngày hiện tại.
+    Save the scraped data to the local temp directory as JSON Lines (.jsonl).
+    The data will be automatically grouped by the current date.
     
-    :param data: Dữ liệu cần lưu (dict hoặc list các dicts).
-    :param source_name: Nguồn cào (ví dụ: 'itviec', 'linkedin', 'topcv').
-    :param entity_name: Loại thực thể (ví dụ: 'jobs', 'companies'). Mặc định là 'jobs'.
+    :param data: Data to save (dict or list of dicts).
+    :param source_name: Source name (e.g., 'itviec', 'linkedin', 'topcv').
+    :param entity_name: Entity type (e.g., 'jobs', 'companies'). Default is 'jobs'.
     """
     TEMP_DIR.mkdir(parents=True, exist_ok=True)
     
-    # Lấy ngày hiện tại (YYYYMMDD) để gom file theo ngày ngay từ local
+    # Get the current date (YYYYMMDD) to group files by date right from local
     today_str = datetime.now().strftime("%Y%m%d")
-    
-    # Định dạng tên file: source_entity_YYYYMMDD.jsonl (vd: itviec_jobs_20260512.jsonl)
+
+    # Format file name: source_entity_YYYYMMDD.jsonl (e.g., itviec_jobs_20260512.jsonl)
     file_name = f"{source_name}_{entity_name}_{today_str}.jsonl"
     file_path = TEMP_DIR / file_name
     
-    # Đảm bảo data luôn là một list để tiện xử lý vòng lặp
+    # Ensure data is always a list for convenient loop processing
     if isinstance(data, dict):
-        data = asdict(data)
+        data = [data] # Lưu ý: Bỏ asdict() nếu data đã là dict, hoặc check kỹ type.
         
-    # Mở file mode 'a' (append) để ghi nối tiếp dữ liệu mới vào cuối file
+    # Open file in append mode to write new data to the end of the file
     with open(str(file_path), 'a', encoding='utf-8') as f:
         for item in data:
-            # Ghi mỗi dict thành 1 chuỗi JSON trên 1 dòng
+            # Write each dict as a JSON string on one line
             f.write(json.dumps(item, ensure_ascii=False) + '\n')
             
     return file_path
+
+def load_to_bronze(bucket_name: str = "bronze"):
+    """
+    Scan the temp directory, compress file into .gz and upload to MinIO according to the standard bronze architecture.
+    The architecture is: bronze/<source_name>/<entity_name>/year=YYYY/month=MM/day=DD/<filename>.jsonl.gz
+    """
+    s3_client = get_s3_client()
+    
+    # Create bucket if it doesn't exist
+    try:
+        s3_client.head_bucket(Bucket=bucket_name)
+    except Exception:
+        s3_client.create_bucket(Bucket=bucket_name)
+
+    if not TEMP_DIR.exists():
+        logger.info(f"Directory {TEMP_DIR} does not exist. Skip.")
+        return
+    if not any(TEMP_DIR.iterdir()): 
+        logger.info("No file to load to minio") 
+        return
+
+    # Get the timestamp to use it as a suffix for the file (to avoid overwriting old files on the same day)
+    timestamp = datetime.now().strftime("%H%M%S")
+
+    for file_path in TEMP_DIR.glob("*.jsonl"):
+        # Parse file name: example 'itviec_jobs_20260512.jsonl'
+        parts = file_path.stem.split('_')
+        if len(parts) >= 3:
+            source_name = parts[0]
+            entity_name = parts[1]
+            date_str = parts[2] # 20260512
+            
+            year, month, day = date_str[:4], date_str[4:6], date_str[6:8]
+            
+            # Compress .jsonl file into .jsonl.gz
+            gz_file_path = file_path.with_suffix('.jsonl.gz')
+            with open(file_path, 'rb') as f_in:
+                with gzip.open(gz_file_path, 'wb') as f_out:
+                    f_out.writelines(f_in)
+                    
+            # Create S3 Key according to the standard Data Lake architecture
+            # Example: itviec/jobs/year=2026/month=05/day=12/itviec_jobs_20260512_170702.jsonl.gz
+            s3_file_name = f"{source_name}_{entity_name}_{date_str}_{timestamp}.jsonl.gz"
+            s3_key = f"{source_name}/{entity_name}/year={year}/month={month}/day={day}/{s3_file_name}"
+            
+            # Upload to MinIO
+            logger.info(f"Uploading to MinIO: {s3_key}")
+            s3_client.upload_file(str(gz_file_path), bucket_name, s3_key)
+            
+            # Delete the compressed file on local after successfully uploading all of them
+            gz_file_path.unlink()
+            
+    # Clean up the files in the temp directory after successfully uploading all of them
+    clean_temp_directory()
+    logger.info("Finish uploading data to MinIO and clean local temp directory!")
+
+if __name__ == "__main__":
+    load_to_bronze()

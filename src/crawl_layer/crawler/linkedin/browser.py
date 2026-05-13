@@ -46,7 +46,7 @@ from .config import (
     PASSWORD_ENV,
     PASSWORD_INPUT_SELECTOR,
     SEARCH_URL_TEMPLATE,
-    SUBMIT_BUTTON_XPATH,
+    # SUBMIT_BUTTON_XPATH,
     TYPING_DELAY_RANGE,
     USER_DATA_DIR,
     USERNAME_ENV,
@@ -126,8 +126,8 @@ class LinkedinBrowser:
         await tab.get(LOGIN_URL)
         logger.info("Navigated to login page")
         
-        # Chờ 3s xem có được tự động chuyển hướng không (nếu đã lưu phiên trước đó)
-        await asyncio.sleep(3)
+        # Chờ 10s xem có được tự động chuyển hướng không (nếu đã lưu phiên trước đó)
+        await asyncio.sleep(10)
         if LOGIN_SUCCESS_MARKERS in tab.target.url or ("login" not in tab.target.url and "checkpoint" not in tab.target.url):
             logger.info("Session restored from previous login. Skipping credential entry.")
             return
@@ -187,6 +187,30 @@ class LinkedinBrowser:
         await self._save_screenshot("linkedin_login_timeout.png")
         raise LinkedinLoginError(f"Login timed out or stuck at: {url}")
 
+    # -- helpers ------------------------------------------------------------
+    async def _wait_for_selector(
+        self, selector: str, timeout: float
+    ):
+        """Poll for a CSS selector, tolerating transient CDP errors.
+
+        nodriver's built-in ``wait_for`` lets ``ProtocolException`` escape
+        immediately (the DOM isn't queryable yet while the page is loading),
+        so the caller never actually waits for the full timeout.  This helper
+        retries across *all* transient failures until the deadline expires.
+        """
+        loop = asyncio.get_running_loop()
+        deadline = loop.time() + timeout
+        while True:
+            try:
+                item = await self.tab.query_selector(selector)
+                if item is not None:
+                    return item
+            except Exception:
+                pass
+            if loop.time() >= deadline:
+                return None
+            await asyncio.sleep(0.5)
+
     # -- search navigation --------------------------------------------------
     async def open_search(self, keyword: str, location: str) -> None:
         """Navigate to the search results page for `keyword` + `location`."""
@@ -202,13 +226,10 @@ class LinkedinBrowser:
         Each iteration scrolls a card into view, clicks it, waits for the
         side panel to refresh, then snapshots its HTML for parsing.
         """
-        try:
-            # Dùng wait_for thay vì query_selector để đợi lazy-load
-            container_matches = await self.tab.wait_for(
-                selector=JOB_CONTAINER_SELECTOR, 
-                timeout=PAGE_LOAD_TIMEOUT
-            )
-        except Exception:
+        container_matches = await self._wait_for_selector(
+            JOB_CONTAINER_SELECTOR, PAGE_LOAD_TIMEOUT
+        )
+        if container_matches is None:
             logger.error("Job container not found on current page (Timeout)")
             return
 
@@ -228,8 +249,8 @@ class LinkedinBrowser:
                 else:
                     await card.click()
 
-                await self.tab.wait_for(
-                    selector=DETAIL_PANEL_SELECTOR, timeout=PANEL_LOAD_TIMEOUT
+                await self._wait_for_selector(
+                    DETAIL_PANEL_SELECTOR, PANEL_LOAD_TIMEOUT
                 )
  
                 panel = await self.tab.query_selector(DETAIL_PANEL_SELECTOR)
@@ -250,12 +271,11 @@ class LinkedinBrowser:
         Returns True if pagination advanced, False if we have hit the last
         page (no button found within NEXT_BUTTON_TIMEOUT).
         """
-        try:
-            next_btn = await self.tab.wait_for(
-                selector=NEXT_PAGE_SELECTOR, timeout=NEXT_BUTTON_TIMEOUT
-            )
-        except Exception:
-            logger.info("No next page button — reached end of results")
+        next_btn = await self._wait_for_selector(
+            NEXT_PAGE_SELECTOR, NEXT_BUTTON_TIMEOUT
+        )
+        if next_btn is None:
+            logger.info("No next page button -- reached end of results")
             return False
 
         try:

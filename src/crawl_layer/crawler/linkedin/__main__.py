@@ -51,6 +51,8 @@ async def _run(
         level=logging.INFO,
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
+    # Suppress noisy KeyError warnings from nodriver for unrecognized CDP events
+    logging.getLogger("nodriver.core.connection").setLevel(logging.ERROR)
     crawler = LinkedinCrawler(
         keyword=keyword,
         location=location,

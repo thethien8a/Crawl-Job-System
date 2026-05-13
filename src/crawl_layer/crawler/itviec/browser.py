@@ -180,6 +180,10 @@ class ItviecBrowser:
                 await card.scroll_into_view()
                 await asyncio.sleep(CARD_CLICK_DELAY)
                 await card.click()
+                
+                # Đợi một chút để JS fetch và render nội dung mới vào panel
+                await asyncio.sleep(1.5)
+
                 await self.tab.wait_for(
                     selector=PREVIEW_PANEL_SELECTOR, timeout=PANEL_LOAD_TIMEOUT
                 )
