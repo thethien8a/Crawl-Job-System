@@ -1,23 +1,12 @@
 import json
 import gzip
-from socket import TCP_NODELAY
-import boto3
 from datetime import datetime
-from src.crawl_layer.config.key import MINIO_ACCESS_KEY,MINIO_ENDPOINT,MINIO_SECRET_KEY
 from typing import Union, List, Dict
 from src.crawl_layer.config.path import TEMP_DIR
 from src.crawl_layer.utils.clean_temp import clean_temp_directory
+from src.storage_layer.MinIO_S3.utils.minio_connect import get_s3_client
 import logging
 logger = logging.getLogger(__name__)
-
-def get_s3_client():
-    return boto3.client(
-        's3',
-        endpoint_url=MINIO_ENDPOINT,
-        aws_access_key_id=MINIO_ACCESS_KEY,
-        aws_secret_access_key=MINIO_SECRET_KEY,
-        region_name='ap-southeast-1'
-    )
 
 def save_to_temp(data: Union[Dict, List[Dict]], source_name: str, entity_name: str = 'jobs'):
     """
@@ -103,6 +92,3 @@ def load_to_bronze(bucket_name: str = "bronze"):
     # Clean up the files in the temp directory after successfully uploading all of them
     clean_temp_directory()
     logger.info("Finish uploading data to MinIO and clean local temp directory!")
-
-if __name__ == "__main__":
-    load_to_bronze()

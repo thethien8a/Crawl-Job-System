@@ -41,7 +41,7 @@ LOGIN_SUCCESS_MARKERS = "feed"
 
 # -- Search page selectors ----------------------------------------------------
 # JOB_CONTAINER_SELECTOR = "ul[class*='nYLoocUsKesdXXoEOGVLjAJWUsyzvYjWFTTF']"
-JOB_CARD_SELECTOR = "li[id*='ember'][class*='occludable-update']"
+JOB_CARD_SELECTOR = "li[id*='ember']"
 JOB_LINK_SELECTOR = "a[href*='/jobs/view/']"
 DETAIL_PANEL_SELECTOR = 'div[class*="jobs-search__job-details"]'
 NEXT_PAGE_SELECTOR = "button[class*='jobs-search-pagination__button--next']"

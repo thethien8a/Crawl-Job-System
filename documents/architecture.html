@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lakehouse-Lite Architecture</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        p.subtitle {
+            color: #6c757d;
+            font-size: 1.1em;
+            max-width: 800px;
+            text-align: center;
+            line-height: 1.6;
+        }
+        .diagram-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 1200px;
+            overflow-x: auto;
+            display: flex;
+            justify-content: center;
+        }
+        /* Customizing Mermaid nodes slightly */
+        .mermaid {
+            font-size: 16px;
+        }
+    </style>
+    <!-- Include Mermaid.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        // Initialize Mermaid with a nice theme
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#e3f2fd',
+                primaryTextColor: '#212529',
+                primaryBorderColor: '#007bff',
+                lineColor: '#495057',
+                secondaryColor: '#f1f8ff',
+                tertiaryColor: '#ffffff'
+            },
+            flowchart: {
+                curve: 'basis',
+                padding: 20
+            }
+        });
+    </script>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Lakehouse-Lite Architecture</h1>
+        <p class="subtitle">
+            Hệ thống thu thập, xử lý và phân tích dữ liệu tuyển dụng (Job Market Data).<br>
+            Sử dụng kiến trúc Medallion (Bronze/Silver) kết hợp Polyglot Persistence (Supabase + ClickHouse).
+        </p>
+    </div>
+
+    <div class="diagram-container">
+        <!-- Mermaid Graph Definition -->
+        <div class="mermaid">
+            graph TD
+                %% Data Sources
+                subgraph Data_Sources ["1. Data Sources"]
+                    ITV[ITViec]:::source
+                    LI[LinkedIn]:::source
+                    TCV[TopCV]:::source
+                    VW[VietnamWorks]:::source
+                end
+
+                %% Crawl Layer
+                subgraph Crawl_Layer ["2. Crawl Layer"]
+                    Crawler["Python Crawlers<br/>(Scrapy / API)"]:::crawler
+                end
+
+                %% Connect Sources to Crawler
+                ITV --> Crawler
+                LI --> Crawler
+                TCV --> Crawler
+                VW --> Crawler
+
+                %% Lakehouse Storage (MinIO)
+                subgraph Data_Lakehouse ["3. Data Lakehouse (MinIO / S3)"]
+                    Bronze[("Bronze Layer<br/>(Raw JSONL.GZ)")]:::bronze
+                    Silver[("Silver Layer<br/>(Flat Parquet / Unified Schema)")]:::silver
+                end
+
+                %% Connect Crawler to Lakehouse
+                Crawler -- "Upload daily" --> Bronze
+                Bronze -- "ETL (Polars / DuckDB)<br/>Clean, Deduplicate" --> Silver
+
+                %% Serving Layer (Gold)
+                subgraph Serving_Layer ["4. Serving / Gold Layer"]
+                    subgraph OLTP ["Web Backend"]
+                        Postgres[("Supabase (PostgreSQL)<br/>Normalized Tables<br/>(jobs, companies...)")]:::postgres
+                    end
+                    subgraph OLAP ["Analytics Backend"]
+                        ClickHouse[("ClickHouse<br/>Wide Flat Table")]:::clickhouse
+                    end
+                end
+
+                %% Connect Silver to Serving
+                Silver -- "ETL Normalization" --> Postgres
+                Silver -- "Direct Read / Load" --> ClickHouse
+
+                %% End User Apps
+                subgraph Applications ["5. Applications"]
+                    WebApp["Job Search Web App<br/>(Next.js / React)"]:::app
+                    Dashboard["BI Dashboard<br/>(Superset / Metabase)"]:::app
+                end
+
+                %% Connect Serving to Apps
+                Postgres -- "REST / GraphQL API" --> WebApp
+                ClickHouse -- "SQL Queries" --> Dashboard
+
+                %% Styling Classes
+                classDef source fill:#f8f9fa,stroke:#ced4da,stroke-width:2px;
+                classDef crawler fill:#e9ecef,stroke:#adb5bd,stroke-width:2px;
+                classDef bronze fill:#cd7f32,stroke:#8a5a22,stroke-width:2px,color:#fff;
+                classDef silver fill:#c0c0c0,stroke:#808080,stroke-width:2px;
+                classDef postgres fill:#336791,stroke:#234a69,stroke-width:2px,color:#fff;
+                classDef clickhouse fill:#f4c20d,stroke:#b38f00,stroke-width:2px;
+                classDef app fill:#28a745,stroke:#1e7e34,stroke-width:2px,color:#fff;
+        </div>
+    </div>
+
+</body>
+</html>

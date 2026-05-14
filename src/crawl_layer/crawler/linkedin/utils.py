@@ -324,7 +324,7 @@ async def type_into_focused(
 
 
 # -- search navigation --------------------------------------------------
-async def scroll_panel_to_bottom(self, panel) -> None:
+async def scroll_panel_to_bottom(panel) -> None:
     """Scroll inside the side panel until lazy-loaded sections stop growing.
 
     The detail panel is its own scroll container (or wraps one); scrolling
