@@ -64,7 +64,7 @@ INDUSTRY_SKIP_KEYWORDS: tuple[str, ...] = (
 )
 
 # -- Timing -------------------------------------------------------------------
-DEFAULT_KEYWORD = "Data Analyst"
+DEFAULT_KEYWORD = "data"
 DEFAULT_LOCATION = "Vietnam"
 DEFAULT_MAX_PAGES = 2
 

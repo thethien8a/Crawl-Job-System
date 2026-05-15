@@ -57,7 +57,7 @@ async def _run(keyword: str, max_pages: int, headless: bool) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="ITviec async crawler")
-    parser.add_argument("--keyword", default="data analyst")
+    parser.add_argument("--keyword", default="data")
     parser.add_argument("--max-pages", type=int, default=2)
     parser.add_argument(
         "--no-headless",

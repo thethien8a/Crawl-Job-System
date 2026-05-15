@@ -11,6 +11,9 @@ SOURCE_NAME = "topcv"
 BASE_URL = "https://www.topcv.vn/tim-viec-lam"
 HOME_URL = "https://www.topcv.vn/"
 
+DEFAULT_KEYWORD = "data"
+DEFAULT_MAX_PAGES = 2
+
 # HTTP statuses worth retrying — transient server errors + rate-limit (429).
 RETRY_STATUS: frozenset[int] = frozenset({408, 429, 500, 502, 503, 504, 522, 524})
 
