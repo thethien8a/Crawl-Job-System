@@ -1,0 +1,3 @@
+bucket_name:
+  bronze_layer: bronze
+  silver_layer: silver

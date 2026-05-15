@@ -1,0 +1,1 @@
+Response for storing clean data, serving for Supabase and Clickhouse
