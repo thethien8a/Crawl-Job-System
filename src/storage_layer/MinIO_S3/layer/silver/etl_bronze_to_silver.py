@@ -6,6 +6,11 @@ from pathlib import Path
 import polars as pl
 from s3fs import S3FileSystem
 
+from src.storage_layer.MinIO_S3.layer.silver.utils.manifest import (
+    append_processed_keys,
+    load_processed_keys,
+)
+
 # Setup logger
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger("BronzeToSilver")
@@ -54,11 +59,27 @@ def process_bronze_to_silver():
         logger.info("No files found in Bronze layer for jobs.")
         return
 
-    logger.info(f"Found {len(files)} files to process.")
+    # Skip files already ingested in a previous run (idempotency).
+    # State lives in s3://<silver>/_manifest/ so it survives across runs.
+    processed_keys = load_processed_keys(fs, silver_bucket)
+    new_files = [f for f in files if f not in processed_keys]
+
+    if not new_files:
+        logger.info(
+            f"All {len(files)} bronze files already in silver manifest. Nothing to do."
+        )
+        return
+
+    logger.info(
+        f"Found {len(files)} bronze files; {len(new_files)} new to process."
+    )
 
     # Process all files into a single Polars DataFrame
     # Polars can read directly from S3 using the storage_options
     df_list = []
+    # Only files that read AND align successfully will be written to the manifest,
+    # so a partial failure never marks a bad file as "done".
+    successfully_read: list[tuple[str, int]] = []
     
     # Define our Unified Schema (SilverJobItem fields)
     unified_schema = {
@@ -82,7 +103,7 @@ def process_bronze_to_silver():
         "job_deadline": pl.Utf8
     }
 
-    for file in files:
+    for file in new_files:
         s3_path = f"s3://{file}"
         logger.info(f"Reading {s3_path}")
         try:
@@ -97,6 +118,7 @@ def process_bronze_to_silver():
             # Select only the columns in our unified schema to ensure order and cleanliness
             df = df.select(list(unified_schema.keys()))
             df_list.append(df)
+            successfully_read.append((file, df.height))
         except Exception as e:
             logger.error(f"Error reading file {s3_path}: {e}")
 
@@ -144,7 +166,6 @@ def process_bronze_to_silver():
     # or iterate through partitions in Polars if pyarrow isn't fully configured for S3 partitioned writes.
     
     # We will use pyarrow dataset to write partitioned data to S3
-    import pyarrow as pa
     import pyarrow.dataset as ds
     
     table = final_df.drop("parsed_date").to_arrow()
@@ -162,6 +183,22 @@ def process_bronze_to_silver():
     )
     
     logger.info(f"Successfully wrote {len(final_df)} records to Silver layer: {s3_uri}")
+
+    # Append the manifest ONLY after the silver write succeeds: if the run
+    # crashes before this point, the next run will reprocess these files
+    # (safe because downstream uses unique(job_url) for dedup).
+    manifest_entries = [
+        {
+            "bronze_key": key,
+            "row_count": rows,
+            "processed_at": datetime.now().isoformat(timespec="seconds"),
+        }
+        for key, rows in successfully_read
+    ]
+    shard_path = append_processed_keys(fs, silver_bucket, manifest_entries)
+    logger.info(
+        f"Manifest updated: s3://{shard_path} ({len(manifest_entries)} entries)"
+    )
 
 if __name__ == "__main__":
     process_bronze_to_silver()
