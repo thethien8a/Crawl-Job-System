@@ -70,11 +70,11 @@ def apply_industry_cleaning(df: pl.DataFrame, taxonomy_df: pl.DataFrame, sep: st
     
     # 3. Handle unmapped and group back
     df_handled = df_mapped.with_columns(
-        pl.col("mapped_industry").fill_null("Others").alias("clean_industry_element"),
         pl.when(pl.col("mapped_industry").is_null())
           .then(pl.col("industry_split"))
           .otherwise(pl.lit(None))
-          .alias("unmapped_element")
+          .alias("unmapped_element"),
+        pl.col("mapped_industry").fill_null("Others").alias("clean_industry_element"),
     )
     
     df_cleaned = df_handled.group_by("temp_row_idx").agg(
@@ -83,7 +83,7 @@ def apply_industry_cleaning(df: pl.DataFrame, taxonomy_df: pl.DataFrame, sep: st
     )
     
     # 4. Join back to original
-    df_final = df.join(df_cleaned, on="temp_row_idx", how="left").drop("temp_row_idx")
+    df_final = df.join(df_cleaned, on="temp_row_idx", how="left").drop(["temp_row_idx", "job_industry"])
     
     # For rows that had completely null/empty job_industry, fill with empty lists to maintain schema
     empty_list_expr = pl.Series([[]], dtype=pl.List(pl.String))
