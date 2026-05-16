@@ -1,18 +1,7 @@
 import polars as pl
-from src.storage_layer.MinIO_S3.layer.silver.utils.normalize_data import remove_vietnamese_accents
+from src.storage_layer.MinIO_S3.layer.silver.utils.normalize_data import remove_accents_col
 
-def remove_accents_col(df: pl.DataFrame, column_name: str, new_column_name: str) -> pl.DataFrame:
-    """
-    Hàm apply loại bỏ dấu tiếng Việt cho toàn bộ một cột trong Polars DataFrame.
-    """
-    return df.with_columns(
-        pl.col(column_name)
-        .cast(pl.String)
-        .map_elements(remove_vietnamese_accents, return_dtype=pl.String)
-        .alias(new_column_name)
-    )
-
-def extract_job_keywords(df: pl.DataFrame, title_no_accent_col: str = "job_title_no_accent", keyword_col: str = "job_title_special_keyword") -> pl.DataFrame:
+def extract_job_keywords(df: pl.DataFrame, title_no_accent_col: str = "job_title_no_accent", keyword_col: str = "job_title_special_keywords") -> pl.DataFrame:
     """
     Trích xuất cấp bậc (Seniority/Level) và phân loại chức danh công việc thành các vị trí chuẩn trong ngành Dữ liệu.
     Gộp chung thành một cột list chứa các keyword. (ví dụ: ["Senior", "Data Analyst"])
@@ -31,28 +20,28 @@ def extract_job_keywords(df: pl.DataFrame, title_no_accent_col: str = "job_title
         .otherwise(pl.lit(None))
     )
     
-    # 2. Biểu thức trích xuất Role (Từng thành phần riêng biệt)
-    role_domain_expr = (
-        pl.when(title_lower.str.contains(r'(data|du lieu)')).then(pl.lit("Data"))
-        .when(title_lower.str.contains(r'(business|nghiep vu)')).then(pl.lit("Business"))
-        .when(title_lower.str.contains(r'(machine learning|\bml\b|hoc may)')).then(pl.lit("Machine Learning"))
-        .when(title_lower.str.contains(r'(artificial intelligence|\bai\b|tri tue nhan tao)')).then(pl.lit("AI"))
-        .when(title_lower.str.contains(r'(database|co so du lieu|\bdba\b)')).then(pl.lit("Database"))
-        .when(title_lower.str.contains(r'(analytics)')).then(pl.lit("Analytics"))
-        .otherwise(pl.lit(None))
-    )
+    # 2. Biểu thức trích xuất Role — MỖI keyword kiểm tra độc lập để bắt được MULTI-ROLE
+    #    VD: "data analytics and engineer" -> ["Data", "Analytics", "Engineer"]
+    domain_keywords = [
+        pl.when(title_lower.str.contains(r'(data|du lieu)')).then(pl.lit("Data")),
+        pl.when(title_lower.str.contains(r'(business|nghiep vu)')).then(pl.lit("Business")),
+        pl.when(title_lower.str.contains(r'(intelligence|thong minh)')).then(pl.lit("Intelligence")),
+        pl.when(title_lower.str.contains(r'(machine learning|\bml\b|hoc may)')).then(pl.lit("Machine Learning")),
+        pl.when(title_lower.str.contains(r'(artificial intelligence|\bai\b|tri tue nhan tao)')).then(pl.lit("AI")),
+        pl.when(title_lower.str.contains(r'(database|co so du lieu|\bdba\b)')).then(pl.lit("Database")),
+        pl.when(title_lower.str.contains(r'(analytics)')).then(pl.lit("Analytics")),
+    ]
 
-    role_action_expr = (
-        pl.when(title_lower.str.contains(r'(scientist|science|nha khoa hoc)')).then(pl.lit("Scientist"))
-        .when(title_lower.str.contains(r'(engineer|ky su)')).then(pl.lit("Engineer"))
-        .when(title_lower.str.contains(r'(analyst|phan tich)')).then(pl.lit("Analyst"))
-        .when(title_lower.str.contains(r'(administrator|quan tri)')).then(pl.lit("Administrator"))
-        .otherwise(pl.lit(None))
-    )
+    action_keywords = [
+        pl.when(title_lower.str.contains(r'(scientist|science|nha khoa hoc)')).then(pl.lit("Scientist")),
+        pl.when(title_lower.str.contains(r'(engineer|ky su)')).then(pl.lit("Engineer")),
+        pl.when(title_lower.str.contains(r'(analyst|phan tich)')).then(pl.lit("Analyst")),
+        pl.when(title_lower.str.contains(r'(administrator|quan tri)')).then(pl.lit("Administrator")),
+    ]
     
-    # 3. Gộp các biểu thức thành 1 List, sau đó loại bỏ các giá trị None trong List
+    # 3. Gộp Level + tất cả Domain + tất cả Action thành 1 List, loại bỏ None
     return df.with_columns(
-        pl.concat_list([level_expr, role_domain_expr, role_action_expr]).list.drop_nulls().alias(keyword_col)
+        pl.concat_list([level_expr] + domain_keywords + action_keywords).list.drop_nulls().alias(keyword_col)
     )
 
 def clean_job_title(df: pl.DataFrame, column_name: str = "job_title", new_column_name: str = "clean_job_title") -> pl.DataFrame:
@@ -96,7 +85,7 @@ def process_job_title_pipeline(df: pl.DataFrame, title_col: str = "job_title") -
     df = remove_accents_col(df, column_name=title_col, new_column_name="job_title_no_accent")
     
     # 2. Sử dụng cột không dấu để extract các keyword gộp chung vào 1 List
-    df = extract_job_keywords(df, title_no_accent_col="job_title_no_accent", keyword_col="job_title_special_keyword")
+    df = extract_job_keywords(df, title_no_accent_col="job_title_no_accent", keyword_col="job_title_special_keywords")
     
     # 3. Clean string trên cột gốc (để giữ được dấu tiếng Việt chuẩn)
     df = clean_job_title(df, column_name=title_col, new_column_name="clean_job_title")

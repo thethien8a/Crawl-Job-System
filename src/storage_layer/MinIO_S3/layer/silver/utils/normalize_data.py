@@ -1,5 +1,6 @@
 import re
 import unicodedata
+import polars as pl
 
 def remove_vietnamese_accents(text: str) -> str:
     """
@@ -13,3 +14,14 @@ def remove_vietnamese_accents(text: str) -> str:
     text = unicodedata.normalize('NFD', text)
     text = re.sub(r'[\u0300-\u036f]', '', text)
     return text
+
+def remove_accents_col(df: pl.DataFrame, column_name: str, new_column_name: str) -> pl.DataFrame:
+    """
+    Hàm apply loại bỏ dấu tiếng Việt cho toàn bộ một cột trong Polars DataFrame.
+    """
+    return df.with_columns(
+        pl.col(column_name)
+        .cast(pl.String)
+        .map_elements(remove_vietnamese_accents, return_dtype=pl.String)
+        .alias(new_column_name)
+    )
