@@ -44,7 +44,6 @@ Thumbs.db
 *.sqlite
 *.sqlite3
 *.parquet
-*.csv
 *.xlsx
 *.xls
 *.json
@@ -59,3 +58,4 @@ tmp/
 temp*/
 
 .linkedin_profile/
+job_industry_data.csv
