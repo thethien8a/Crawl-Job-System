@@ -4,7 +4,7 @@ import polars as pl
 
 from src.storage_layer.MinIO_S3.layer.silver.utils.normalize_data import remove_vietnamese_accents
 
-SEEDS_DIR = Path(__file__).parent.parent / "seeds"
+SEEDS_DIR = Path(__file__).parent.parent.parent / "seeds"
 LOCATION_MAPPING_PATH = SEEDS_DIR / "location_mapping.csv"
 
 
