@@ -36,9 +36,11 @@ def clean_salary(
     # Các flag phân loại — đặt riêng để biểu thức dưới dễ đọc và tránh lặp regex
     has_digit = salary.str.contains(r"\d")
     is_usd = salary.str.contains(r"(usd|\$)")
+    
     # Dùng cho bước normalize: chỉ những đơn vị "lớn" (tr/triệu/tỷ) thì giữ dấu thập phân
     has_decimal_unit = salary.str.contains(r"(tr|triệu|tỷ)")
     has_thousand_text = salary.str.contains(r"(nghìn|k)")
+
     # Bản gốc SQL dùng (tr|triệu|m) cho hệ số *1.000.000 — giữ nguyên (kể cả ký tự 'm' lẻ)
     has_million_text = salary.str.contains(r"(tr|triệu|m)")
     has_billion_text = salary.str.contains(r"tỷ")
@@ -58,10 +60,10 @@ def clean_salary(
     #    - tr/triệu/tỷ     -> đổi dấu phẩy thành dấu chấm (1,5 triệu -> 1.5 triệu)
     #    - còn lại         -> bỏ cả dấu phẩy lẫn dấu chấm (1.500.000 -> 1500000)
     normalized = (
-        pl.when(is_usd)
-        .then(salary.str.replace_all(",", ""))
-        .when(has_decimal_unit)
+        pl.when(has_decimal_unit)
         .then(salary.str.replace_all(",", "."))
+        .when(is_usd)
+        .then(salary.str.replace_all(",", ""))
         .otherwise(salary.str.replace_all(",", "").str.replace_all(r"\.", ""))
     )
 
@@ -75,15 +77,15 @@ def clean_salary(
 
     # 3. Hệ số đơn vị tiền tệ / độ lớn (thứ tự CASE phải khớp SQL gốc)
     unit_mult = (
-        pl.when(is_usd)
+        pl
+        .when(has_thousand_text).then(pl.lit(1_000.0))
+        .when(has_million_text).then(pl.lit(1_000_000.0))
+        .when(has_billion_text).then(pl.lit(1_000_000_000.0)).when(is_usd)
         .then(
             pl.when(has_usd_k)
             .then(pl.lit(1_000.0 * USD_TO_VND_RATE))
             .otherwise(pl.lit(float(USD_TO_VND_RATE)))
-        )
-        .when(has_thousand_text).then(pl.lit(1_000.0))
-        .when(has_million_text).then(pl.lit(1_000_000.0))
-        .when(has_billion_text).then(pl.lit(1_000_000_000.0))
+        )   
         .otherwise(pl.lit(1.0))
     )
 
