@@ -23,13 +23,6 @@ def clean_exp_level(
         6. "X tháng", "X month(s)", "occupational X"                -> MIN=X/12,     MAX=X/12  (đổi tháng -> năm)
         7. "X - Y năm"                                              -> MIN=X,        MAX=Y
         8. "X năm" (đơn lẻ)                                         -> MIN=X,        MAX=NULL
-
-    Khác biệt so với macro SQL gốc (clean_exp.sql):
-        - "Không yêu cầu" (không có hậu tố "KN") nay đặt MAX=0 thay vì NULL → nhất quán semantic.
-        - Bổ sung "Trên X", "X+", "X trở lên" tường minh (SQL gốc xếp vào case mặc định).
-        - Bổ sung đơn vị "tháng / month" (SQL gốc chỉ xử lý keyword "occupational").
-        - Khi đơn vị là tháng, MAX cũng được tính (giá trị xác định), không bỏ NULL.
-        - Bổ sung nhóm "Fresh / fresher / entry level" làm đồng nghĩa "không yêu cầu".
     """
 
     df = remove_accents_col(df, column_name, "exp_no_accent")
