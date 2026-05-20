@@ -58,6 +58,14 @@ PAGE_LOAD_TIMEOUT = 15.0
 PANEL_LOAD_TIMEOUT = 10.0
 NEXT_BUTTON_TIMEOUT = 5.0
 
+# Post-submit hardening: the page redirects after sign-in and nodriver's
+# `wait_for` can raise "Could not find node with given id" mid-navigation
+# because node handles get invalidated. We poll instead of one-shot waiting.
+POST_SUBMIT_SETTLE = 2.0          # let the redirect kick off before probing
+LOGIN_MARKER_TOTAL_TIMEOUT = 60.0 # total budget to see the logged-in marker
+LOGIN_MARKER_RETRY_TIMEOUT = 5.0  # per-attempt wait_for timeout
+LOGIN_MARKER_RETRY_INTERVAL = 1.0 # pause between retries
+
 # Pause between successive card clicks; ITviec re-renders the side panel and
 # we want to give it room to settle without thrashing the JS event loop.
 CARD_CLICK_DELAY = 0.5

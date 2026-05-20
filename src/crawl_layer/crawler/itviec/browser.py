@@ -26,6 +26,9 @@ from .config import (
     EMAIL_INPUT_SELECTOR,
     JOB_CARD_SELECTOR,
     LOGGED_IN_MARKER_SELECTOR,
+    LOGIN_MARKER_RETRY_INTERVAL,
+    LOGIN_MARKER_RETRY_TIMEOUT,
+    LOGIN_MARKER_TOTAL_TIMEOUT,
     LOGIN_TIMEOUT,
     LOGIN_URL,
     NEXT_BUTTON_TIMEOUT,
@@ -36,6 +39,7 @@ from .config import (
     PASSWORD_ENV,
     PASSWORD_INPUT_SELECTOR,
     POST_LOGIN_MODAL_SELECTOR,
+    POST_SUBMIT_SETTLE,
     PREVIEW_PANEL_SELECTOR,
     REMIND_LATER_BUTTON_XPATH,
     SEARCH_LOADED_SELECTOR,
@@ -126,16 +130,62 @@ class ItviecBrowser:
             raise ItviecLoginError("Sign-in submit button not found")
         await submit_buttons[0].click()
         logger.info("Clicked submit button")
-        
-        try:
-            await tab.wait_for(
-                selector=LOGGED_IN_MARKER_SELECTOR, timeout=LOGIN_TIMEOUT
+
+        # Give the post-submit redirect time to start before we probe the DOM;
+        # otherwise nodriver may grab a node id that gets invalidated mid-nav.
+        await asyncio.sleep(POST_SUBMIT_SETTLE)
+
+        if not await self._wait_for_logged_in_marker():
+            raise ItviecLoginError(
+                "Post-login marker never appeared after "
+                f"{LOGIN_MARKER_TOTAL_TIMEOUT:.0f}s of retries"
             )
-        except Exception as e:
-            raise ItviecLoginError(f"Post-login marker never appeared: {e}") from e
 
         logger.info("Logged in to ITviec")
         await self._dismiss_post_login_modal()
+
+    async def _wait_for_logged_in_marker(self) -> bool:
+        """Poll for the logged-in marker, surviving CDP node-id churn.
+
+        nodriver's `wait_for` occasionally fails with
+        "Could not find node with given id [code: -32000]" because the
+        page redirects after sign-in and any element handle it acquired
+        becomes stale. Retrying with fresh selector queries works around
+        that without giving up on the whole login.
+        """
+        tab = self.tab
+        loop = asyncio.get_event_loop()
+        deadline = loop.time() + LOGIN_MARKER_TOTAL_TIMEOUT
+        attempt = 0
+        last_error: Exception | None = None
+
+        while loop.time() < deadline:
+            attempt += 1
+            try:
+                await tab.wait_for(
+                    selector=LOGGED_IN_MARKER_SELECTOR,
+                    timeout=LOGIN_MARKER_RETRY_TIMEOUT,
+                )
+                logger.info(
+                    "Logged-in marker found on attempt %d", attempt
+                )
+                return True
+            except Exception as e:
+                last_error = e
+                logger.debug(
+                    "Login marker not visible yet (attempt %d): %s",
+                    attempt,
+                    e,
+                )
+                await asyncio.sleep(LOGIN_MARKER_RETRY_INTERVAL)
+
+        if last_error is not None:
+            logger.warning(
+                "Gave up waiting for logged-in marker after %d attempts: %s",
+                attempt,
+                last_error,
+            )
+        return False
 
     async def _dismiss_post_login_modal(self) -> None:
         """Close the "Remind me later" upsell modal that blurs the page."""

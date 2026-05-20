@@ -55,17 +55,17 @@ async def _run(keyword: str, max_pages: int, headless: bool) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="VietnamWorks async crawler")
-    parser.add_argument("--keyword", default="data analyst")
+    parser.add_argument("--keyword", default="data")
     parser.add_argument("--max-pages", type=int, default=2)
     parser.add_argument(
-        "--no-headless",
+        "--headless",
         action="store_true",
-        help="Show the browser window.",
+        help="Run the browser hidden. Default is windowed (--no-headless).",
     )
     args = parser.parse_args()
 
     asyncio.run(
-        _run(args.keyword, args.max_pages, headless=not args.no_headless)
+        _run(args.keyword, args.max_pages, headless=args.headless)
     )
 
 
