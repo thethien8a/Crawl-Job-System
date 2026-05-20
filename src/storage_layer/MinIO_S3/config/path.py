@@ -4,7 +4,6 @@ from src.storage_layer.MinIO_S3.layer.silver.utils.config_loader import load_con
 ## Local Path
 CONFIG_PATH = Path(__file__).parent
 YAML_PATH = CONFIG_PATH / "bucket.yml"
-
 ## Bucket Paths
 class BronzeBucketPaths:
     def __init__(self, source_name: str, entity_name: str = "jobs", year: str = "*", month: str = "*", day: str = "*"):
