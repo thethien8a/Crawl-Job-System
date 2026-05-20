@@ -1,0 +1,176 @@
+canonical_vi,canonical_en,parent_vi,parent_en,keywords
+Tableau,Tableau,BI & Trực quan hóa,BI & Visualization,tableau
+Power BI,Power BI,BI & Trực quan hóa,BI & Visualization,power bi|powerbi|power-bi|\bpbi\b
+Looker,Looker,BI & Trực quan hóa,BI & Visualization,\blooker\b
+Looker Studio,Looker Studio,BI & Trực quan hóa,BI & Visualization,looker studio|google data studio|data studio
+Apache Superset,Apache Superset,BI & Trực quan hóa,BI & Visualization,superset|apache superset
+Metabase,Metabase,BI & Trực quan hóa,BI & Visualization,metabase
+Qlik,Qlik,BI & Trực quan hóa,BI & Visualization,\bqlik\b|qlikview|qlik sense
+AWS QuickSight,AWS QuickSight,BI & Trực quan hóa,BI & Visualization,quicksight|quick sight|aws quicksight
+Mode Analytics,Mode Analytics,BI & Trực quan hóa,BI & Visualization,mode analytics
+ThoughtSpot,ThoughtSpot,BI & Trực quan hóa,BI & Visualization,thoughtspot|thought spot
+Sisense,Sisense,BI & Trực quan hóa,BI & Visualization,sisense
+IBM Cognos,IBM Cognos,BI & Trực quan hóa,BI & Visualization,cognos|ibm cognos
+Oracle BI,Oracle BI,BI & Trực quan hóa,BI & Visualization,oracle bi|obiee|oracle business intelligence
+JasperReports,JasperReports,BI & Trực quan hóa,BI & Visualization,jasper|jasperreport|jasper report
+Excel,Excel,BI & Trực quan hóa,BI & Visualization,\bexcel\b|microsoft excel|ms excel|google sheet|google sheets|spreadsheet|bang tinh|pivot table
+DAX,DAX,BI & Trực quan hóa,BI & Visualization,\bdax\b|data analysis expressions
+TensorRT,TensorRT,Tầm nhìn máy tính,Computer Vision,tensorrt|tensor rt
+OpenVINO,OpenVINO,Tầm nhìn máy tính,Computer Vision,openvino|open vino
+CUDA,CUDA,Tầm nhìn máy tính,Computer Vision,\bcuda\b|cudnn|gpu programming
+OpenAI API,OpenAI API,AI tạo sinh & LLM,GenAI & LLM Apps,openai api|\bopenai\b|chatgpt api
+Anthropic Claude,Anthropic Claude,AI tạo sinh & LLM,GenAI & LLM Apps,anthropic|\bclaude\b|claude api|claude 3|claude 4|claude sonnet|claude opus|claude haiku
+Google Gemini,Google Gemini,AI tạo sinh & LLM,GenAI & LLM Apps,\bgemini\b|gemini api|gemini pro|gemini 2|gemini 2\.5|gemini 2\.0
+Cohere,Cohere,AI tạo sinh & LLM,GenAI & LLM Apps,cohere|cohere api
+Mistral,Mistral,AI tạo sinh & LLM,GenAI & LLM Apps,mistral|mistral api|mistral-7b|mistral nemo|mixtral
+Qwen,Qwen,AI tạo sinh & LLM,GenAI & LLM Apps,\bqwen\b|qwen2|qwen 2|qwen2\.5
+DeepSeek,DeepSeek,AI tạo sinh & LLM,GenAI & LLM Apps,deepseek|deep seek|deepseek r1|deepseek v3
+Pinecone,Pinecone,CSDL Vector & Embedding,Vector DB & Embeddings,pinecone
+Weaviate,Weaviate,CSDL Vector & Embedding,Vector DB & Embeddings,weaviate
+Qdrant,Qdrant,CSDL Vector & Embedding,Vector DB & Embeddings,qdrant
+ChromaDB,ChromaDB,CSDL Vector & Embedding,Vector DB & Embeddings,\bchroma\b|chromadb|chroma db
+Milvus,Milvus,CSDL Vector & Embedding,Vector DB & Embeddings,milvus
+FAISS,FAISS,CSDL Vector & Embedding,Vector DB & Embeddings,\bfaiss\b
+pgvector,pgvector,CSDL Vector & Embedding,Vector DB & Embeddings,pgvector|\bpg vector\b
+LanceDB,LanceDB,CSDL Vector & Embedding,Vector DB & Embeddings,lancedb|lance db
+Apache Airflow,Apache Airflow,ETL & Điều phối,ETL & Orchestration,airflow|apache airflow|airflow dag
+dbt,dbt,ETL & Điều phối,ETL & Orchestration,\bdbt\b|data build tool|dbt cloud|dbt core|dbt model|dbt test
+Dagster,Dagster,ETL & Điều phối,ETL & Orchestration,dagster
+Prefect,Prefect,ETL & Điều phối,ETL & Orchestration,prefect
+Talend,Talend,ETL & Điều phối,ETL & Orchestration,talend
+Pentaho,Pentaho,ETL & Điều phối,ETL & Orchestration,pentaho|kettle
+Informatica,Informatica,ETL & Điều phối,ETL & Orchestration,informatica|powercenter|informatica iics
+SSIS,SSIS,ETL & Điều phối,ETL & Orchestration,\bssis\b|sql server integration services
+SAP DataServices,SAP DataServices,ETL & Điều phối,ETL & Orchestration,sap dataservices|sap data services|\bbods\b
+IBM DataStage,IBM DataStage,ETL & Điều phối,ETL & Orchestration,datastage|ibm datastage
+AWS Glue,AWS Glue,ETL & Điều phối,ETL & Orchestration,aws glue|glue job|glue crawler
+AWS Lambda,AWS Lambda,ETL & Điều phối,ETL & Orchestration,aws lambda|lambda function|serverless lambda
+AWS Step Functions,AWS Step Functions,ETL & Điều phối,ETL & Orchestration,step functions|step function|aws stepfunction
+AWS DMS,AWS DMS,ETL & Điều phối,ETL & Orchestration,\bdms\b|database migration service|data migration service
+Fivetran,Fivetran,ETL & Điều phối,ETL & Orchestration,fivetran|five tran
+Airbyte,Airbyte,ETL & Điều phối,ETL & Orchestration,airbyte|air byte
+Apache NiFi,Apache NiFi,ETL & Điều phối,ETL & Orchestration,\bnifi\b|apache nifi
+Sqoop,Sqoop,ETL & Điều phối,ETL & Orchestration,sqoop|apache sqoop
+Snowflake,Snowflake,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,snowflake|snow flake|snowsql
+BigQuery,BigQuery,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,bigquery|big query|google bigquery
+Amazon Redshift,Amazon Redshift,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,redshift|amazon redshift
+Databricks,Databricks,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,databricks|data bricks
+Delta Lake,Delta Lake,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,delta lake|delta table|delta live tables|\bdlt\b
+Apache Iceberg,Apache Iceberg,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,iceberg|apache iceberg
+Apache Hudi,Apache Hudi,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,\bhudi\b|apache hudi
+ClickHouse,ClickHouse,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,clickhouse|click house
+DuckDB,DuckDB,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,duckdb|duck db
+Trino,Trino,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,\btrino\b
+Presto,Presto,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,prestodb|presto db|prestosql
+Apache Druid,Apache Druid,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,\bdruid\b|apache druid
+MinIO,MinIO,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,minio|min io
+Parquet,Parquet,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,parquet
+ORC,ORC,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,\borc file\b|\borc format\b|optimized row columnar
+Avro,Avro,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,\bavro\b
+Unity Catalog,Unity Catalog,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,unity catalog|databricks catalog|data catalog
+PostgreSQL,PostgreSQL,CSDL vận hành,Operational Databases,postgresql|postgres|\bpsql\b
+MySQL,MySQL,CSDL vận hành,Operational Databases,mysql|my sql|mariadb|maria db
+MS SQL Server,MS SQL Server,CSDL vận hành,Operational Databases,ms sql|sql server|microsoft sql|mssql server
+Oracle Database,Oracle Database,CSDL vận hành,Operational Databases,oracle database|oracle db|\boracle\b
+MongoDB,MongoDB,CSDL vận hành,Operational Databases,mongodb|mongo db|\bmongo\b
+Redis,Redis,CSDL vận hành,Operational Databases,\bredis\b
+Elasticsearch,Elasticsearch,CSDL vận hành,Operational Databases,elasticsearch|elastic search|opensearch
+Cassandra,Cassandra,CSDL vận hành,Operational Databases,cassandra|apache cassandra|scylladb
+DynamoDB,DynamoDB,CSDL vận hành,Operational Databases,dynamodb|dynamo db
+Neo4j,Neo4j,CSDL vận hành,Operational Databases,neo4j|graph database|csdl do thi
+Couchbase,Couchbase,CSDL vận hành,Operational Databases,couchbase|couch base
+SQLite,SQLite,CSDL vận hành,Operational Databases,sqlite|sq lite
+Weights & Biases,Weights & Biases,MLOps & DevOps,MLOps & DevOps,weights and biases|weights & biases|\bwandb\b|\bw&b\b
+Tecton,Tecton,MLOps & DevOps,MLOps & DevOps,tecton
+Soda,Soda,MLOps & DevOps,MLOps & DevOps,\bsoda core\b|soda cl|soda data quality
+Monte Carlo Data,Monte Carlo Data,MLOps & DevOps,MLOps & DevOps,monte carlo data|monte carlo observability
+DVC,DVC,MLOps & DevOps,MLOps & DevOps,\bdvc\b|data version control
+Docker,Docker,MLOps & DevOps,MLOps & DevOps,docker|dockerfile|containerization
+Kubernetes,Kubernetes,MLOps & DevOps,MLOps & DevOps,kubernetes|\bk8s\b
+Terraform,Terraform,MLOps & DevOps,MLOps & DevOps,terraform|\biac\b|infrastructure as code
+Ansible,Ansible,MLOps & DevOps,MLOps & DevOps,ansible
+Jenkins,Jenkins,MLOps & DevOps,MLOps & DevOps,jenkins
+GitHub Actions,GitHub Actions,MLOps & DevOps,MLOps & DevOps,github actions|gh actions
+GitLab CI,GitLab CI,MLOps & DevOps,MLOps & DevOps,gitlab ci|gitlab-ci
+ArgoCD,ArgoCD,MLOps & DevOps,MLOps & DevOps,argocd|argo cd
+Helm,Helm,MLOps & DevOps,MLOps & DevOps,\bhelm\b|helm chart
+Prometheus,Prometheus,MLOps & DevOps,MLOps & DevOps,prometheus
+Grafana,Grafana,MLOps & DevOps,MLOps & DevOps,grafana
+ELK Stack,ELK Stack,MLOps & DevOps,MLOps & DevOps,\belk\b|logstash|\bkibana\b
+Splunk,Splunk,MLOps & DevOps,MLOps & DevOps,splunk
+Datadog,Datadog,MLOps & DevOps,MLOps & DevOps,datadog|data dog
+Git,Git,MLOps & DevOps,MLOps & DevOps,\bgit\b|github|gitlab|bitbucket|version control|\bsvn\b
+Linux,Linux,MLOps & DevOps,MLOps & DevOps,\blinux\b|ubuntu|centos|debian|redhat
+MicroStrategy,MicroStrategy,BI & Trực quan hóa,BI & Visualization,microstrategy|micro strategy
+SAP BusinessObjects,SAP BusinessObjects,BI & Trực quan hóa,BI & Visualization,sap businessobjects|business objects|businessobjects|\bbo report\b
+SSRS,SSRS,BI & Trực quan hóa,BI & Visualization,\bssrs\b|sql server reporting services|reporting services
+Google Analytics 4,Google Analytics 4,BI & Trực quan hóa,BI & Visualization,google analytics|\bga4\b|universal analytics
+Adobe Analytics,Adobe Analytics,BI & Trực quan hóa,BI & Visualization,adobe analytics|omniture
+Amplitude,Amplitude,BI & Trực quan hóa,BI & Visualization,amplitude analytics|\bamplitude\b
+Mixpanel,Mixpanel,BI & Trực quan hóa,BI & Visualization,mixpanel|mix panel
+Heap,Heap,BI & Trực quan hóa,BI & Visualization,heap analytics|\bheap\b
+PostHog,PostHog,BI & Trực quan hóa,BI & Visualization,posthog|post hog
+Power Query,Power Query,BI & Trực quan hóa,BI & Visualization,power query|m query|power bi query editor
+Jupyter Notebook,Jupyter Notebook,Môi trường phân tích,Analytics Environments,jupyter notebook|ipython notebook
+JupyterLab,JupyterLab,Môi trường phân tích,Analytics Environments,jupyterlab|jupyter lab
+Google Colab,Google Colab,Môi trường phân tích,Analytics Environments,google colab|colab notebook|colaboratory
+Apache Zeppelin,Apache Zeppelin,Môi trường phân tích,Analytics Environments,apache zeppelin|zeppelin notebook
+Alteryx,Alteryx,ETL & Điều phối,ETL & Orchestration,alteryx|alteryx designer
+KNIME,KNIME,ETL & Điều phối,ETL & Orchestration,knime|knime analytics
+RapidMiner,RapidMiner,ETL & Điều phối,ETL & Orchestration,rapidminer|rapid miner
+OpenRefine,OpenRefine,ETL & Điều phối,ETL & Orchestration,openrefine|open refine|google refine
+Trifacta,Trifacta,ETL & Điều phối,ETL & Orchestration,trifacta|data wrangler|wrangle data
+Dataform,Dataform,ETL & Điều phối,ETL & Orchestration,dataform|google dataform
+SQLMesh,SQLMesh,ETL & Điều phối,ETL & Orchestration,sqlmesh|sql mesh
+Coalesce,Coalesce,ETL & Điều phối,ETL & Orchestration,coalesce.io|coalesce data|coalesce snowflake
+Matillion,Matillion,ETL & Điều phối,ETL & Orchestration,matillion
+Hevo Data,Hevo Data,ETL & Điều phối,ETL & Orchestration,hevo|hevo data
+Stitch,Stitch,ETL & Điều phối,ETL & Orchestration,stitch data|stitch etl
+Meltano,Meltano,ETL & Điều phối,ETL & Orchestration,meltano
+Singer,Singer,ETL & Điều phối,ETL & Orchestration,singer tap|singer target|singer etl
+Mage,Mage,ETL & Điều phối,ETL & Orchestration,mage ai|mage pipeline|mage data
+Kestra,Kestra,ETL & Điều phối,ETL & Orchestration,kestra
+Luigi,Luigi,ETL & Điều phối,ETL & Orchestration,luigi|spotify luigi
+Argo Workflows,Argo Workflows,ETL & Điều phối,ETL & Orchestration,argo workflows|argo workflow
+Debezium,Debezium,ETL & Điều phối,ETL & Orchestration,debezium|debezium connector
+Confluent Platform,Confluent Platform,ETL & Điều phối,ETL & Orchestration,confluent|confluent kafka|confluent cloud
+Apache Pulsar,Apache Pulsar,ETL & Điều phối,ETL & Orchestration,apache pulsar|\bpulsar\b
+RabbitMQ,RabbitMQ,ETL & Điều phối,ETL & Orchestration,rabbitmq|rabbit mq
+Redpanda,Redpanda,ETL & Điều phối,ETL & Orchestration,redpanda|red panda
+DataHub,DataHub,Quản trị dữ liệu,Data Governance,datahub|linkedin datahub
+OpenMetadata,OpenMetadata,Quản trị dữ liệu,Data Governance,openmetadata|open metadata
+Apache Atlas,Apache Atlas,Quản trị dữ liệu,Data Governance,apache atlas|\batlas\b
+Amundsen,Amundsen,Quản trị dữ liệu,Data Governance,amundsen|lyft amundsen
+Atlan,Atlan,Quản trị dữ liệu,Data Governance,atlan
+Collibra,Collibra,Quản trị dữ liệu,Data Governance,collibra
+Alation,Alation,Quản trị dữ liệu,Data Governance,alation
+OpenLineage,OpenLineage,Quản trị dữ liệu,Data Governance,openlineage|open lineage
+Marquez,Marquez,Quản trị dữ liệu,Data Governance,marquez|marquez lineage
+Elementary,Elementary,Chất lượng dữ liệu,Data Quality,elementary data|elementary dbt|elementary
+Amazon Deequ,Amazon Deequ,Chất lượng dữ liệu,Data Quality,deequ|amazon deequ
+Bigeye,Bigeye,Chất lượng dữ liệu,Data Quality,bigeye|bigeye data
+Anomalo,Anomalo,Chất lượng dữ liệu,Data Quality,anomalo
+Acceldata,Acceldata,Chất lượng dữ liệu,Data Quality,acceldata
+MLflow,MLflow,MLOps & DevOps,MLOps & DevOps,mlflow|ml flow|mlflow tracking|mlflow registry
+Neptune,Neptune,MLOps & DevOps,MLOps & DevOps,neptune.ai|neptune ai|neptune ml
+Comet ML,Comet ML,MLOps & DevOps,MLOps & DevOps,comet ml|comet.ml|comet experiment
+ClearML,ClearML,MLOps & DevOps,MLOps & DevOps,clearml|clear ml
+Evidently AI,Evidently AI,MLOps & DevOps,MLOps & DevOps,evidently ai|evidentlyai|evidently
+Label Studio,Label Studio,MLOps & DevOps,MLOps & DevOps,label studio|labelstudio
+Snorkel,Snorkel,MLOps & DevOps,MLOps & DevOps,snorkel ai|snorkel labeling|snorkel
+Microsoft Fabric,Microsoft Fabric,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,microsoft fabric|fabric lakehouse|fabric warehouse|onelake
+Teradata,Teradata,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,teradata
+Vertica,Vertica,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,vertica
+Greenplum,Greenplum,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,greenplum|green plum
+StarRocks,StarRocks,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,starrocks|star rocks
+Apache Doris,Apache Doris,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,apache doris|\bdoris\b
+Apache Pinot,Apache Pinot,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,apache pinot|\bpinot\b
+TimescaleDB,TimescaleDB,CSDL vận hành,Operational Databases,timescaledb|timescale db|timescale
+InfluxDB,InfluxDB,CSDL vận hành,Operational Databases,influxdb|influx db
+Apache Impala,Apache Impala,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,apache impala|\bimpala\b
+Apache Drill,Apache Drill,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,apache drill|\bdrill sql\b
+Cube,Cube,BI & Trực quan hóa,BI & Visualization,cube.dev|cube semantic layer|cube js|cubejs
+MetricFlow,MetricFlow,BI & Trực quan hóa,BI & Visualization,metricflow|metric flow
+LookML,LookML,BI & Trực quan hóa,BI & Visualization,lookml|looker modeling
+Hightouch,Hightouch,ETL & Điều phối,ETL & Orchestration,hightouch|reverse etl
+Census,Census,ETL & Điều phối,ETL & Orchestration,census reverse etl|census data

@@ -1,0 +1,36 @@
+canonical_vi,canonical_en,parent_vi,parent_en,keywords
+Banking,Banking,Kiến thức nghiệp vụ,Domain Knowledge,banking|ngan hang|core banking|corebank|\bway4\b|tai chinh ngan hang
+Fintech,Fintech,Kiến thức nghiệp vụ,Domain Knowledge,fintech|tai chinh cong nghe|digital payment|vi dien tu|e-wallet|wallet|mobile money|payment gateway
+E-commerce,E-commerce,Kiến thức nghiệp vụ,Domain Knowledge,e-commerce|ecommerce|thuong mai dien tu|online retail|\btmdt\b|marketplace|shopee|tiki|lazada|tiktok shop
+Healthcare,Healthcare,Kiến thức nghiệp vụ,Domain Knowledge,healthcare|y te|medical|cham soc suc khoe|pharmaceutical|duoc pham
+Insurance,Insurance,Kiến thức nghiệp vụ,Domain Knowledge,insurance|bao hiem|insurtech
+Real Estate,Real Estate,Kiến thức nghiệp vụ,Domain Knowledge,real estate|bat dong san|\bbds\b|proptech
+Manufacturing,Manufacturing,Kiến thức nghiệp vụ,Domain Knowledge,manufacturing|san xuat|industrial|cong nghiep|smart factory|\biot\b
+Telecommunications,Telecommunications,Kiến thức nghiệp vụ,Domain Knowledge,telecom|telecommunications|vien thong|\bisp\b|mobile carrier|nha mang
+Retail / FMCG,Retail / FMCG,Kiến thức nghiệp vụ,Domain Knowledge,\bretail\b|ban le|\bfmcg\b|consumer goods|hang tieu dung
+Logistics & Supply Chain,Logistics & Supply Chain,Kiến thức nghiệp vụ,Domain Knowledge,logistics|supply chain|chuoi cung ung|hau can|warehouse management|\bwms\b|delivery|3pl
+Education / EdTech,Education / EdTech,Kiến thức nghiệp vụ,Domain Knowledge,education|giao duc|edtech|e-learning|elearning|lms
+Gaming,Gaming,Kiến thức nghiệp vụ,Domain Knowledge,gaming|game industry|gameplay|game dev|game development
+Media & Advertising,Media & Advertising,Kiến thức nghiệp vụ,Domain Knowledge,\bmedia\b|advertising|quang cao|\badtech\b|\bmartech\b|marketing tech
+Energy / Utilities,Energy / Utilities,Kiến thức nghiệp vụ,Domain Knowledge,\benergy\b|nang luong|oil and gas|dau khi|renewable|solar|wind power
+Government / B2G,Government / B2G,Kiến thức nghiệp vụ,Domain Knowledge,\bb2g\b|government|chinh phu|chinh phu dien tu|digital government|chuyen doi so
+Fraud Detection,Fraud Detection,Ứng dụng dữ liệu,Data Use Cases,fraud detection|phat hien gian lan|anti fraud|anti-fraud|gian lan giao dich
+Credit Scoring,Credit Scoring,Ứng dụng dữ liệu,Data Use Cases,credit scoring|diem tin dung|credit score|risk score|cham diem tin dung
+Risk Analytics,Risk Analytics,Ứng dụng dữ liệu,Data Use Cases,risk analytics|risk analysis|phan tich rui ro|quan tri rui ro|risk modeling
+Customer Analytics,Customer Analytics,Ứng dụng dữ liệu,Data Use Cases,customer analytics|phan tich khach hang|customer insight|customer insights|crm analytics
+Product Analytics,Product Analytics,Ứng dụng dữ liệu,Data Use Cases,product analytics|phan tich san pham|user behavior|hanh vi nguoi dung|product metrics
+Marketing Analytics,Marketing Analytics,Ứng dụng dữ liệu,Data Use Cases,marketing analytics|marketing attribution|campaign analytics|phan tich marketing|multi-touch attribution
+Growth Analytics,Growth Analytics,Ứng dụng dữ liệu,Data Use Cases,growth analytics|growth analysis|phan tich tang truong|growth funnel|growth metric
+Pricing Analytics,Pricing Analytics,Ứng dụng dữ liệu,Data Use Cases,pricing analytics|price optimization|toi uu gia|dynamic pricing|revenue pricing
+Revenue Analytics,Revenue Analytics,Ứng dụng dữ liệu,Data Use Cases,revenue analytics|phan tich doanh thu|sales analytics|sales performance|doanh thu
+Supply Chain Analytics,Supply Chain Analytics,Ứng dụng dữ liệu,Data Use Cases,supply chain analytics|phan tich chuoi cung ung|logistics analytics|inventory analytics
+Demand Forecasting,Demand Forecasting,Ứng dụng dữ liệu,Data Use Cases,demand forecasting|du bao nhu cau|sales forecasting|forecast demand|demand planning
+Inventory Optimization,Inventory Optimization,Ứng dụng dữ liệu,Data Use Cases,inventory optimization|toi uu ton kho|stock optimization|warehouse optimization
+HR Analytics,HR Analytics,Ứng dụng dữ liệu,Data Use Cases,hr analytics|people analytics|workforce analytics|phan tich nhan su|talent analytics
+Healthcare Analytics,Healthcare Analytics,Ứng dụng dữ liệu,Data Use Cases,healthcare analytics|clinical analytics|medical analytics|phan tich y te|patient analytics
+Financial Analytics,Financial Analytics,Ứng dụng dữ liệu,Data Use Cases,financial analytics|finance analytics|phan tich tai chinh|financial modeling|financial planning
+Quantitative Finance,Quantitative Finance,Ứng dụng dữ liệu,Data Use Cases,quantitative finance|quant finance|quantitative research|algorithmic trading|algo trading
+IoT Analytics,IoT Analytics,Ứng dụng dữ liệu,Data Use Cases,iot analytics|sensor analytics|industrial iot|iiot|phan tich cam bien
+Search & Recommendation,Search & Recommendation,Ứng dụng dữ liệu,Data Use Cases,search ranking|recommendation|recommender|personalization|ca nhan hoa|he goi y
+Customer Churn,Customer Churn,Ứng dụng dữ liệu,Data Use Cases,churn prediction|customer churn|du doan roi bo|roi bo khach hang|retention model
+Customer Segmentation,Customer Segmentation,Ứng dụng dữ liệu,Data Use Cases,customer segmentation|phan khuc khach hang|customer clustering|rfm analysis|rfm segmentation

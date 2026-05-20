@@ -1,0 +1,128 @@
+canonical_vi,canonical_en,parent_vi,parent_en,keywords
+matplotlib,matplotlib,BI & Trực quan hóa,BI & Visualization,matplotlib|mat plot lib
+seaborn,seaborn,BI & Trực quan hóa,BI & Visualization,seaborn
+Plotly,Plotly,BI & Trực quan hóa,BI & Visualization,plotly|plotly express
+ggplot2,ggplot2,BI & Trực quan hóa,BI & Visualization,ggplot|ggplot2
+D3.js,D3.js,BI & Trực quan hóa,BI & Visualization,d3\.js|\bd3 js\b
+Bokeh,Bokeh,BI & Trực quan hóa,BI & Visualization,bokeh
+Streamlit,Streamlit,BI & Trực quan hóa,BI & Visualization,streamlit
+Dash,Dash,BI & Trực quan hóa,BI & Visualization,plotly dash|\bdash framework\b
+scikit-learn,scikit-learn,Học máy cổ điển,Classical ML,scikit-learn|scikit learn|sklearn
+XGBoost,XGBoost,Học máy cổ điển,Classical ML,xgboost|xg boost
+LightGBM,LightGBM,Học máy cổ điển,Classical ML,lightgbm|light gbm
+CatBoost,CatBoost,Học máy cổ điển,Classical ML,catboost|cat boost
+statsmodels,statsmodels,Học máy cổ điển,Classical ML,statsmodels|stats models
+H2O.ai,H2O.ai,Học máy cổ điển,Classical ML,h2o\.ai|\bh2o\b
+Spark MLlib,Spark MLlib,Học máy cổ điển,Classical ML,mllib|spark ml|spark mllib
+PyTorch,PyTorch,Học sâu,Deep Learning,pytorch|py torch
+TensorFlow,TensorFlow,Học sâu,Deep Learning,tensorflow|tensor flow
+Keras,Keras,Học sâu,Deep Learning,\bkeras\b
+JAX,JAX,Học sâu,Deep Learning,\bjax\b|\bflax\b
+PyTorch Lightning,PyTorch Lightning,Học sâu,Deep Learning,pytorch lightning|pl lightning
+Fast.ai,Fast.ai,Học sâu,Deep Learning,fast\.ai|\bfastai\b
+timm,timm,Học sâu,Deep Learning,\btimm\b|pytorch image models
+torchvision,torchvision,Học sâu,Deep Learning,torchvision|torch vision
+ONNX,ONNX,Học sâu,Deep Learning,\bonnx\b|onnx runtime
+Hugging Face,Hugging Face,NLP,NLP,hugging face|huggingface|\bhf hub\b|hf transformers
+spaCy,spaCy,NLP,NLP,spacy
+NLTK,NLTK,NLP,NLP,\bnltk\b
+gensim,gensim,NLP,NLP,gensim
+BERT,BERT,NLP,NLP,\bbert\b|distilbert|roberta|albert|deberta|camembert
+GPT,GPT,NLP,NLP,\bgpt\b|gpt-3|gpt-4|gpt-5|gpt-3\.5|gpt-4o|gpt-4\.1|chatgpt
+T5,T5,NLP,NLP,\bt5\b|flan-t5|\bmt5\b
+LLaMA,LLaMA,NLP,NLP,llama|llama-2|llama-3|llama-4|llama2|llama3|llama4
+BART,BART,NLP,NLP,\bbart\b|\bmbart\b
+sentence-transformers,sentence-transformers,NLP,NLP,sentence-transformers|sentence transformers|\bsbert\b
+OpenCV,OpenCV,Tầm nhìn máy tính,Computer Vision,opencv|open cv|\bcv2\b
+Pillow,Pillow,Tầm nhìn máy tính,Computer Vision,\bpillow\b|\bpil image\b
+Albumentations,Albumentations,Tầm nhìn máy tính,Computer Vision,albumentations
+YOLO,YOLO,Tầm nhìn máy tính,Computer Vision,\byolo\b|yolov\d|yolov5|yolov6|yolov7|yolov8|yolov9|yolov10|yolov11|ultralytics
+Detectron2,Detectron2,Tầm nhìn máy tính,Computer Vision,detectron|detectron2
+MMDetection,MMDetection,Tầm nhìn máy tính,Computer Vision,mmdetection|mm detection|mmsegmentation
+SAM,SAM,Tầm nhìn máy tính,Computer Vision,segment anything|segment-anything|\bsam model\b
+Mask R-CNN,Mask R-CNN,Tầm nhìn máy tính,Computer Vision,mask r-?cnn|mask rcnn|yolact|solov2
+Faster R-CNN,Faster R-CNN,Tầm nhìn máy tính,Computer Vision,faster r-?cnn|faster rcnn
+DETR,DETR,Tầm nhìn máy tính,Computer Vision,\bdetr\b|rt-detr|rt detr|\bdino model\b
+ResNet,ResNet,Tầm nhìn máy tính,Computer Vision,resnet|res net
+EfficientNet,EfficientNet,Tầm nhìn máy tính,Computer Vision,efficientnet|efficient net|mobilenet
+Vision Transformer,Vision Transformer,Tầm nhìn máy tính,Computer Vision,vision transformer|\bvit\b|\bdeit\b
+U-Net,U-Net,Tầm nhìn máy tính,Computer Vision,u-net|\bunet\b
+DeepLab,DeepLab,Tầm nhìn máy tính,Computer Vision,deeplab|deeplabv3
+SegFormer,SegFormer,Tầm nhìn máy tính,Computer Vision,segformer
+ByteTrack,ByteTrack,Tầm nhìn máy tính,Computer Vision,bytetrack|byte track
+DeepSORT,DeepSORT,Tầm nhìn máy tính,Computer Vision,\bdeepsort\b|deep sort|\bsort tracker\b
+LangChain,LangChain,AI tạo sinh & LLM,GenAI & LLM Apps,langchain|lang chain
+LlamaIndex,LlamaIndex,AI tạo sinh & LLM,GenAI & LLM Apps,llamaindex|llama index|llama-index
+LangGraph,LangGraph,AI tạo sinh & LLM,GenAI & LLM Apps,langgraph|lang graph
+CrewAI,CrewAI,AI tạo sinh & LLM,GenAI & LLM Apps,crewai|crew ai
+AutoGen,AutoGen,AI tạo sinh & LLM,GenAI & LLM Apps,autogen|auto gen
+PydanticAI,PydanticAI,AI tạo sinh & LLM,GenAI & LLM Apps,pydanticai|pydantic ai|pydanticia
+Unsloth,Unsloth,Fine-tuning & LLMOps,Fine-tuning & LLMOps,unsloth
+Axolotl,Axolotl,Fine-tuning & LLMOps,Fine-tuning & LLMOps,axolotl
+vLLM,vLLM,Fine-tuning & LLMOps,Fine-tuning & LLMOps,\bvllm\b
+llama.cpp,llama.cpp,Fine-tuning & LLMOps,Fine-tuning & LLMOps,llama\.cpp|llamacpp
+Ollama,Ollama,Fine-tuning & LLMOps,Fine-tuning & LLMOps,\bollama\b
+TGI,TGI,Fine-tuning & LLMOps,Fine-tuning & LLMOps,\btgi\b|text generation inference
+SGLang,SGLang,Fine-tuning & LLMOps,Fine-tuning & LLMOps,sglang|sg lang
+Langfuse,Langfuse,Fine-tuning & LLMOps,Fine-tuning & LLMOps,langfuse|lang fuse
+LangSmith,LangSmith,Fine-tuning & LLMOps,Fine-tuning & LLMOps,langsmith|lang smith
+Ragas,Ragas,Fine-tuning & LLMOps,Fine-tuning & LLMOps,\bragas\b|deepeval|trulens
+Apache Spark,Apache Spark,ETL & Điều phối,ETL & Orchestration,apache spark|\bspark\b|spark sql|spark streaming|spark structured streaming
+PySpark,PySpark,ETL & Điều phối,ETL & Orchestration,pyspark|py spark
+Apache Flink,Apache Flink,ETL & Điều phối,ETL & Orchestration,\bflink\b|apache flink
+Apache Kafka,Apache Kafka,ETL & Điều phối,ETL & Orchestration,\bkafka\b|kafka streams|kafka connect|kafka topic|kafka producer|kafka consumer
+Apache Beam,Apache Beam,ETL & Điều phối,ETL & Orchestration,apache beam|\bbeam pipeline\b
+Hadoop,Hadoop,ETL & Điều phối,ETL & Orchestration,hadoop|\bhdfs\b|map.?reduce|mapreduce
+Hive,Hive,ETL & Điều phối,ETL & Orchestration,\bhive\b|hiveql|apache hive
+Kubeflow,Kubeflow,MLOps & DevOps,MLOps & DevOps,kubeflow|kube flow|\bkfp\b
+BentoML,BentoML,MLOps & DevOps,MLOps & DevOps,bentoml|bento ml
+NVIDIA Triton,NVIDIA Triton,MLOps & DevOps,MLOps & DevOps,triton inference|nvidia triton|triton server
+TorchServe,TorchServe,MLOps & DevOps,MLOps & DevOps,torchserve|torch serve
+Seldon,Seldon,MLOps & DevOps,MLOps & DevOps,seldon|seldon core
+KServe,KServe,MLOps & DevOps,MLOps & DevOps,kserve|kfserving
+Feast,Feast,MLOps & DevOps,MLOps & DevOps,\bfeast\b|feast feature store|feature store
+Great Expectations,Great Expectations,MLOps & DevOps,MLOps & DevOps,great expectations|\bgx framework\b
+NumPy,NumPy,Xử lý dữ liệu Python,Python Data Processing,numpy|\bnp\.array\b|numerical python
+pandas,pandas,Xử lý dữ liệu Python,Python Data Processing,pandas|dataframe|data frame|pd\.dataframe
+SciPy,SciPy,Xử lý dữ liệu Python,Python Data Processing,scipy|scientific python
+PyArrow,PyArrow,Xử lý dữ liệu Python,Python Data Processing,pyarrow|apache arrow python|arrow table
+Polars,Polars,Xử lý dữ liệu Python,Python Data Processing,polars|lazyframe|pl\.dataframe
+Dask,Dask,Xử lý dữ liệu phân tán,Distributed Data Processing,dask|dask dataframe|dask distributed
+Modin,Modin,Xử lý dữ liệu phân tán,Distributed Data Processing,modin|modin pandas
+Vaex,Vaex,Xử lý dữ liệu phân tán,Distributed Data Processing,vaex
+RAPIDS cuDF,RAPIDS cuDF,Xử lý dữ liệu GPU,GPU Data Processing,cudf|rapids cudf|rapids ai
+Ibis,Ibis,Truy vấn & biến đổi dữ liệu,Data Query & Transformation,ibis framework|ibis python|ibis dataframe
+Apache DataFusion,Apache DataFusion,Truy vấn & biến đổi dữ liệu,Data Query & Transformation,datafusion|apache datafusion
+SQLAlchemy,SQLAlchemy,Truy vấn & biến đổi dữ liệu,Data Query & Transformation,sqlalchemy|sql alchemy
+Altair,Altair,BI & Trực quan hóa,BI & Visualization,altair|vega altair
+Vega-Lite,Vega-Lite,BI & Trực quan hóa,BI & Visualization,vega-lite|vegalite|vega lite
+Apache ECharts,Apache ECharts,BI & Trực quan hóa,BI & Visualization,echarts|apache echarts
+Panel,Panel,BI & Trực quan hóa,BI & Visualization,holoviz panel|python panel
+Gradio,Gradio,BI & Trực quan hóa,BI & Visualization,gradio
+Shiny,Shiny,BI & Trực quan hóa,BI & Visualization,r shiny|shiny for python|posit shiny
+Ray,Ray,Xử lý dữ liệu phân tán,Distributed Data Processing,ray|ray cluster|ray distributed
+Ray Data,Ray Data,Xử lý dữ liệu phân tán,Distributed Data Processing,ray data|ray dataset
+Ray Tune,Ray Tune,Học máy cổ điển,Classical ML,ray tune|tune hyperparameter
+Optuna,Optuna,Học máy cổ điển,Classical ML,optuna
+Hyperopt,Hyperopt,Học máy cổ điển,Classical ML,hyperopt
+Prophet,Prophet,Học máy cổ điển,Classical ML,facebook prophet|prophet forecasting|\bprophet\b
+NeuralProphet,NeuralProphet,Học máy cổ điển,Classical ML,neuralprophet|neural prophet
+sktime,sktime,Học máy cổ điển,Classical ML,sktime|time series ml
+imbalanced-learn,imbalanced-learn,Học máy cổ điển,Classical ML,imbalanced-learn|imbalanced learn|imblearn
+mlxtend,mlxtend,Học máy cổ điển,Classical ML,mlxtend
+PyCaret,PyCaret,Học máy cổ điển,Classical ML,pycaret|py caret
+AutoGluon,AutoGluon,Học máy cổ điển,Classical ML,autogluon|auto gluon
+Featuretools,Featuretools,Học máy cổ điển,Classical ML,featuretools|deep feature synthesis
+tsfresh,tsfresh,Học máy cổ điển,Classical ML,tsfresh|time series feature extraction
+Pandera,Pandera,Chất lượng dữ liệu,Data Quality,pandera|dataframe validation
+Evidently,Evidently,Giám sát mô hình,MLOps & Monitoring,evidently ai|evidentlyai|evidently
+Deepchecks,Deepchecks,Giám sát mô hình,MLOps & Monitoring,deepchecks|deep checks
+Haystack,Haystack,AI tạo sinh & LLM,GenAI & LLM Apps,haystack|deepset haystack
+DSPy,DSPy,AI tạo sinh & LLM,GenAI & LLM Apps,\bdspy\b|dspy ai
+Instructor,Instructor,AI tạo sinh & LLM,GenAI & LLM Apps,instructor|python instructor
+LiteLLM,LiteLLM,AI tạo sinh & LLM,GenAI & LLM Apps,litellm|lite llm
+Guardrails AI,Guardrails AI,AI tạo sinh & LLM,GenAI & LLM Apps,guardrails ai|guardrails\.ai|llm guardrails
+Semantic Kernel,Semantic Kernel,AI tạo sinh & LLM,GenAI & LLM Apps,semantic kernel|microsoft semantic kernel
+Guidance,Guidance,AI tạo sinh & LLM,GenAI & LLM Apps,\bguidance\b|microsoft guidance
+MediaPipe,MediaPipe,Tầm nhìn máy tính,Computer Vision,mediapipe|media pipe
+PaddleOCR,PaddleOCR,Tầm nhìn máy tính,Computer Vision,paddleocr|paddle ocr

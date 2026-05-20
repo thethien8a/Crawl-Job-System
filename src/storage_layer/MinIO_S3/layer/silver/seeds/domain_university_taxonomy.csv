@@ -1,0 +1,56 @@
+canonical_vi,canonical_en,parent_vi,parent_en,keywords
+Khoa học máy tính,Computer Science,Công nghệ & Kỹ thuật máy tính,Computer Science & IT,khoa hoc may tinh|computer science|\bcs\b|cntt|cong nghe thong tin|information technology|khoa hoc may tinh va cong nghe thong tin|csit
+Công nghệ thông tin,Information Technology,Công nghệ & Kỹ thuật máy tính,Computer Science & IT,cong nghe thong tin|information technology|\bit\b|cntt|it major|nganh cntt|cong nghe thong tin va truyen thong|ict
+Kỹ thuật phần mềm,Software Engineering,Công nghệ & Kỹ thuật máy tính,Computer Science & IT,ky thuat phan mem|software engineering|\bse\b|phan mem|software dev|nganh phan mem
+Kỹ thuật máy tính,Computer Engineering,Công nghệ & Kỹ thuật máy tính,Computer Science & IT,ky thuat may tinh|computer engineering|\bce\b|co khi may tinh|computer eng
+Hệ thống thông tin quản lý,Management Information Systems,Công nghệ & Kỹ thuật máy tính,Computer Science & IT,he thong thong tin quan ly|management information system|\bmis\b|information system|he thong thong tin|\bis\b
+Mạng máy tính & Truyền thông,Computer Networks & Communications,Công nghệ & Kỹ thuật máy tính,Computer Science & IT,mang may tinh|computer network|truyen thong|networking|network engineering|telecommunications engineering
+An ninh mạng,Cybersecurity / Information Security,Công nghệ & Kỹ thuật máy tính,Computer Science & IT,an ninh mang|cybersecurity|information security|bao mat thong tin|security engineering|an toan thong tin
+Kỹ thuật dữ liệu,Data Engineering / Data Technology,Công nghệ & Kỹ thuật máy tính,Computer Science & IT,ky thuat du lieu|data engineering|data technology|cong nghe du lieu|data tech
+Khoa học dữ liệu,Data Science,Khoa học dữ liệu & Phân tích,Data Science & Analytics,khoa hoc du lieu|data science|\bds\b|data sci|nganh khoa hoc du lieu|data science major
+Phân tích dữ liệu,Data Analytics,Khoa học dữ liệu & Phân tích,Data Science & Analytics,phan tich du lieu|data analytics|data analysis|phan tich du lieu va kinh doanh|business analytics|business data analytics
+Phân tích kinh doanh,Business Analytics,Khoa học dữ liệu & Phân tích,Data Science & Analytics,phan tich kinh doanh|business analytics|\bba\b|business analysis|business data analytics|analytics business
+Trí tuệ nhân tạo,Artificial Intelligence,Khoa học dữ liệu & Phân tích,Data Science & Analytics,tri tue nhan tao|artificial intelligence|\bai\b|ai major|nganh ai|tri tue nhan tao va may hoc|artificial intelligence and machine learning
+Học máy & Khai phá dữ liệu,Machine Learning & Data Mining,Khoa học dữ liệu & Phân tích,Data Science & Analytics,hoc may|machine learning|\bml\b|khai pha du lieu|data mining|mining|machine learning and data mining
+Kinh tế lượng / Phân tích định lượng,Econometrics / Quantitative Analysis,Khoa học dữ liệu & Phân tích,Data Science & Analytics,kinh te luong|econometrics|quantitative analysis|phan tich dinh luong|quantitative economics|kinh te dinh luong|quant econ
+Toán học,Mathematics,Toán học & Thống kê,Mathematics & Statistics,toan hoc|mathematics|math|toan|pure math|toan hoc thuan|toan dai so|toan tuyen tinh
+Toán ứng dụng,Applied Mathematics,Toán học & Thống kê,Mathematics & Statistics,toan ung dung|applied mathematics|applied math|toan ung dung va kinh te|mathematical modeling
+Thống kê,Statistics,Toán học & Thống kê,Mathematics & Statistics,thong ke|statistics|stat|thong ke hoc|statistical science|thong ke thuan
+Thống kê ứng dụng,Applied Statistics,Toán học & Thống kê,Mathematics & Statistics,thong ke ung dung|applied statistics|applied stat|thong ke kinh te|economic statistics|thong ke du lieu
+Toán - Tin,Mathematics - Computer Science,Toán học & Thống kê,Mathematics & Statistics,toan tin|mathematics computer science|math cs|toan hoc va tin hoc|math and cs|toan - tin hoc
+Toán - Kinh tế,Mathematics - Economics,Toán học & Thống kê,Mathematics & Statistics,toan kinh te|mathematics economics|math econ|toan hoc va kinh te|math and economics
+Nghiên cứu thao tác / Tối ưu hóa,Operations Research / Optimization,Toán học & Thống kê,Mathematics & Statistics,nghien cuu thao tac|operations research|\bor\b|toi uu hoa|optimization|operations research and optimization
+Kinh tế học,Economics,Kinh tế & Tài chính,Economics & Finance,kinh te hoc|economics|kinh te|econ|kinh te vi mo|microeconomics|kinh te vi mo va hoanh|macroeconomics
+Tài chính - Ngân hàng,Finance - Banking,Kinh tế & Tài chính,Economics & Finance,tai chinh ngan hang|finance banking|tai chinh|finance|ngan hang|banking|tai chinh va ngan hang|financial economics
+Kế toán,Accounting,Kinh tế & Tài chính,Economics & Finance,ke toan|accounting|accountancy|ke toan kiem toan|accounting and auditing|kiem toan|auditing
+Kế toán - Kiểm toán,Accounting & Auditing,Kinh tế & Tài chính,Economics & Finance,ke toan kiem toan|accounting auditing|ke toan va kiem toan|accounting and auditing
+Quản trị kinh doanh,Business Administration,Kinh tế & Tài chính,Economics & Finance,quan tri kinh doanh|business administration|\bbba\b|\bmba\b|quan tri doanh nghiep|business management|business admin
+Tài chính định lượng,Quantitative Finance,Kinh tế & Tài chính,Economics & Finance,tai chinh dinh luong|quantitative finance|quant finance|financial engineering|tai chinh va dinh luong|computational finance
+Toán bảo hiểm / Khoa học bảo hiểm,Actuarial Science,Kinh tế & Tài chính,Economics & Finance,toan bao hiem|actuarial science|actuary|khoa hoc bao hiem|actuarial mathematics|bao hiem tinh toan
+Quản trị rủi ro,Risk Management,Kinh tế & Tài chính,Economics & Finance,quan tri rui ro|risk management|risk analysis|risk admin
+Marketing,Marketing,Kinh tế & Tài chính,Economics & Finance,marketing|nganh marketing|marketing management|quan tri marketing|digital marketing
+Kinh tế quốc tế,International Economics,Kinh tế & Tài chính,Economics & Finance,kinh te quoc te|international economics|international trade|kinh te doi ngoai|thuong mai quoc te
+Kỹ thuật công nghiệp,Industrial Engineering,Kỹ thuật & Vật lý,Engineering & Physics,ky thuat cong nghiep|industrial engineering|\bie\b|cong nghiep|industrial eng|san xuat cong nghiep
+Kỹ thuật hệ thống,Systems Engineering,Kỹ thuật & Vật lý,Engineering & Physics,ky thuat he thong|systems engineering|system engineering|he thong ky thuat
+Kỹ thuật điện - điện tử,Electrical - Electronics Engineering,Kỹ thuật & Vật lý,Engineering & Physics,ky thuat dien dien tu|electrical engineering|electronics engineering|\bee\b|dien tu|co dien|electrical and electronics
+Cơ điện tử,Mechatronics,Kỹ thuật & Vật lý,Engineering & Physics,co dien tu|mechatronics|mechatronic engineering|robotics|co khi dien tu
+Kỹ thuật điều khiển & Tự động hóa,Control & Automation Engineering,Kỹ thuật & Vật lý,Engineering & Physics,ky thuat dieu khien tu dong hoa|control engineering|automation engineering|tu dong hoa|automation|control and automation
+Vật lý học,Physics,Kỹ thuật & Vật lý,Engineering & Physics,vat ly hoc|physics|vat ly|phys|vat ly thuan|pure physics
+Vật lý ứng dụng,Applied Physics,Kỹ thuật & Vật lý,Engineering & Physics,vat ly ung dung|applied physics|vat ly ky thuat|engineering physics|vat ly cong nghe
+Kỹ thuật cơ khí,Mechanical Engineering,Kỹ thuật & Vật lý,Engineering & Physics,ky thuat co khi|mechanical engineering|\bme\b|co khi|mechanical eng
+Kỹ thuật sinh học,Bioengineering / Biomedical Engineering,Kỹ thuật & Vật lý,Engineering & Physics,ky thuat sinh hoc|bioengineering|biomedical engineering|sinh hoc ky thuat|bio eng|biomedical eng
+Công nghệ sinh học,Biotechnology,Khoa học tự nhiên & Sinh học,Natural Sciences & Biology,cong nghe sinh hoc|biotechnology|\bbiotech\b|sinh hoc cong nghe|biological technology|bio tech
+Tin sinh học,Bioinformatics,Khoa học tự nhiên & Sinh học,Natural Sciences & Biology,tin sinh hoc|bioinformatics|bio info|computational biology|tin hoc sinh hoc|biological informatics
+Sinh học,Biology,Khoa học tự nhiên & Sinh học,Natural Sciences & Biology,sinh hoc|biology|\bbio\b|biological science|sinh hoc thuan|life science|biological studies
+Hóa học,Chemistry,Khoa học tự nhiên & Sinh học,Natural Sciences & Biology,hoa hoc|chemistry|\bchem\b|hoa hoc thuan|chemical science|hoa hoc ung dung|applied chemistry
+Khoa học môi trường,Environmental Science,Khoa học tự nhiên & Sinh học,Natural Sciences & Biology,khoa hoc moi truong|environmental science|env science|moi truong|environmental studies|khoa hoc va moi truong
+Dược học,Pharmacy / Pharmaceutical Science,Khoa học tự nhiên & Sinh học,Natural Sciences & Biology,duoc hoc|pharmacy|pharmaceutical science|duoc pham|pharmaceutics|duoc
+Y học,Medicine,Khoa học tự nhiên & Sinh học,Natural Sciences & Biology,y hoc|medicine|medical|y khoa|medical science|doctor|bac si|y dieu duong|nursing
+Nông nghiệp công nghệ,Agritech / Agricultural Technology,Khoa học tự nhiên & Sinh học,Natural Sciences & Biology,nong nghiep cong nghe|agritech|agricultural technology|nong nghiep|agriculture|cong nghe nong nghiep
+Quản trị thông tin,Information Management,Quản trị & Hệ thống,Management & Systems,quan tri thong tin|information management|info management|thong tin quan ly|knowledge management
+Quản trị dự án,Project Management,Quản trị & Hệ thống,Management & Systems,quan tri du an|project management|\bpm\b|project admin|du an|project mgmt
+Quản trị chuỗi cung ứng,Supply Chain Management,Quản trị & Hệ thống,Management & Systems,quan tri chuoi cung ung|supply chain management|\bscm\b|chuoi cung ung|logistics management|supply chain admin
+Quản lý công,Public Administration,Quản trị & Hệ thống,Management & Systems,quan ly cong|public administration|public management|hanh chinh cong|public policy|chinh sach cong
+Hệ thống thông tin địa lý,GIS / Geographic Information Systems,Quản trị & Hệ thống,Management & Systems,he thong thong tin dia ly|gis|geographic information system|dia ly thong tin|geo informatics|spatial data
+Thương mại điện tử,E-commerce,Quản trị & Hệ thống,Management & Systems,thuong mai dien tu|e-commerce|ecommerce|digital commerce|ban hang online|online business
+Chuyển đổi số,Digital Transformation,Quản trị & Hệ thống,Management & Systems,chuyen doi so|digital transformation|digital strategy|chuyen doi so va cong nghe|digital innovation

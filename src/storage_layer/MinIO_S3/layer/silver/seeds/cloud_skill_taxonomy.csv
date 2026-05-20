@@ -1,0 +1,67 @@
+canonical_vi,canonical_en,parent_vi,parent_en,keywords
+AWS,AWS,Nền tảng đám mây,Cloud Platforms,\baws\b|amazon web services
+Microsoft Azure,Microsoft Azure,Nền tảng đám mây,Cloud Platforms,\bazure\b|microsoft azure
+Google Cloud Platform,Google Cloud Platform,Nền tảng đám mây,Cloud Platforms,\bgcp\b|google cloud|google cloud platform
+IBM,IBM,Nền tảng đám mây,Cloud Platforms,\bIBM\b|ibm cloud
+Oracle Cloud Infrastructure,Oracle Cloud Infrastructure,Nền tảng đám mây,Cloud Platforms,oracle cloud|\boci\b|oracle cloud infrastructure
+Alibaba Cloud,Alibaba Cloud,Nền tảng đám mây,Cloud Platforms,alibaba cloud|aliyun
+Snowflake,Snowflake,Nền tảng đám mây,Cloud Platforms,snowflake|snowflake data cloud
+Databricks,Databricks,Nền tảng đám mây,Cloud Platforms,databricks|unity catalog|delta lake
+AWS S3,AWS S3,Dịch vụ dữ liệu AWS,AWS Data Services,\bs3\b|amazon s3|simple storage service
+AWS Athena,AWS Athena,Dịch vụ dữ liệu AWS,AWS Data Services,athena|amazon athena
+AWS EMR,AWS EMR,Dịch vụ dữ liệu AWS,AWS Data Services,\bemr\b|elastic mapreduce|amazon emr
+AWS Kinesis,AWS Kinesis,Dịch vụ dữ liệu AWS,AWS Data Services,kinesis|amazon kinesis|kinesis data streams|kinesis firehose
+AWS Lake Formation,AWS Lake Formation,Dịch vụ dữ liệu AWS,AWS Data Services,lake formation|aws lake formation
+AWS SageMaker,AWS SageMaker,Dịch vụ dữ liệu AWS,AWS Data Services,sagemaker|sage maker|amazon sagemaker
+AWS Redshift,AWS Redshift,Dịch vụ dữ liệu AWS,AWS Data Services,redshift|amazon redshift|redshift spectrum
+AWS Glue,AWS Glue,Dịch vụ dữ liệu AWS,AWS Data Services,aws glue|glue catalog|glue crawler|glue etl|aws glue data catalog
+AWS DynamoDB,AWS DynamoDB,Dịch vụ dữ liệu AWS,AWS Data Services,dynamodb|amazon dynamodb
+AWS RDS,AWS RDS,Dịch vụ dữ liệu AWS,AWS Data Services,rds|amazon rds|relational database service
+AWS Lambda,AWS Lambda,Dịch vụ tính toán AWS,AWS Compute Services,lambda|aws lambda|serverless|lambda function
+AWS EC2,AWS EC2,Dịch vụ tính toán AWS,AWS Compute Services,ec2|amazon ec2|elastic compute cloud
+AWS ECS,AWS ECS,Dịch vụ tính toán AWS,AWS Compute Services,ecs|amazon ecs|elastic container service
+AWS EKS,AWS EKS,Dịch vụ tính toán AWS,AWS Compute Services,eks|amazon eks|elastic kubernetes service
+AWS SQS,AWS SQS,Dịch vụ tích hợp AWS,AWS Integration Services,sqs|amazon sqs|simple queue service|sqs queue
+AWS SNS,AWS SNS,Dịch vụ tích hợp AWS,AWS Integration Services,sns|amazon sns|simple notification service
+AWS Step Functions,AWS Step Functions,Dịch vụ tích hợp AWS,AWS Integration Services,step functions|aws step functions|state machine|step function workflow
+AWS CloudFormation,AWS CloudFormation,Dịch vụ quản lý AWS,AWS Management Services,cloudformation|aws cloudformation|infrastructure as code|iac
+AWS CloudWatch,AWS CloudWatch,Dịch vụ quản lý AWS,AWS Management Services,cloudwatch|amazon cloudwatch|aws monitoring
+AWS IAM,AWS IAM,Dịch vụ bảo mật AWS,AWS Security Services,iam|aws iam|identity and access management|iam role|iam policy
+AWS Secrets Manager,AWS Secrets Manager,Dịch vụ bảo mật AWS,AWS Security Services,secrets manager|aws secrets manager|secret rotation
+Azure Data Lake Storage,Azure Data Lake Storage,Dịch vụ dữ liệu Azure,Azure Data Services,azure data lake|adls|azure blob|blob storage|adls gen2
+Azure Data Factory,Azure Data Factory,Dịch vụ dữ liệu Azure,Azure Data Services,azure data factory|\badf\b
+Azure Synapse Analytics,Azure Synapse Analytics,Dịch vụ dữ liệu Azure,Azure Data Services,azure synapse|synapse analytics
+Microsoft Fabric,Microsoft Fabric,Dịch vụ dữ liệu Azure,Azure Data Services,microsoft fabric|ms fabric|fabric lakehouse|fabric data warehouse
+Azure Event Hubs,Azure Event Hubs,Dịch vụ dữ liệu Azure,Azure Data Services,event hubs|azure event hub|azure event hubs
+Azure Stream Analytics,Azure Stream Analytics,Dịch vụ dữ liệu Azure,Azure Data Services,azure stream analytics|stream analytics job
+Azure Machine Learning,Azure Machine Learning,Dịch vụ dữ liệu Azure,Azure Data Services,azure machine learning|azure ml|azureml
+Azure Databricks,Azure Databricks,Dịch vụ dữ liệu Azure,Azure Data Services,azure databricks|databricks on azure
+Azure Cosmos DB,Azure Cosmos DB,Dịch vụ dữ liệu Azure,Azure Data Services,cosmos db|azure cosmos|cosmosdb
+Azure SQL Database,Azure SQL Database,Dịch vụ dữ liệu Azure,Azure Data Services,azure sql|azure sql database|sql azure
+Azure Functions,Azure Functions,Dịch vụ tính toán Azure,Azure Compute Services,azure functions|function app|serverless azure|azure function
+Azure Virtual Machines,Azure Virtual Machines,Dịch vụ tính toán Azure,Azure Compute Services,azure vm|azure virtual machine|azure vmss
+Azure Kubernetes Service,Azure Kubernetes Service,Dịch vụ tính toán Azure,Azure Compute Services,aks|azure kubernetes|azure kubernetes service
+Azure Container Instances,Azure Container Instances,Dịch vụ tính toán Azure,Azure Compute Services,aci|azure container instances|container instance
+Azure Logic Apps,Azure Logic Apps,Dịch vụ tích hợp Azure,Azure Integration Services,logic apps|azure logic apps|workflow azure
+Azure Service Bus,Azure Service Bus,Dịch vụ tích hợp Azure,Azure Integration Services,service bus|azure service bus|azure sb
+Azure Monitor,Azure Monitor,Dịch vụ quản lý Azure,Azure Management Services,azure monitor|application insights|azure monitoring
+Azure Key Vault,Azure Key Vault,Dịch vụ bảo mật Azure,Azure Security Services,key vault|azure key vault|azure secrets|keyvault
+Azure Active Directory,Azure Active Directory,Dịch vụ bảo mật Azure,Azure Security Services,azure ad|azure active directory|entra id|microsoft entra
+Google Cloud Storage,Google Cloud Storage,Dịch vụ dữ liệu GCP,GCP Data Services,google cloud storage|cloud storage|\bgcs\b
+Google BigQuery,Google BigQuery,Dịch vụ dữ liệu GCP,GCP Data Services,google bigquery|bigquery|big query
+Google Dataflow,Google Dataflow,Dịch vụ dữ liệu GCP,GCP Data Services,google dataflow|cloud dataflow|apache beam on gcp
+Google Dataproc,Google Dataproc,Dịch vụ dữ liệu GCP,GCP Data Services,google dataproc|cloud dataproc|dataproc cluster
+Google Pub/Sub,Google Pub/Sub,Dịch vụ dữ liệu GCP,GCP Data Services,pub/sub|pubsub|google pubsub|google pub/sub|cloud pub/sub
+Google Cloud Composer,Google Cloud Composer,Dịch vụ dữ liệu GCP,GCP Data Services,cloud composer|google cloud composer|composer dag
+Google Vertex AI,Google Vertex AI,Dịch vụ dữ liệu GCP,GCP Data Services,vertex ai|google vertex|vertex ai pipelines
+Google Dataplex,Google Dataplex,Dịch vụ dữ liệu GCP,GCP Data Services,dataplex|google dataplex|data lake governance
+Google Dataform,Google Dataform,Dịch vụ dữ liệu GCP,GCP Data Services,google dataform|dataform
+Google Cloud SQL,Google Cloud SQL,Dịch vụ dữ liệu GCP,GCP Data Services,cloud sql|google cloud sql|mysql gcp|postgresql gcp
+Google Cloud Firestore,Google Cloud Firestore,Dịch vụ dữ liệu GCP,GCP Data Services,firestore|cloud firestore|google firestore
+Google Cloud Bigtable,Google Cloud Bigtable,Dịch vụ dữ liệu GCP,GCP Data Services,bigtable|cloud bigtable|google bigtable
+Google Cloud Run,Google Cloud Run,Dịch vụ tính toán GCP,GCP Compute Services,cloud run|google cloud run|serverless containers gcp
+Google Kubernetes Engine,Google Kubernetes Engine,Dịch vụ tính toán GCP,GCP Compute Services,gke|google kubernetes|google kubernetes engine
+Google Cloud Functions,Google Cloud Functions,Dịch vụ tính toán GCP,GCP Compute Services,cloud functions|google cloud functions|gcf
+Google Cloud Monitoring,Google Cloud Monitoring,Dịch vụ quản lý GCP,GCP Management Services,cloud monitoring|stackdriver|google cloud monitoring|cloud operations
+Google Cloud IAM,Google Cloud IAM,Dịch vụ bảo mật GCP,GCP Security Services,cloud iam|google iam|identity and access management gcp
+Google Cloud Secret Manager,Google Cloud Secret Manager,Dịch vụ bảo mật GCP,GCP Security Services,secret manager|google secret manager|gcp secrets

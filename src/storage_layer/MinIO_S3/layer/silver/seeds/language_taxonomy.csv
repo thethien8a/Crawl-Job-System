@@ -1,0 +1,11 @@
+canonical_vi,canonical_en,parent_vi,parent_en,keywords
+English,English,Ngoại ngữ,Foreign Languages,\benglish\b|tieng anh|toeic|ielts|toefl
+Japanese,Japanese,Ngoại ngữ,Foreign Languages,japanese|tieng nhat|\bjlpt\b|jlpt n[1-5]
+Korean,Korean,Ngoại ngữ,Foreign Languages,korean|tieng han|\btopik\b
+Chinese,Chinese,Ngoại ngữ,Foreign Languages,chinese|tieng trung|mandarin|\bhsk\b|tieng hoa
+French,French,Ngoại ngữ,Foreign Languages,french|tieng phap|\bdelf\b|\bdalf\b
+German,German,Ngoại ngữ,Foreign Languages,german|tieng duc|deutsch|\btestdaf\b
+Vietnamese,Vietnamese,Ngôn ngữ,Languages,vietnamese|tieng viet|native vietnamese|fluent vietnamese
+Spanish,Spanish,Ngoại ngữ,Foreign Languages,spanish|tieng tay ban nha|\bdele\b
+Thai,Thai,Ngoại ngữ,Foreign Languages,thai|tieng thai
+Indonesian,Indonesian,Ngoại ngữ,Foreign Languages,indonesian|bahasa indonesia|tieng indonesia

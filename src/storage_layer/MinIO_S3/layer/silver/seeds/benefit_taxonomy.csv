@@ -1,0 +1,91 @@
+canonical_vi,canonical_en,parent_vi,parent_en,keywords
+Lương tháng 13,13th month salary,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,\bluong thang 13\b|thang luong thu 13|13th[- ]?month|13 month salary|thirteen.?month
+Lương tháng 14 trở lên,14th month salary and above,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,luong thang 14|thang luong thu 14|luong thang 15|thang luong thu 15|14th[- ]?month|15th[- ]?month|16th[- ]?month|extra month salary
+Thưởng hiệu suất,Performance bonus,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,performance bonus|thuong hieu suat|thuong theo hieu qua|thuong thanh tich|thuong performance
+Thưởng KPI,KPI bonus,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,\bkpi bonus\b|thuong kpi|thuong theo kpi|thuong dat kpi|bonus kpi
+Thưởng dự án,Project bonus,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,thuong du an|project bonus|project completion bonus|delivery bonus|thuong on-site|thuong onsite
+Thưởng doanh số,Sales bonus,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,sales bonus|thuong doanh so|thuong sale|thuong target|target bonus
+Hoa hồng,Commission,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,\bcommission\b|hoa hong|sales commission
+Thưởng lợi nhuận,Profit sharing,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,profit sharing|chia se loi nhuan|thuong loi nhuan|profit bonus|profit share|co tuc|dividend
+Cổ phiếu ESOP,Employee stock ownership,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,\besop\b|co phieu thuong|co phieu uu dai|stock option|stock options|employee stock|equity compensation|\brsu\b
+Thưởng Token / Crypto,Crypto and Token Bonus,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,token bonus|crypto bonus|thuong token|phan bo token|token allocation|coin bonus
+Thưởng ký hợp đồng,Signing bonus,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,signing bonus|sign-on bonus|sign on bonus|thuong ky hop dong|thuong gia nhap|welcome bonus
+Thưởng giới thiệu ứng viên,Referral bonus,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,referral bonus|employee referral|thuong gioi thieu ung vien|thuong referral|gioi thieu nhan su
+Thưởng giữ chân,Retention bonus,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,retention bonus|thuong giu chan|thuong cam ket|loyalty bonus
+Thưởng đỗ chứng chỉ,Certification bonus,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,thuong chung chi|thuong thi do chung chi|certification bonus|certificate bonus
+Thưởng sáng kiến,Innovation bonus,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,innovation bonus|idea bonus|thuong sang kien|thuong y tuong|thuong cai tien
+Thưởng lễ Tết,Holiday bonus,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,holiday bonus|tet bonus|thuong le tet|thuong tet|thuong le|thuong cuoi nam|thuong 2/9|thuong 30/4
+Thưởng chuyên cần,Attendance bonus,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,thuong chuyen can|attendance bonus|phu cap chuyen can|chuyen can
+Tăng lương định kỳ,Regular salary increase,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,tang luong dinh ky|salary increase|annual salary review|review luong|xet tang luong|pay raise
+Đánh giá lương,Salary review,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,salary review|xet luong|danh gia luong|review salary|compensation review|review nang luc
+Lương làm thêm giờ,Overtime pay,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,\bot\b|overtime pay|paid overtime|luong lam them|tien tang ca|tien lam them gio|phu cap tang ca
+Phụ cấp ngoại ngữ,Foreign language allowance,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,phu cap ngoai ngu|phu cap tieng anh|phu cap tieng nhat|jlpt allowance|toeic allowance|language allowance
+Phụ cấp khấu hao thiết bị (BYOD),BYOD allowance,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,byod|bring your own device|phu cap thiet bi|khau hao laptop|phu cap laptop|khau hao thiet bi
+Phụ cấp làm việc từ xa,WFH allowance,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,wfh allowance|remote allowance|phu cap wfh|phu cap lam viec tu xa|setup goc lam viec
+Phụ cấp ăn trưa,Meal allowance,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,meal allowance|lunch allowance|food allowance|phu cap an|phu cap com|phu cap an trua|tien an trua
+Phụ cấp đi lại,Transportation allowance,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,transportation allowance|travel allowance|commuting allowance|phu cap di lai|ho tro di lai|tien xe|commute allowance
+Phụ cấp gửi xe,Parking allowance,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,parking allowance|free parking|giu xe mien phi|phu cap gui xe|cho dau xe|ve gui xe
+Phụ cấp điện thoại,Phone allowance,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,phone allowance|mobile allowance|phu cap dien thoai|cuoc dien thoai|dien thoai cong ty
+Phụ cấp nhà ở,Housing allowance,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,housing allowance|rent allowance|accommodation allowance|phu cap nha o|ho tro nha o|ky tuc xa|cho o
+Trợ cấp thôi việc,Severance pay,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,severance pay|tro cap thoi viec|tro cap mat viec|termination allowance
+Ứng lương linh hoạt,Flexible salary advance,Lương thưởng & đãi ngộ tài chính,Compensation & Financial Rewards,salary advance|ung luong|tam ung luong|pay advance|earned wage access
+Bảo hiểm xã hội 100% lương,Full salary social insurance,Bảo hiểm & bảo vệ,Insurance & Protection,bhxh full luong|bhxh tren 100|dong full luong|dong bao hiem 100%|full salary insurance|bhxh tren toan bo luong
+Bảo hiểm bắt buộc,Statutory insurance,Bảo hiểm & bảo vệ,Insurance & Protection,\bbhxh\b|\bbhyt\b|\bbhtn\b|bao hiem xa hoi|bao hiem y te|bao hiem that nghiep|social insurance|health insurance|unemployment insurance|bao hiem day du
+Bảo hiểm sức khỏe cao cấp,Premium health insurance,Bảo hiểm & bảo vệ,Insurance & Protection,premium healthcare|premium insurance|bao hiem suc khoe|bao hiem cao cap|bao hiem vip|pvi|bao viet|generali|aon|pti|tokio marine
+Bảo hiểm cho người thân,Family insurance,Bảo hiểm & bảo vệ,Insurance & Protection,family insurance|dependent insurance|bao hiem cho nguoi than|bao hiem gia dinh|spouse insurance|children insurance
+Bảo hiểm tai nạn 24/7,24/7 Accident insurance,Bảo hiểm & bảo vệ,Insurance & Protection,accident insurance|bao hiem tai nan|personal accident|24/7 accident|bao hiem rui ro
+Bảo hiểm nhân thọ,Life insurance,Bảo hiểm & bảo vệ,Insurance & Protection,life insurance|bao hiem nhan tho|life coverage
+Bảo hiểm nha khoa & thị lực,Dental and vision insurance,Bảo hiểm & bảo vệ,Insurance & Protection,dental insurance|vision insurance|bao hiem nha khoa|bao hiem mat|kham mat|kham rang
+Quỹ hưu trí,Retirement plan,Bảo hiểm & bảo vệ,Insurance & Protection,retirement plan|pension|quy huu tri|luong huu|401k|provident fund
+Khám sức khỏe tổng quát,Annual health check,Sức khỏe & an sinh,Health & Wellbeing,annual health check|medical check|health check-up|health checkup|kham suc khoe dinh ky|kham suc khoe hang nam|kham suc khoe tong quat
+Tài trợ tập Gym & Yoga,Gym and fitness subsidy,Sức khỏe & an sinh,Health & Wellbeing,gym|fitness|yoga|california fitness|elite fitness|tai tro gym|ho tro the duc|the thao
+Tư vấn tâm lý (Mental Health),Mental health support,Sức khỏe & an sinh,Health & Wellbeing,mental health|wellbeing|well-being|suc khoe tinh than|tu van tam ly|psychological counseling|employee assistance
+Góc làm việc công thái học,Ergonomic workspace,Sức khỏe & an sinh,Health & Wellbeing,ergonomic|ghe cong thai hoc|ban nang ha|standing desk|standing table|ghe herman miller
+Câu lạc bộ thể thao,Sports clubs,Sức khỏe & an sinh,Health & Wellbeing,sport club|sports club|clb the thao|clb bong da|clb cau long|football club|running club|marathon
+Nghỉ phép năm (12-20 ngày),Annual leave,Nghỉ phép & thời gian nghỉ,Leave & Time Off,annual leave|nghi phep nam|ngay phep nam|phep nam|paid annual leave|12 ngay phep|15 ngay phep|18 ngay phep|20 ngay phep
+Nghỉ phép không giới hạn,Unlimited PTO,Nghỉ phép & thời gian nghỉ,Leave & Time Off,unlimited pto|unlimited leave|nghi phep khong gioi han|khong gioi han so ngay phep
+Nghỉ ốm hưởng lương,Paid sick leave,Nghỉ phép & thời gian nghỉ,Leave & Time Off,sick leave|paid sick leave|nghi om huong luong|phep om|nghi benh
+Nghỉ ngày dâu (Menstrual leave),Menstrual leave,Nghỉ phép & thời gian nghỉ,Leave & Time Off,menstrual leave|period leave|nghi ngay dau|nghi kinh nguyet|nghi ngay phu nu
+Nghỉ chiều thứ 6,Summer Fridays,Nghỉ phép & thời gian nghỉ,Leave & Time Off,summer friday|half-day friday|nghi chieu thu 6|nghi som thu 6
+Nghỉ ngày sinh nhật,Birthday leave,Nghỉ phép & thời gian nghỉ,Leave & Time Off,birthday leave|nghi sinh nhat|birthday off|birthday holiday|nghi ngay sinh nhat
+Nghỉ hiếu hỉ,Compassionate and wedding leave,Nghỉ phép & thời gian nghỉ,Leave & Time Off,compassionate leave|wedding leave|marriage leave|funeral leave|nghi hieu hi|nghi cuoi|nghi tang|nghi dam cuoi|nghi dam tang
+Nghỉ thai sản & chăm con,Maternity and paternity leave,Nghỉ phép & thời gian nghỉ,Leave & Time Off,maternity leave|parental leave|paternity leave|nghi thai san|che do thai san|nghi cham con|nghi sinh con
+Nghỉ phép xả hơi dài hạn,Sabbatical leave,Nghỉ phép & thời gian nghỉ,Leave & Time Off,sabbatical|career break|nghi dai han|nghi sabbatical
+Làm việc từ xa (Remote/WFH),Remote work,Cách làm việc & thời gian làm việc,Work Arrangement,remote work|work remotely|working remotely|lam viec tu xa|lam viec online|\bwfh\b|work from home
+Làm việc Hybrid,Hybrid work,Cách làm việc & thời gian làm việc,Work Arrangement,hybrid work|hybrid working|lam viec hybrid|hybrid model|remote and office|ket hop van phong
+Giờ làm linh hoạt,Flexible working hours,Cách làm việc & thời gian làm việc,Work Arrangement,flexible hours|flexible working|flexi.?time|flextime|gio lam linh hoat|thoi gian linh hoat|linh dong thoi gian
+Không làm thêm giờ (No OT),No overtime,Cách làm việc & thời gian làm việc,Work Arrangement,no overtime|no ot|khong ot|khong tang ca|rare overtime|it tang ca
+Làm việc 5 ngày/tuần,Five working days,Cách làm việc & thời gian làm việc,Work Arrangement,5 days.?week|five days.?week|5 ngay.?tuan|lam viec 5 ngay|monday to friday|thu 2 den thu 6|weekends off|nghi thu 7 chu nhat
+Cân bằng công việc & cuộc sống,Work life balance,Cách làm việc & thời gian làm việc,Work Arrangement,work.?life balance|can bang cong viec|can bang cuoc song|healthy work life
+Trang phục tự do,Casual dress code,Cách làm việc & thời gian làm việc,Work Arrangement,casual dress|dress code thoai mai|trang phuc tu do|an mac tu do|no dress code|smart casual
+Cấp MacBook / Laptop High-end,High-end Work Equipment,Văn phòng & thiết bị,Workspace & Equipment,macbook|high-end laptop|may tinh cau hinh cao|laptop ca nhan|macbook pro|apple m1|apple m2
+Cấp màn hình rời,External monitor,Văn phòng & thiết bị,Workspace & Equipment,external monitor|dual monitor|man hinh roi|man hinh thu 2|cap man hinh
+Phần mềm bản quyền,Licensed software,Văn phòng & thiết bị,Workspace & Equipment,licensed software|ban quyen phan mem|github copilot|jetbrains|office 365|chatgpt plus
+Văn phòng hiện đại / Hạng A,Premium modern office,Văn phòng & thiết bị,Workspace & Equipment,modern office|van phong hien dai|van phong hang a|creative office|van phong xanh
+Văn phòng mang thú cưng (Pet-friendly),Pet-friendly office,Văn phòng & thiết bị,Workspace & Equipment,pet friendly|pet-friendly|mang thu cung|van phong cho phep mang cho meo
+Đồ ăn vặt & Đồ uống miễn phí,Free snacks and drinks,Văn phòng & thiết bị,Workspace & Equipment,pantry|snack|snacks|do an nhe|free snack|free drinks|tra ca phe|ca phe mien phi|nuoc uong mien phi|tra sua|bim bim|trai cay
+Phòng ngủ trưa & Nghỉ ngơi,Nap and Rest room,Văn phòng & thiết bị,Workspace & Equipment,rest area|nap room|relax room|khu nghi ngoi|phong nghi|khu thu gian|sleeping room|phong ngu trua
+Phòng vắt sữa (Mother's room),Mother's room,Văn phòng & thiết bị,Workspace & Equipment,mother room|phong vat sua|phong cho me bỉm|nursing room
+Khu vui chơi (PS5 / Billiard),Game and entertainment room,Văn phòng & thiết bị,Workspace & Equipment,game room|entertainment room|phong game|khu giai tri|ps5|foosball|billiard|board game|nintendo
+Cơm trưa miễn phí,Catered meals,Văn phòng & thiết bị,Workspace & Equipment,catered lunch|company meal|free meal|bua an cong ty|an trua mien phi|com trua mien phi|canteen|nha an
+Tài trợ khóa học (Udemy / Coursera),Online course sponsorship,Học tập & phát triển,Learning & Development,udemy|coursera|pluralsight|tai tro khoa hoc|mua khoa hoc|online course
+Tài trợ chứng chỉ chuyên môn,Professional certification sponsorship,Học tập & phát triển,Learning & Development,certification|thi chung chi|tai tro chung chi|certificate fee|aws certification|microsoft certification|pmp
+Đào tạo nội bộ & On-the-job,Internal training,Học tập & phát triển,Learning & Development,internal training|dao tao noi bo|training program|on-the-job training|\bojt\b|nhap mon|onboarding
+Lớp học ngoại ngữ miễn phí,Free language classes,Học tập & phát triển,Learning & Development,language training|english class|japanese class|dao tao ngoai ngu|hoc tieng anh|lop tieng anh|lop tieng nhat
+Ngân sách mua sách,Book allowance,Học tập & phát triển,Learning & Development,book allowance|thu vien|library|mua sach|doc sach|kindle|sach chuyen nganh
+Tài trợ dự hội thảo,Conference sponsorship,Học tập & phát triển,Learning & Development,conference|seminar|workshop|hoi thao|hoi nghi|tech talk|meetup|event ticket
+Mentorship / Coaching,Mentoring and coaching,Học tập & phát triển,Learning & Development,mentoring|mentor|coaching|coach|huong dan|nguoi huong dan|buddy program
+Lộ trình thăng tiến rõ ràng,Clear career path,Học tập & phát triển,Learning & Development,career path|career development|lo trinh nghe nghiep|lo trinh phat trien|phat trien su nghiep|co hoi thang tien
+Ngân sách Team bonding,Team bonding budget,Văn hóa & môi trường,Culture & Environment,team bonding budget|ngan sach team building|quy an choi|quy team|team fund
+Team building & Du lịch công ty,Company trip and team building,Văn hóa & môi trường,Culture & Environment,team building|teambuilding|team outing|company trip|annual trip|du lich cong ty|nghi mat|retreat
+Tiệc cuối năm (YEP),Year End Party,Văn hóa & môi trường,Culture & Environment,company party|year end party|\byep\b|new year party|tiec cuoi nam|tiec tat nien
+Happy Hour & TGIF,Happy hour,Văn hóa & môi trường,Culture & Environment,happy hour|beer day|friday beer|tea break|coffee talk|an uong hang tuan|tgif
+Môi trường quốc tế,Global environment,Văn hóa & môi trường,Culture & Environment,international environment|global environment|lam viec quoc te|du an quoc te|khach hang quoc te|onsite overseas|global team
+Cấu trúc phẳng (Mở & Trao quyền),Flat organization,Văn hóa & môi trường,Culture & Environment,open culture|flat organization|flat structure|it cap bac|trao quyen|van hoa coi mo|open-minded
+Đa dạng và hòa nhập (DEI),Diversity and inclusion,Văn hóa & môi trường,Culture & Environment,diversity|inclusion|inclusive|\bdei\b|d&i|da dang hoa nhap|binh dang|equal opportunity
+Hỗ trợ nuôi con nhỏ,Childcare support,Gia đình & đời sống,Family & Life Support,childcare|child care|daycare|ho tro cham soc con|giu tre|nha tre|childcare allowance|phu cap nuoi con
+Hỗ trợ học phí cho con,Tuition support for kids,Gia đình & đời sống,Family & Life Support,tuition support|education assistance|ho tro hoc phi|hoc phi cho con|scholarship for children
+Quà tặng gia đình & trẻ em,Gifts for kids and family,Gia đình & đời sống,Family & Life Support,children gift|qua cho con|qua thieu nhi|quoc te thieu nhi|1/6|qua trung thu cho con
+Hỗ trợ di dời (Relocation package),Relocation package,Gia đình & đời sống,Family & Life Support,relocation support|relocation package|ho tro relocation|ho tro chuyen noi o|ho tro di doi|moving allowance
+Tài trợ Visa / Work Permit,Visa and work permit support,Gia đình & đời sống,Family & Life Support,visa support|work permit|giay phep lao dong|ho tro visa|visa sponsorship|the tam tru
+Thử việc 100% lương,100% salary during probation,Pháp lý & tuân thủ lao động,Statutory & Compliance,probation 100|100% salary during probation|thu viec 100% luong|thu viec huong 100|100 luong

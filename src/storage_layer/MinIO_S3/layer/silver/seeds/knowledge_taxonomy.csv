@@ -1,0 +1,147 @@
+canonical_vi,canonical_en,parent_vi,parent_en,keywords
+Business Intelligence,Business Intelligence,BI & Trực quan hóa,BI & Visualization,business intelligence|\bbi tools?\b|\bbi developer\b|\bbi engineer\b|\bbi analyst\b|\bbi report\b|\bbi dashboard\b|tri tue kinh doanh
+A/B Testing,A/B Testing,Thống kê & Toán học,Statistics & Math,a/b test|a-b test|ab testing|split test|kiem dinh a b
+Hypothesis Testing,Hypothesis Testing,Thống kê & Toán học,Statistics & Math,hypothesis test|kiem dinh gia thuyet|t-test|t test|chi-square|chi square|anova|z-test
+Regression,Regression,Thống kê & Toán học,Statistics & Math,\bregression\b|hoi quy|linear regression|logistic regression|hoi quy tuyen tinh|hoi quy logistic|ridge regression|lasso regression
+Bayesian,Bayesian,Thống kê & Toán học,Statistics & Math,bayesian|\bbayes\b|bayesian inference|naive bayes
+Time Series,Time Series,Thống kê & Toán học,Statistics & Math,time series|chuoi thoi gian|arima|sarima|prophet|exponential smoothing|forecasting|du bao
+Causal Inference,Causal Inference,Thống kê & Toán học,Statistics & Math,causal inference|nhan qua|difference-in-differences|\bdid\b|propensity score|instrumental variable
+Linear Algebra,Linear Algebra,Thống kê & Toán học,Statistics & Math,linear algebra|dai so tuyen tinh|matrix algebra|eigenvalue|eigenvector
+Calculus,Calculus,Thống kê & Toán học,Statistics & Math,calculus|giai tich|derivative|gradient calculus
+Statistics,Statistics,Thống kê & Toán học,Statistics & Math,statistics|thong ke|descriptive statistics|inferential statistics|thong ke mo ta|thong ke suy luan
+Probability,Probability,Thống kê & Toán học,Statistics & Math,probability|xac suat|probability distribution|phan phoi xac suat
+Optimization,Optimization,Thống kê & Toán học,Statistics & Math,optimization|toi uu hoa|gradient descent|stochastic gradient|convex optimization
+SHAP,SHAP,Thống kê & Toán học,Statistics & Math,\bshap\b|shapley|explainable ai|\bxai\b|model interpretability
+Feature Engineering,Feature Engineering,Thống kê & Toán học,Statistics & Math,feature engineering|tao dac trung|feature selection|feature extraction
+Model Evaluation,Model Evaluation,Thống kê & Toán học,Statistics & Math,model evaluation|\bauc-?roc\b|\bauc-?pr\b|\brmse\b|\bmae\b|cross validation|cross-validation|precision|recall|f1[ -]?score|roc curve|confusion matrix|danh gia mo hinh
+Dimensionality Reduction,Dimensionality Reduction,Thống kê & Toán học,Statistics & Math,dimensionality reduction|\bpca\b|\bt-sne\b|umap|principal component|giam chieu
+Random Forest,Random Forest,Học máy cổ điển,Classical ML,random forest|rung ngau nhien
+Gradient Boosting,Gradient Boosting,Học máy cổ điển,Classical ML,gradient boosting|\bgbm\b|\bgbdt\b
+SVM,SVM,Học máy cổ điển,Classical ML,\bsvm\b|support vector machine
+Clustering,Clustering,Học máy cổ điển,Classical ML,clustering|phan cum|kmeans|k-means|dbscan|hierarchical clustering
+Recommendation Systems,Recommendation Systems,Học máy cổ điển,Classical ML,recommendation system|recommender system|he goi y|collaborative filtering|content-based filtering
+Machine Learning,Machine Learning,Học máy cổ điển,Classical ML,machine learning|hoc may|\bml\b|supervised learning|unsupervised learning|\bml model\b|\bml pipeline\b
+Ensemble Learning,Ensemble Learning,Học máy cổ điển,Classical ML,ensemble learning|\bbagging\b|stacking|ensemble model
+CNN,CNN,Học sâu,Deep Learning,\bcnn\b|convolutional neural network|mang no ron tich chap
+RNN,RNN,Học sâu,Deep Learning,\brnn\b|recurrent neural network
+LSTM,LSTM,Học sâu,Deep Learning,\blstm\b|long short.term memory|\bgru\b
+Transformer,Transformer,Học sâu,Deep Learning,\btransformer\b|\btransformers\b|attention mechanism|self-attention|multi-head attention
+GAN,GAN,Học sâu,Deep Learning,\bgan\b|generative adversarial network|stylegan
+VAE,VAE,Học sâu,Deep Learning,\bvae\b|variational autoencoder
+Autoencoder,Autoencoder,Học sâu,Deep Learning,autoencoder|auto encoder
+Deep Learning,Deep Learning,Học sâu,Deep Learning,deep learning|hoc sau|neural network|mang no ron|\bdnn\b
+Reinforcement Learning,Reinforcement Learning,Học sâu,Deep Learning,reinforcement learning|hoc tang cuong|\brl\b|q-learning|policy gradient
+Tokenization,Tokenization,NLP,NLP,tokenization|tokenizer|\bbpe\b|wordpiece|sentencepiece|byte-pair encoding
+NER,NER,NLP,NLP,\bner\b|named entity recognition|nhan dien thuc the
+Sentiment Analysis,Sentiment Analysis,NLP,NLP,sentiment analysis|phan tich cam xuc|opinion mining
+Topic Modeling,Topic Modeling,NLP,NLP,topic modeling|\blda\b|latent dirichlet
+Text Classification,Text Classification,NLP,NLP,text classification|phan loai van ban|document classification
+NLP,NLP,NLP,NLP,\bnlp\b|natural language processing|xu ly ngon ngu tu nhien
+Image Classification,Image Classification,Tầm nhìn máy tính,Computer Vision,image classification|phan loai anh|phan loai hinh anh
+Object Detection,Object Detection,Tầm nhìn máy tính,Computer Vision,object detection|phat hien doi tuong|nhan dien doi tuong|nhan dien vat the
+Image Segmentation,Image Segmentation,Tầm nhìn máy tính,Computer Vision,image segmentation|phan doan anh|semantic segmentation|instance segmentation|panoptic segmentation
+3D Vision,3D Vision,Tầm nhìn máy tính,Computer Vision,3d vision|point cloud|depth estimation|\bnerf\b|gaussian splatting
+Action Recognition,Action Recognition,Tầm nhìn máy tính,Computer Vision,action recognition|nhan dien hanh dong|video analysis|video understanding
+OCR,OCR,Tầm nhìn máy tính,Computer Vision,\bocr\b|optical character recognition|tesseract|paddleocr|easyocr|nhan dien ky tu
+Computer Vision,Computer Vision,Tầm nhìn máy tính,Computer Vision,computer vision|thi giac may tinh|tam nhin may tinh
+Prompt Engineering,Prompt Engineering,AI tạo sinh & LLM,GenAI & LLM Apps,prompt engineering|ky thuat prompt|prompting|few-shot|zero-shot|chain of thought|chain-of-thought|\bcot prompting\b
+RAG,RAG,AI tạo sinh & LLM,GenAI & LLM Apps,\brag\b|retrieval augmented|retrieval-augmented generation|agentic rag|graph rag|hybrid rag
+AI Agent,AI Agent,AI tạo sinh & LLM,GenAI & LLM Apps,\bai agent\b|agentic|multi-agent|agent orchestration|react agent|reasoning agent|autonomous agent
+Tool Use,Tool Use,AI tạo sinh & LLM,GenAI & LLM Apps,tool calling|function calling|tool use|tool invocation
+MCP,MCP,AI tạo sinh & LLM,GenAI & LLM Apps,\bmcp\b|model context protocol
+Structured Output,Structured Output,AI tạo sinh & LLM,GenAI & LLM Apps,structured output|json mode|json schema output|pydantic output
+LLM,LLM,AI tạo sinh & LLM,GenAI & LLM Apps,\bllm\b|large language model|mo hinh ngon ngu lon|gen ai|generative ai|\bgenai\b|ai tao sinh
+Multimodal,Multimodal,AI tạo sinh & LLM,GenAI & LLM Apps,multimodal|multi-modal|da phuong thuc|vision language model|\bvlm\b
+Knowledge Graph,Knowledge Graph,AI tạo sinh & LLM,GenAI & LLM Apps,knowledge graph|do thi tri thuc|kg-rag
+Vector Database,Vector Database,CSDL Vector & Embedding,Vector DB & Embeddings,vector database|vector db|vector store|csdl vector|co so du lieu vector
+Text Embeddings,Text Embeddings,CSDL Vector & Embedding,Vector DB & Embeddings,\bembedding\b|embeddings|text embedding|word embedding|word2vec|\bglove\b|\bbge\b|bge-m3|voyage ai|cohere embed|text-embedding-3|text-embedding-ada
+Semantic Search,Semantic Search,CSDL Vector & Embedding,Vector DB & Embeddings,similarity search|semantic search|tim kiem ngu nghia|\bknn search\b|nearest neighbor
+Hybrid Search,Hybrid Search,CSDL Vector & Embedding,Vector DB & Embeddings,hybrid search|tim kiem ket hop|\bbm25\b|reciprocal rank fusion|\brrf\b
+Reranker,Reranker,CSDL Vector & Embedding,Vector DB & Embeddings,reranker|re-ranker|reranking|re-ranking|cohere rerank|bge reranker|cross-encoder
+Chunking,Chunking,CSDL Vector & Embedding,Vector DB & Embeddings,chunking|chunk strategy|semantic chunking|document chunking
+LoRA,LoRA,Fine-tuning & LLMOps,Fine-tuning & LLMOps,\blora\b|low-rank adaptation
+QLoRA,QLoRA,Fine-tuning & LLMOps,Fine-tuning & LLMOps,\bqlora\b
+PEFT,PEFT,Fine-tuning & LLMOps,Fine-tuning & LLMOps,\bpeft\b|parameter efficient|parameter-efficient fine-tuning
+DPO,DPO,Fine-tuning & LLMOps,Fine-tuning & LLMOps,\bdpo\b|direct preference optimization
+RLHF,RLHF,Fine-tuning & LLMOps,Fine-tuning & LLMOps,\brlhf\b|reinforcement learning from human|reinforcement learning with human|\bppo\b
+SFT,SFT,Fine-tuning & LLMOps,Fine-tuning & LLMOps,\bsft\b|supervised fine.tuning
+Fine-tuning,Fine-tuning,Fine-tuning & LLMOps,Fine-tuning & LLMOps,fine.tuning|fine-tune|fine tune|tinh chinh mo hinh|model fine tuning
+ETL/ELT,ETL/ELT,ETL & Điều phối,ETL & Orchestration,\betl\b|extract.transform.load|trich xuat chuyen doi|\belt\b
+CDC,CDC,ETL & Điều phối,ETL & Orchestration,\bcdc\b|change data capture|debezium
+Streaming,Streaming,ETL & Điều phối,ETL & Orchestration,stream processing|real.time processing|streaming data|streaming pipeline|xu ly stream
+Data Pipeline,Data Pipeline,ETL & Điều phối,ETL & Orchestration,data pipeline|pipeline du lieu|data engineering pipeline
+Star Schema,Star Schema,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,star schema|so do hinh sao
+Snowflake Schema,Snowflake Schema,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,snowflake schema|so do bong tuyet
+Data Modeling,Data Modeling,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,data modeling|mo hinh hoa du lieu|dimensional modeling|\bkimball\b|\binmon\b|dim table|fact table|\bscd\b
+Medallion Architecture,Medallion Architecture,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,medallion|bronze silver gold|kien truc medallion
+Data Vault,Data Vault,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,data vault|datavault
+Data Warehouse,Data Warehouse,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,data warehouse|\bdwh\b|kho du lieu
+Data Lake / Lakehouse,Data Lake / Lakehouse,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,data lake|ho du lieu|data lakehouse|lakehouse
+OLAP,OLAP,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,\bolap\b|online analytical processing
+OLTP,OLTP,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,\boltp\b|online transaction processing
+NoSQL,NoSQL,CSDL vận hành,Operational Databases,nosql|no.sql
+Time Series Database,Time Series Database,CSDL vận hành,Operational Databases,time series database|\btsdb\b|influxdb|timescale|timescaledb
+CI/CD,CI/CD,MLOps & DevOps,MLOps & DevOps,ci/cd|ci.cd|continuous integration|continuous deployment|continuous delivery
+Testing,Testing,MLOps & DevOps,MLOps & DevOps,pytest|py test|unit test|integration test|kiem thu|test framework
+MLOps,MLOps,MLOps & DevOps,MLOps & DevOps,\bmlops\b|machine learning ops|llmops|\bllmops\b|model deployment|model serving|model monitoring
+Analytics Engineering,Analytics Engineering,Kỹ thuật phân tích,Analytics Engineering,analytics engineering|analytics engineer|ky thuat phan tich|dbt model|semantic model
+Data Engineering,Data Engineering,Kỹ thuật dữ liệu,Data Engineering,data engineering|ky thuat du lieu|data engineer|data platform engineer
+Data Analytics,Data Analytics,Phân tích dữ liệu,Data Analytics,data analytics|phan tich du lieu|data analyst|business analyst data
+Data Science,Data Science,Khoa học dữ liệu,Data Science,data science|khoa hoc du lieu|data scientist
+Data Governance,Data Governance,Quản trị dữ liệu,Data Governance,data governance|quan tri du lieu|data policy|data ownership
+Data Stewardship,Data Stewardship,Quản trị dữ liệu,Data Governance,data steward|data stewardship|chu quan du lieu|data owner
+Data Quality,Data Quality,Chất lượng dữ liệu,Data Quality,data quality|chat luong du lieu|data quality rule|dq rule
+Data Observability,Data Observability,Chất lượng dữ liệu,Data Quality,data observability|data monitoring|giam sat du lieu|data incident
+Data Lineage,Data Lineage,Quản trị dữ liệu,Data Governance,data lineage|lineage graph|nguon goc du lieu|impact analysis
+Metadata Management,Metadata Management,Quản trị dữ liệu,Data Governance,metadata management|quan ly metadata|business metadata|technical metadata
+Data Catalog,Data Catalog,Quản trị dữ liệu,Data Governance,data catalog|catalog du lieu|data discovery|dataset catalog
+Master Data Management,Master Data Management,Quản trị dữ liệu,Data Governance,master data management|\bmdm\b|du lieu chu|master data
+Data Privacy,Data Privacy,Quản trị dữ liệu,Data Governance,data privacy|bao mat rieng tu du lieu|gdpr|pdpa|pii|personal data
+Data Security,Data Security,Quản trị dữ liệu,Data Governance,data security|bao mat du lieu|row level security|column level security|data masking
+Data Contracts,Data Contracts,Quản trị dữ liệu,Data Governance,data contract|data contracts|schema contract|producer consumer contract
+Data Mesh,Data Mesh,Kiến trúc dữ liệu,Data Architecture,data mesh|domain data product|federated governance
+Data Fabric,Data Fabric,Kiến trúc dữ liệu,Data Architecture,data fabric|metadata driven data|unified data fabric
+Data Product,Data Product,Kiến trúc dữ liệu,Data Architecture,data product|san pham du lieu|data as a product
+Data Architecture,Data Architecture,Kiến trúc dữ liệu,Data Architecture,data architecture|kien truc du lieu|data architect|solution architecture data
+Data Platform,Data Platform,Kiến trúc dữ liệu,Data Architecture,data platform|nen tang du lieu|platform data|self-service data platform
+Data Ingestion,Data Ingestion,ETL & Điều phối,ETL & Orchestration,data ingestion|nap du lieu|ingest data|source ingestion
+Data Transformation,Data Transformation,ETL & Điều phối,ETL & Orchestration,data transformation|bien doi du lieu|transform data|transformation logic
+Data Cleaning,Data Cleaning,Chất lượng dữ liệu,Data Quality,data cleaning|lam sach du lieu|clean data|data cleansing
+Data Wrangling,Data Wrangling,Chất lượng dữ liệu,Data Quality,data wrangling|data munging|xu ly du lieu tho|prepare data
+Data Profiling,Data Profiling,Chất lượng dữ liệu,Data Quality,data profiling|profile data|phan tich ho so du lieu|column profiling
+Data Validation,Data Validation,Chất lượng dữ liệu,Data Quality,data validation|validate data|kiem tra du lieu|schema validation
+Schema Evolution,Schema Evolution,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,schema evolution|schema change|schema migration|evolve schema
+Data Mart,Data Mart,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,data mart|mart du lieu|department mart|subject area mart
+Semantic Layer,Semantic Layer,BI & Trực quan hóa,BI & Visualization,semantic layer|semantic model|business semantic layer|metrics layer
+Metrics Layer,Metrics Layer,BI & Trực quan hóa,BI & Visualization,metrics layer|metric store|metric definition|metric governance
+KPI Design,KPI Design,BI & Trực quan hóa,BI & Visualization,kpi design|metric design|thiet ke kpi|business metrics|north star metric
+Dashboard Design,Dashboard Design,BI & Trực quan hóa,BI & Visualization,dashboard design|thiet ke dashboard|dashboarding|report design
+Data Storytelling,Data Storytelling,BI & Trực quan hóa,BI & Visualization,data storytelling|ke chuyen bang du lieu|insight storytelling|storytelling with data
+Exploratory Data Analysis,Exploratory Data Analysis,Phân tích dữ liệu,Data Analytics,exploratory data analysis|\beda\b|phan tich kham pha du lieu
+Cohort Analysis,Cohort Analysis,Phân tích dữ liệu,Data Analytics,cohort analysis|phan tich cohort|retention cohort|cohort retention
+Funnel Analysis,Funnel Analysis,Phân tích dữ liệu,Data Analytics,funnel analysis|phan tich funnel|conversion funnel|sales funnel
+Retention Analysis,Retention Analysis,Phân tích dữ liệu,Data Analytics,retention analysis|phan tich giu chan|user retention|customer retention
+Experiment Design,Experiment Design,Thống kê & Toán học,Statistics & Math,experiment design|experimental design|thiet ke thi nghiem|randomized experiment
+Classification,Classification,Học máy cổ điển,Classical ML,classification|phan lop|binary classification|multi-class classification|multiclass classification
+Decision Tree,Decision Tree,Học máy cổ điển,Classical ML,decision tree|cay quyet dinh|classification tree|regression tree
+kNN,kNN,Học máy cổ điển,Classical ML,\bknn\b|k-nearest neighbors|nearest neighbors
+Naive Bayes,Naive Bayes,Học máy cổ điển,Classical ML,naive bayes|bayes classifier
+Anomaly Detection,Anomaly Detection,Học máy cổ điển,Classical ML,anomaly detection|outlier detection|phat hien bat thuong|phat hien ngoai le
+Association Rule Mining,Association Rule Mining,Học máy cổ điển,Classical ML,association rule|association rules|apriori|fp-growth|fp growth
+Market Basket Analysis,Market Basket Analysis,Học máy cổ điển,Classical ML,market basket analysis|basket analysis|phan tich gio hang
+Survival Analysis,Survival Analysis,Thống kê & Toán học,Statistics & Math,survival analysis|cox regression|kaplan meier|time to event
+Uplift Modeling,Uplift Modeling,Thống kê & Toán học,Statistics & Math,uplift modeling|uplift model|incrementality|treatment effect model
+Feature Store,Feature Store,MLOps & DevOps,MLOps & DevOps,feature store|kho dac trung|offline feature|online feature
+Model Registry,Model Registry,MLOps & DevOps,MLOps & DevOps,model registry|dang ky mo hinh|registered model|model versioning
+Model Monitoring,Model Monitoring,MLOps & DevOps,MLOps & DevOps,model monitoring|giam sat mo hinh|model performance monitoring
+Model Serving,Model Serving,MLOps & DevOps,MLOps & DevOps,model serving|serve model|trien khai mo hinh|inference service
+Data Drift,Data Drift,MLOps & DevOps,MLOps & DevOps,data drift|drift du lieu|feature drift|distribution drift
+Concept Drift,Concept Drift,MLOps & DevOps,MLOps & DevOps,concept drift|drift khai niem|target drift|model drift
+Data Labeling,Data Labeling,MLOps & DevOps,MLOps & DevOps,data labeling|label data|gan nhan du lieu|annotation
+Active Learning,Active Learning,MLOps & DevOps,MLOps & DevOps,active learning|hoc chu dong|human in the loop labeling
+Human-in-the-loop,Human-in-the-loop,MLOps & DevOps,MLOps & DevOps,human-in-the-loop|human in the loop|hitl|human feedback
+Query Optimization,Query Optimization,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,query optimization|toi uu truy van|sql optimization|query tuning
+SQL Performance Tuning,SQL Performance Tuning,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,sql performance tuning|sql tuning|index tuning|partition pruning
+Batch Processing,Batch Processing,ETL & Điều phối,ETL & Orchestration,batch processing|xu ly batch|batch pipeline|batch job
+Real-time Analytics,Real-time Analytics,ETL & Điều phối,ETL & Orchestration,real-time analytics|realtime analytics|phan tich thoi gian thuc|near real-time
+Event-driven Architecture,Event-driven Architecture,ETL & Điều phối,ETL & Orchestration,event-driven architecture|event driven|event streaming|event sourcing

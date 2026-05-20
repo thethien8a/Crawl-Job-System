@@ -1,0 +1,33 @@
+canonical_vi,canonical_en,parent_vi,parent_en,keywords
+Python,Python,Ngôn ngữ lập trình,Programming Languages,python|\bpy3?\b|python3
+SQL,SQL,Ngôn ngữ lập trình,Programming Languages,\bsql\b|t-sql|tsql|pl/sql|plsql|ansi sql|spark sql|bigquery sql|postgres sql|mysql sql
+R Language,R Language,Ngôn ngữ lập trình,Programming Languages,\br language|programming r|ngon ngu r
+Scala,Scala,Ngôn ngữ lập trình,Programming Languages,scala
+Java,Java,Ngôn ngữ lập trình,Programming Languages,\bjava\b
+C++,C++,Ngôn ngữ lập trình,Programming Languages,c\+\+|\bcpp\b
+C#,C#,Ngôn ngữ lập trình,Programming Languages,c#|c sharp|\bcsharp\b|\.net|dotnet
+Go,Go,Ngôn ngữ lập trình,Programming Languages,golang|\bgo lang\b|\bgo programming\b|\bgo dev\b
+Julia,Julia,Ngôn ngữ lập trình,Programming Languages,\bjulia\b
+JavaScript,JavaScript,Ngôn ngữ lập trình,Programming Languages,javascript|\bjs\b|node\.js|nodejs|node js
+TypeScript,TypeScript,Ngôn ngữ lập trình,Programming Languages,typescript|\bts\b
+Shell/Bash,Shell/Bash,Ngôn ngữ lập trình,Programming Languages,\bbash\b|\bshell\b|shell script|\bzsh\b|powershell|shell scripting
+Rust,Rust,Ngôn ngữ lập trình,Programming Languages,\brust\b|rustlang
+MATLAB,MATLAB,Ngôn ngữ lập trình,Programming Languages,matlab
+SAS,SAS,Ngôn ngữ lập trình,Programming Languages,\bsas\b|sas language|sas programming
+Kotlin,Kotlin,Ngôn ngữ lập trình,Programming Languages,kotlin
+VBA,VBA,Ngôn ngữ lập trình,Programming Languages,\bvba\b|visual basic
+PHP,PHP,Ngôn ngữ lập trình,Programming Languages,php
+Ruby,Ruby,Ngôn ngữ lập trình,Programming Languages,ruby
+Swift,Swift,Ngôn ngữ lập trình,Programming Languages,swift
+Perl,Perl,Ngôn ngữ lập trình,Programming Languages,perl
+Lua,Lua,Ngôn ngữ lập trình,Programming Languages,lua
+M Query,M Query,Ngôn ngữ truy vấn dữ liệu,Data Query Languages,power query|m query|power query m|m language
+DAX,DAX,Ngôn ngữ truy vấn dữ liệu,Data Query Languages,\bdax\b|data analysis expressions
+MDX,MDX,Ngôn ngữ truy vấn dữ liệu,Data Query Languages,\bmdx\b|multidimensional expressions
+Cypher,Cypher,Ngôn ngữ truy vấn dữ liệu,Data Query Languages,cypher|neo4j cypher
+SPARQL,SPARQL,Ngôn ngữ truy vấn dữ liệu,Data Query Languages,sparql|rdf query
+Gremlin,Gremlin,Ngôn ngữ truy vấn dữ liệu,Data Query Languages,gremlin|tinkerpop
+GraphQL,GraphQL,Ngôn ngữ truy vấn dữ liệu,Data Query Languages,graphql|graph query language
+Jinja,Jinja,Ngôn ngữ template dữ liệu,Data Template Languages,jinja|jinja2|dbt jinja
+Pig Latin,Pig Latin,Ngôn ngữ xử lý dữ liệu,Data Processing Languages,pig latin|apache pig
+PromQL,PromQL,Ngôn ngữ truy vấn giám sát,Monitoring Query Languages,promql|prometheus query language
