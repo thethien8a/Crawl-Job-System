@@ -1,8 +1,8 @@
 from __future__ import annotations
-
 import polars as pl
 from src.storage_layer.MinIO_S3.layer.silver.utils.clean_text import clean_text
 from src.storage_layer.MinIO_S3.layer.silver.utils.normalize_data import remove_vietnamese_accents
+from src.storage_layer.MinIO_S3.layer.silver.utils.config_loader import read_seeds
 
 
 def _build_label_exprs(
@@ -67,3 +67,7 @@ def apply_benefit_cleaning(
     return df.with_columns(
         pl.concat_list(vi_exprs).list.drop_nulls().list.unique().alias("benefits_categories_vi"),
     ).drop("_benefits_norm")
+
+def main_clean_benefit(df: pl.DataFrame, column_name: str = "benefits", extra_noise_patterns: list[str] | None = None):
+    benefits_taxonomy = read_seeds("benefit_taxonomy.csv")
+    return apply_benefit_cleaning(df, benefits_taxonomy, column_name, extra_noise_patterns)
