@@ -1,6 +1,10 @@
 import polars as pl
 import unicodedata
 
+from src.storage_layer.MinIO_S3.layer.silver.cleaning.common.map_company_name import (
+    map_canonical_company,
+)
+
 def normalize_unicode(df: pl.DataFrame, column_name: str) -> pl.DataFrame:
     # Vietnamese có 2 dạng tổ hợp dấu (NFC vs NFD); chuẩn hoá để dedup hoạt động chính xác
     return df.with_columns(
@@ -55,3 +59,22 @@ def clean_2(df: pl.DataFrame, column_name: str = "company_name") -> pl.DataFrame
         .str.strip_chars()
         .alias(column_name)
     )
+
+
+def main_clean_company(df: pl.DataFrame, column_name: str = "company_name") -> pl.DataFrame:
+    """Run the full company-name cleaning chain in the only correct order.
+
+    NFC -> clean_2 (strip URLs, "(SHB)"-style bracketed text, special chars
+    while keeping case) -> clean_1 (strip legal forms + uppercase) ->
+    map_canonical_company (exact-join with the seed mapping to add
+    `company_name_canonical` + `is_mapped`).
+
+    `clean_2` must run BEFORE `clean_1` so bracketed text is dropped while
+    the parentheses are still intact; otherwise `clean_1` strips just the
+    parens and leaves the inner text behind.
+    """
+    df = normalize_unicode(df, column_name)
+    df = clean_2(df, column_name)
+    df = clean_1(df, column_name, new_column_name=column_name)
+    df = map_canonical_company(df, source_col=column_name)
+    return df
