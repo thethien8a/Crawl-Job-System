@@ -82,7 +82,7 @@ def apply_requirement_cleaning(
 
     return df.with_columns(new_columns).drop("_requirements_norm")
 
-def main(df: pl.DataFrame, extra_noise_patterns: list[str] | None = None):
+def main_clean_requirement(df: pl.DataFrame, extra_noise_patterns: list[str] | None = None):
     # Build taxonomies dict from seed CSV files
     taxonomies = {
         "program_lang": read_seeds("program_lang_taxonomy.csv"),
