@@ -1,5 +1,9 @@
 import polars as pl
+import logging
 from src.storage_layer.MinIO_S3.layer.silver.cleaning.common.clean_benefit import main_clean_benefit
+
+logging.basicConfig(level=logging.INFO, format="%(message)s")
+logger = logging.getLogger(__name__)
 
 benefits = pl.DataFrame([
     {
@@ -59,9 +63,9 @@ benefits = pl.DataFrame([
     },
 ])
 
-print("=== Raw benefits ===")
-print(benefits)
+logger.info("=== Raw benefits ===")
+logger.info(benefits)
 
 df = main_clean_benefit(benefits)
-print("\n=== Cleaned benefits ===")
-print(df)
+logger.info("\n=== Cleaned benefits ===")
+logger.info(df)

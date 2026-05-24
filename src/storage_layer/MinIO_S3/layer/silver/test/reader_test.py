@@ -4,6 +4,10 @@ from src.storage_layer.MinIO_S3.layer.silver.cleaning.clean_itviec.clean_benefit
     _ITVIEC_NOISE_PATTERNS,
 )
 import polars as pl
+import logging
+
+logging.basicConfig(level=logging.INFO, format="%(message)s")
+logger = logging.getLogger(__name__)
 
 df = get_jobs_data_from_bronze("itviec", "jobs", "2026-05-14", "2026-05-14")
 
@@ -14,4 +18,4 @@ result = apply_benefit_cleaning(
     taxonomy_df,
     extra_noise_patterns=_ITVIEC_NOISE_PATTERNS,
 )
-print(result.filter(pl.col("benefits_categories_vi").list.len() == 0).select("job_url").sink_csv("ket_qua.csv"))
+logger.info(result.filter(pl.col("benefits_categories_vi").list.len() == 0).select("job_url").sink_csv("ket_qua.csv"))
