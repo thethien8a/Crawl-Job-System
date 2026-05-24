@@ -39,8 +39,8 @@ class BronzeBucketPaths:
 
 
 class SilverBucketPaths:
-    def __init__(self, source_name: str, entity_name: str = "jobs", year: str = "*", month: str = "*", day: str = "*"):
-        self.source_name = source_name
+    def __init__(self, source_site: str, entity_name: str = "jobs", year: str = "*", month: str = "*", day: str = "*"):
+        self.source_site = source_site
         self.entity_name = entity_name
         self.year = year
         self.month = month
@@ -55,13 +55,21 @@ class SilverBucketPaths:
         """
         Generate dynamic S3 prefix for Silver layer folder with date (without bucket name and schema).
         """
-        return f"{self.source_name}/{self.entity_name}/year={self.year}/month={self.month}/day={self.day}/"
+        return f"{self.entity_name}/source_site={self.source_site}/year={self.year}/month={self.month}/day={self.day}/"
 
     def get_folder_date_path(self) -> str:
-        return f"s3://{self.silver_bucket_name}/{self.source_name}/{self.entity_name}/year={self.year}/month={self.month}/day={self.day}/"
+        return f"s3://{self.silver_bucket_name}/{self.entity_name}/source_site={self.source_site}/year={self.year}/month={self.month}/day={self.day}/"
 
     def get_files_path_parquet(self) -> str:
         """
-        Silver dùng parquet (columnar, schema-aware) thay vì jsonl.gz để query nhanh hơn ở downstream.
+        Silver uses parquet (columnar, schema-aware) instead of jsonl.gz for faster downstream queries.
         """
-        return f"s3://{self.silver_bucket_name}/{self.source_name}/{self.entity_name}/year={self.year}/month={self.month}/day={self.day}/*.parquet"
+        return f"s3://{self.silver_bucket_name}/{self.entity_name}/source_site={self.source_site}/year={self.year}/month={self.month}/day={self.day}/*.parquet"
+
+    def get_file_key(self, timestamp: str) -> str:
+        """
+        Full S3 object key for a specific cleaned parquet file.
+        {entity_name}/source_site={source_site}/year=.../month=.../day=.../clean_bronze_{timestamp}.parquet
+        """
+        prefix = self.get_prefix()
+        return f"{prefix}clean_bronze_{timestamp}.parquet"

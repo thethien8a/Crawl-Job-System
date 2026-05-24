@@ -10,10 +10,14 @@ from __future__ import annotations
 import argparse
 import logging
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Callable
 
 import polars as pl
 
+from src.storage_layer.MinIO_S3.layer.silver.data_model.data_class import (
+    silver_schema_to_polars,
+)
 from src.storage_layer.MinIO_S3.layer.silver.utils.loader import (
     upload_silver_parquet,
 )
@@ -23,10 +27,47 @@ from src.storage_layer.MinIO_S3.layer.silver.utils.reader import (
 
 logger = logging.getLogger(__name__)
 
+# Silver schema derived from SilverJobItem dataclass -- computed once at import.
+SILVER_SCHEMA = silver_schema_to_polars()
 
+
+def enforce_silver_schema(
+    df: pl.DataFrame,
+    schema: dict[str, pl.DataType],
+) -> pl.DataFrame:
+    """Conform a cleaned DataFrame to the SilverJobItem Polars schema.
+
+    - Casts existing columns to target dtype (uncastable values become null).
+    - Adds missing columns with null defaults of the correct dtype.
+    - Drops columns not defined in the schema.
+    - Returns columns in schema definition order.
+
+    Polars does not support String -> Boolean cast directly, so Boolean
+    columns originating from string data go through Int64 first (uncastable
+    strings become null, then null stays null through the Boolean cast).
+    """
+    existing = set(df.columns)
+    exprs = []
+    for col, dtype in schema.items():
+        if col in existing:
+            src_dtype = df.schema[col]
+            # String -> Boolean is unsupported in Polars; bridge via Int64.
+            if dtype == pl.Boolean and src_dtype == pl.String():
+                exprs.append(
+                    pl.col(col).cast(pl.Int64, strict=False).cast(pl.Boolean)
+                )
+            else:
+                exprs.append(pl.col(col).cast(dtype, strict=False))
+        else:
+            exprs.append(pl.lit(None).cast(dtype).alias(col))
+    return df.select(exprs)
+
+
+# Local directory for CSV debug dumps; created on demand.
+SILVER_DEBUG_DIR = Path(__file__).parents[2] / "debug_output"
 
 def build_argument_parser(site: str) -> argparse.ArgumentParser:
-    """Standard CLI shape: --from_date / --to_date / --entity_name / --no_save."""
+    """Standard CLI shape: --from_date / --to_date / --entity_name / --no_save / --export_parquet."""
     parser = argparse.ArgumentParser(description=f"Silver cleaner for {site}")
     parser.add_argument("--from_date", required=True, help="Inclusive start date YYYY-MM-DD")
     parser.add_argument("--to_date", required=True, help="Inclusive end date YYYY-MM-DD")
@@ -36,10 +77,16 @@ def build_argument_parser(site: str) -> argparse.ArgumentParser:
         action="store_true",
         help="Skip writing parquet (useful for dry runs / interactive debugging).",
     )
+    parser.add_argument(
+        "--export_parquet",
+        action="store_true",
+        help=(
+            "Dump each day's cleaned DataFrame to a local parquet file "
+            f"(written to {SILVER_DEBUG_DIR}/) for visual debugging. "
+            "Filename pattern: <site>_cleaned_<date>.parquet"
+        ),
+    )
     return parser
-
-
-
 
 def run_pipeline(
     site: str,
@@ -74,7 +121,15 @@ def run_pipeline(
             
         df = lazy.collect()
         cleaned = clean_fn(df)
-        
+        cleaned = enforce_silver_schema(cleaned, SILVER_SCHEMA)
+
+        if args.export_parquet:
+            SILVER_DEBUG_DIR.mkdir(parents=True, exist_ok=True)
+            parquet_name = f"{site}_cleaned_{date_str}.parquet"
+            parquet_path = SILVER_DEBUG_DIR / parquet_name
+            cleaned.write_parquet(parquet_path)
+            logger.info("Exported cleaned parquet: %s (%d rows)", parquet_path, cleaned.height)
+
         if not args.no_save:
             s3_key = upload_silver_parquet(
                 df=cleaned,
