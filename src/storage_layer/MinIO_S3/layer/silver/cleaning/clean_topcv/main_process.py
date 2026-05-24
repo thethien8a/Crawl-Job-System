@@ -54,6 +54,7 @@ from src.storage_layer.MinIO_S3.layer.silver.cleaning.common.pipeline import (
     main_for_site,
 )
 from src.storage_layer.MinIO_S3.layer.silver.utils.config_loader import read_seeds
+from src.storage_layer.MinIO_S3.layer.silver.cleaning.common.drop_cols import drop_unecessary_cols
 
 def clean_topcv_jobs(df: pl.DataFrame) -> pl.DataFrame:
     """Apply every cleaner relevant to TopCVJobItem.
@@ -63,6 +64,7 @@ def clean_topcv_jobs(df: pl.DataFrame) -> pl.DataFrame:
     nothing downstream is allowed to reference `location` or `job_industry`
     after those calls.
     """
+    df = drop_unecessary_cols(df)
     industry_taxonomy = read_seeds("industry_taxonomy.csv")
 
     df = main_clean_company(df, column_name="company_name")

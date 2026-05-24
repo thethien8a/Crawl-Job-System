@@ -39,6 +39,7 @@ from src.storage_layer.MinIO_S3.layer.silver.cleaning.common.pipeline import (
     main_for_site,
 )
 from src.storage_layer.MinIO_S3.layer.silver.utils.config_loader import read_seeds
+from src.storage_layer.MinIO_S3.layer.silver.cleaning.common.drop_cols import drop_unecessary_cols
 
 def clean_itviec_jobs(df: pl.DataFrame) -> pl.DataFrame:
     """Apply cleaners relevant to ITViecJobItem.
@@ -48,6 +49,7 @@ def clean_itviec_jobs(df: pl.DataFrame) -> pl.DataFrame:
     intentionally skipped — calling them would error out on a missing column
     even though the equivalent fields exist in TopCV / VietnamWorks rows.
     """
+    df = drop_unecessary_cols(df)
     industry_taxonomy = read_seeds("industry_taxonomy.csv")
 
     df = main_clean_company(df, column_name="company_name")
@@ -63,6 +65,7 @@ def clean_itviec_jobs(df: pl.DataFrame) -> pl.DataFrame:
     df = clean_itviec_benefit(df)
     df = clean_itviec_requirement(df)
     df = clean_company_size(df, column_name="company_size")
+    
     return df
 
 

@@ -55,6 +55,7 @@ from src.storage_layer.MinIO_S3.layer.silver.cleaning.common.pipeline import (
     main_for_site,
 )
 from src.storage_layer.MinIO_S3.layer.silver.utils.config_loader import read_seeds
+from src.storage_layer.MinIO_S3.layer.silver.cleaning.common.drop_cols import drop_unecessary_cols
 
 def clean_vnworks_jobs(df: pl.DataFrame) -> pl.DataFrame:
     """Apply cleaners relevant to VietnamWorksJobItem.
@@ -63,6 +64,7 @@ def clean_vnworks_jobs(df: pl.DataFrame) -> pl.DataFrame:
     `job_position`, and `job_deadline`, but the columns still exist in the
     JSONL so every cleaner is safe to call. There is no `company_size` field.
     """
+    df = drop_unecessary_cols(df)
     industry_taxonomy = read_seeds("industry_taxonomy.csv")
 
     df = main_clean_company(df, column_name="company_name")
