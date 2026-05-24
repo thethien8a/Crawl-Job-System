@@ -67,6 +67,6 @@ def clean_location(df: pl.DataFrame, column_name: str = "location", new_column_n
         pl.col(new_column_name).fill_null("Không xác định").alias(new_column_name)
     )
 
-    df = df.drop([temp_col, column_name])
+    df = df.drop([temp_col])
 
     return df

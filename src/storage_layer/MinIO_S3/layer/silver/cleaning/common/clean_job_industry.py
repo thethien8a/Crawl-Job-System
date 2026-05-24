@@ -83,7 +83,7 @@ def apply_industry_cleaning(df: pl.DataFrame, taxonomy_df: pl.DataFrame, sep: st
     )
     
     # 4. Join back to original
-    df_final = df.join(df_cleaned, on="temp_row_idx", how="left").drop(["temp_row_idx", "job_industry"])
+    df_final = df.join(df_cleaned, on="temp_row_idx", how="left").drop(["temp_row_idx"])
     
     # For rows that had completely null/empty job_industry, fill with empty lists to maintain schema
     empty_list_expr = pl.Series([[]], dtype=pl.List(pl.String))

@@ -69,7 +69,6 @@ def clean_vnworks_jobs(df: pl.DataFrame) -> pl.DataFrame:
 
     df = process_job_title_pipeline(df, title_col="job_title")
     df = clean_location(df, column_name="location")
-    # VietnamWorks publishes a single industry string per row (no separator).
     df = apply_industry_cleaning(df, industry_taxonomy, sep=None)
     df = clean_vnworks_description(df)
     df = clean_salary(df, column_name="salary")

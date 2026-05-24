@@ -2,11 +2,14 @@ import pandas as pd
 import polars as pl
 import numpy as np
 import re
+import logging
 from pathlib import Path
 from rapidfuzz import process, fuzz
 
 from src.storage_layer.MinIO_S3.layer.silver.utils.reader import get_jobs_data_from_silver
 from src.storage_layer.MinIO_S3.layer.silver.utils.config_loader import read_seeds
+
+logger = logging.getLogger(__name__)
 
 OUTPUT_PATH = Path(__file__).parent / "clusters_review.csv"
 SOURCE_COLUMN = "company_name"
@@ -228,21 +231,21 @@ def build_matching_key(series: pd.Series) -> pd.Series:
 
 def load_unmapped_from_silver() -> pd.DataFrame:
     """
-    Concat Silver của tất cả sites, filter is_mapped=0, lấy distinct company_name.
-    Cần is_mapped column tồn tại trong Silver schema (do map_canonical_company tạo ra).
+    Concat Silver của tất cả sites, filter company_name_canonical is null, lấy distinct company_name.
+    Cần company_name_canonical column tồn tại trong Silver schema (do map_canonical_company tạo ra).
     """
     frames: list[pl.LazyFrame] = []
     for site in SILVER_SITES:
         lf = get_jobs_data_from_silver(site)
         if lf is not None:
-            frames.append(lf.select([SOURCE_COLUMN, "is_mapped"]))
+            frames.append(lf.select([SOURCE_COLUMN, "company_name_canonical"]))
 
     if not frames:
         return pd.DataFrame(columns=[SOURCE_COLUMN])
 
     unmapped = (
         pl.concat(frames, how="diagonal_relaxed")
-        .filter(pl.col("is_mapped") == 0)
+        .filter(pl.col("company_name_canonical").is_null())
         .select(SOURCE_COLUMN)
         .unique()
         .drop_nulls()
@@ -284,7 +287,7 @@ def build_fuzzy_input() -> pd.DataFrame:
 def main() -> None:
     df = build_fuzzy_input()
     if df.empty:
-        print("No company names to cluster (silver empty + seed empty). Exiting.")
+        logger.info("No company names to cluster (silver empty + seed empty). Exiting.")
         return
 
     upper_names = df[SOURCE_COLUMN]
@@ -298,7 +301,7 @@ def main() -> None:
 
     names = df[MATCHING_COLUMN].tolist()
 
-    print(f"Computing similarity for {len(names)} names (threshold={THRESHOLD}, len_ratio>={LEN_RATIO_MIN})...")
+    logger.info("Computing similarity for %d names (threshold=%d, len_ratio>=%f)...", len(names), THRESHOLD, LEN_RATIO_MIN)
     raw_cluster_ids = build_clusters(names, THRESHOLD, LEN_RATIO_MIN)
 
     df = df.assign(_raw_cluster=raw_cluster_ids)
@@ -325,8 +328,8 @@ def main() -> None:
 
     review_df.to_csv(OUTPUT_PATH, index=False, encoding="utf-8-sig")
 
-    print(f"Saved {len(review_df)} rows in {len(review_clusters)} clusters -> {OUTPUT_PATH}")
-    print(f"Singletons / pure-seed clusters skipped: {len(df) - len(review_df)}")
+    logger.info("Saved %d rows in %d clusters -> %s", len(review_df), len(review_clusters), OUTPUT_PATH)
+    logger.info("Singletons / pure-seed clusters skipped: %d", len(df) - len(review_df))
 
 
 def _select_review_clusters(df: pd.DataFrame, cluster_sizes: pd.Series) -> list[int]:
@@ -343,4 +346,8 @@ def _select_review_clusters(df: pd.DataFrame, cluster_sizes: pd.Series) -> list[
 
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    )
     main()

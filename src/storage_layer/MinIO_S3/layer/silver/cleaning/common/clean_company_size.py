@@ -40,6 +40,6 @@ def clean_company_size(df: pl.DataFrame, column_name: str = "company_size", min_
         max_expr.cast(pl.Int64, strict=False).alias(max_col),
     ])
 
-    df = df.drop(temp_col)
+    df = df.drop([temp_col])
 
     return df

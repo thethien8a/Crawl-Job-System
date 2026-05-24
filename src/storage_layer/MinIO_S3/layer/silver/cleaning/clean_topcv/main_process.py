@@ -69,7 +69,6 @@ def clean_topcv_jobs(df: pl.DataFrame) -> pl.DataFrame:
 
     df = process_job_title_pipeline(df, title_col="job_title")
     df = clean_location(df, column_name="location")
-    # TopCV ships industries as a comma-separated string ("Kế toán, Marketing").
     df = apply_industry_cleaning(df, industry_taxonomy, sep=",")
     df = clean_topcv_description(df)
     df = clean_salary(df, column_name="salary")

@@ -3,6 +3,7 @@ import unicodedata
 
 from src.storage_layer.MinIO_S3.layer.silver.cleaning.common.map_company_name import (
     map_canonical_company,
+    RAW_COLUMN,
 )
 
 def normalize_unicode(df: pl.DataFrame, column_name: str) -> pl.DataFrame:
@@ -16,7 +17,7 @@ def normalize_unicode(df: pl.DataFrame, column_name: str) -> pl.DataFrame:
 
 
 # Bước 1
-def clean_1(df: pl.DataFrame, column_name: str, new_column_name: str = 'company_name') -> pl.DataFrame:
+def clean_1(df: pl.DataFrame, column_name: str, new_column_name: str = RAW_COLUMN) -> pl.DataFrame:
     """
     Làm sạch tên công ty: Chỉ xóa loại hình pháp lý, giữ lại lĩnh vực kinh doanh và tên riêng.
     """
@@ -44,7 +45,7 @@ def clean_1(df: pl.DataFrame, column_name: str, new_column_name: str = 'company_
 
 
 # Bước 2
-def clean_2(df: pl.DataFrame, column_name: str = "company_name") -> pl.DataFrame:
+def clean_2(df: pl.DataFrame, column_name: str = RAW_COLUMN) -> pl.DataFrame:
 
     return df.with_columns(
         pl.col(column_name)
@@ -61,13 +62,13 @@ def clean_2(df: pl.DataFrame, column_name: str = "company_name") -> pl.DataFrame
     )
 
 
-def main_clean_company(df: pl.DataFrame, column_name: str = "company_name") -> pl.DataFrame:
+def main_clean_company(df: pl.DataFrame, column_name: str = RAW_COLUMN) -> pl.DataFrame:
     """Run the full company-name cleaning chain in the only correct order.
 
     NFC -> clean_2 (strip URLs, "(SHB)"-style bracketed text, special chars
     while keeping case) -> clean_1 (strip legal forms + uppercase) ->
     map_canonical_company (exact-join with the seed mapping to add
-    `company_name_canonical` + `is_mapped`).
+    `company_name_canonical`).
 
     `clean_2` must run BEFORE `clean_1` so bracketed text is dropped while
     the parentheses are still intact; otherwise `clean_1` strips just the

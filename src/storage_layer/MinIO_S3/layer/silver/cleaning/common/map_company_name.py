@@ -5,8 +5,7 @@ from src.storage_layer.MinIO_S3.layer.silver.utils.config_loader import read_see
 
 SEED_FILE_NAME = "company_mapping.csv"
 CANONICAL_COLUMN = "company_name_canonical"
-IS_MAPPED_COLUMN = "is_mapped"
-
+RAW_COLUMN = "company_name"
 
 def _normalize_name(value: str | None) -> str | None:
     if value is None:
@@ -53,13 +52,12 @@ def _load_normalized_seed() -> pl.DataFrame:
 
 
 def map_canonical_company(
-    df: pl.DataFrame, source_col: str = "company_name"
+    df: pl.DataFrame, source_col: str = RAW_COLUMN
 ) -> pl.DataFrame:
     """
-    Join cleaned company_name với seed company_mapping.csv để gắn canonical name + is_mapped flag.
-
-    is_mapped = 1 khi variant_name khớp exact với source_col, ngược lại 0.
+    Join cleaned company_name với seed company_mapping.csv để gắn canonical name.
     Khi không khớp, company_name_canonical = NULL để downstream phân biệt với chuỗi rỗng.
+    Downstream có thể infer mapping status bằng company_name_canonical.is_not_null().
     """
     seed = _load_normalized_seed()
 
@@ -67,10 +65,4 @@ def map_canonical_company(
         seed, left_on=source_col, right_on="variant_name", how="left"
     ).rename({"canonical_name": CANONICAL_COLUMN})
 
-    return mapped.with_columns(
-        pl.when(pl.col(CANONICAL_COLUMN).is_not_null())
-        .then(1)
-        .otherwise(0)
-        .cast(pl.Int8)
-        .alias(IS_MAPPED_COLUMN)
-    )
+    return mapped
