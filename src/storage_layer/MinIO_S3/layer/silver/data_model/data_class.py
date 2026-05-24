@@ -49,7 +49,7 @@ class SilverJobItem:
     # ==========================================
     job_type: Optional[str] = None
     job_position: Optional[str] = None
-    
+
     # ==========================================
     # 7. EXPERIENCE & EDUCATION
     # ==========================================
