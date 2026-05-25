@@ -56,6 +56,7 @@ from src.storage_layer.MinIO_S3.layer.silver.cleaning.common.pipeline import (
 )
 from src.storage_layer.MinIO_S3.layer.silver.utils.config_loader import read_seeds
 from src.storage_layer.MinIO_S3.layer.silver.cleaning.common.drop_cols import drop_unecessary_cols
+from src.storage_layer.MinIO_S3.layer.silver.cleaning.common.clean_job_url import clean_job_url
 
 def clean_vnworks_jobs(df: pl.DataFrame) -> pl.DataFrame:
     """Apply cleaners relevant to VietnamWorksJobItem.
@@ -66,7 +67,7 @@ def clean_vnworks_jobs(df: pl.DataFrame) -> pl.DataFrame:
     """
     df = drop_unecessary_cols(df)
     industry_taxonomy = read_seeds("industry_taxonomy.csv")
-
+    df = clean_job_url(df, column_name="job_url")
     df = main_clean_company(df, column_name="company_name")
 
     df = process_job_title_pipeline(df, title_col="job_title")
