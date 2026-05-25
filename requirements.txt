@@ -41,6 +41,7 @@ parsel==1.11.0
 polars==1.40.1
 polars-runtime-32==1.40.1
 propcache==0.5.2
+psycopg2-binary==2.9.10
 pycparser==3.0
 pydantic==2.13.4
 pydantic_core==2.46.4
