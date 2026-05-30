@@ -4,6 +4,12 @@ A data lakehouse pipeline for job postings from multiple Vietnamese recruitment 
 
 The pipeline follows a **Bronze -> Silver** medallion architecture stored in MinIO (S3-compatible), with planned future serving layers via Supabase (OLTP) and ClickHouse (OLAP).
 
+## Quick Start
+```bash
+docker compose --project-directory . -f src/orchestration_layer/docker-compose.yaml up -d
+docker compose --project-directory . -f src/storage_layer/MinIO_S3/docker-compose.yaml up -d
+```
+
 ## Architecture Overview
 
 ```
