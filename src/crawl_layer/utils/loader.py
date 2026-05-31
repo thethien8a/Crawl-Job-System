@@ -38,10 +38,13 @@ def save_to_temp(data: Union[Dict, List[Dict]], source_name: str, entity_name: s
             
     return file_path
 
-def load_to_bronze(bucket_name: str = "bronze"):
+def load_to_bronze(bucket_name: str = "bronze", source_filter: str | None = None):
     """
     Scan the temp directory, compress file into .gz and upload to MinIO according to the standard bronze architecture.
     The architecture is: bronze/<source_name>/<entity_name>/year=YYYY/month=MM/day=DD/<filename>.jsonl.gz
+
+    :param source_filter: Only process files whose name starts with this source prefix
+        (e.g. ``"topcv"``). When ``None``, all ``*.jsonl`` files are processed.
     """
     s3_client = get_s3_client()
     
@@ -54,8 +57,8 @@ def load_to_bronze(bucket_name: str = "bronze"):
     if not TEMP_DIR.exists():
         logger.info(f"Directory {TEMP_DIR} does not exist. Skip.")
         return
-    if not any(TEMP_DIR.iterdir()): 
-        logger.info("No file to load to minio") 
+    if not any(TEMP_DIR.iterdir()):
+        logger.info("No file to load to minio")
         return
 
     # Get the timestamp to use it as a suffix for the file (to avoid overwriting old files on the same day)
@@ -66,6 +69,10 @@ def load_to_bronze(bucket_name: str = "bronze"):
         parts = file_path.stem.split('_')
         if len(parts) >= 3:
             source_name = parts[0]
+            # Skip files that don't match the requested source filter
+            if source_filter and source_name != source_filter:
+                logger.debug("Skipping %s (source_filter=%s)", file_path.name, source_filter)
+                continue
             entity_name = parts[1]
             date_str = parts[2] # 20260512
             
@@ -89,6 +96,8 @@ def load_to_bronze(bucket_name: str = "bronze"):
             # Delete the compressed file on local after successfully uploading all of them
             gz_file_path.unlink()
             
-    # Clean up the files in the temp directory after successfully uploading all of them
-    clean_temp_directory()
+    # Clean up the files in the temp directory after successfully uploading all of them.
+    # When a source_filter is given, only remove matching files so other sites
+    # are left untouched.
+    clean_temp_directory(prefix=source_filter)
     logger.info("Finish uploading data to MinIO and clean local temp directory!")

@@ -8,10 +8,12 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 # Define the relative path to the temp directory
 from src.crawl_layer.config.path import TEMP_DIR
 
-def clean_temp_directory():
+def clean_temp_directory(prefix: str | None = None):
     """
-    Delete all files in the temp directory.
-    This function is usually called after the script uploads data to MinIO and reports success.
+    Delete files in the temp directory.
+
+    :param prefix: When provided, only delete files whose **basename** starts
+        with this string (e.g. ``"topcv"``). When ``None``, delete all files.
     """
     if not os.path.exists(TEMP_DIR):
         logging.info(f"Directory {TEMP_DIR} does not exist. Skipping cleanup.")
@@ -28,6 +30,8 @@ def clean_temp_directory():
     for file_path in files:
         # Only delete files, skip if there are subdirectories
         if os.path.isfile(file_path):
+            if prefix and not os.path.basename(file_path).startswith(prefix):
+                continue
             try:
                 os.remove(file_path)
                 logging.info(f"Deleted: {os.path.basename(file_path)}")

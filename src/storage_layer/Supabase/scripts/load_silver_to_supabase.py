@@ -70,6 +70,7 @@ def main() -> None:
     parser.add_argument("--to_date", required=True, help="Inclusive YYYY-MM-DD")
     args = parser.parse_args()
 
+    sites_to_load = SITES
     grand_total = 0
     with closing(get_connection()) as conn:
         # Ensure target table exists (idempotent)
@@ -77,7 +78,7 @@ def main() -> None:
             cur.execute(CREATE_TABLE_SQL)
         conn.commit()
         
-        for site in SITES:
+        for site in sites_to_load:
             try:
                 grand_total += _load_site(conn, site, args.from_date, args.to_date)
             except Exception:
