@@ -37,6 +37,7 @@ class VietnamWorksBrowser:
     async def __aenter__(self) -> "VietnamWorksBrowser":
         self._browser = await uc.start(
             headless=self.headless,
+            sandbox=False,
             browser_args=list(BROWSER_ARGS),
         )
         self._tab = self._browser.main_tab

@@ -19,7 +19,7 @@ NEXT_PAGE_XPATH = "//ul[contains(@class, 'pagination')]//li[contains(@class, 'bt
 TITLE_SELECTOR = "h1[name='title']"
 COMPANY_SELECTOR = "a[href*='nha-tuyen-dung']"
 SALARY_SELECTOR = "span[class*='cVbwLK']"
-LOCATION_SELECTOR = "div[class*='ebdjLi'] span"
+LOCATION_SELECTOR = "div[class*='gVpPKv'] span"
 DEADLINE_XPATH = "//span[contains(text(), 'Hết hạn trong')]//text()"
 
 # "Xem thêm" button
@@ -34,6 +34,7 @@ SCROLL_INCREMENT = 1000
 
 BROWSER_ARGS: tuple[str, ...] = (
     "--no-sandbox",
+    "--disable-setuid-sandbox",
     "--disable-dev-shm-usage",
     "--disable-gpu",
     "--disable-blink-features=AutomationControlled",

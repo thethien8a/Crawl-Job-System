@@ -53,7 +53,7 @@ class TopcvParser:
         item.company_size = self._extract_company_size(sel, is_brand)
         item.salary = self._extract_salary(sel, is_brand)
         item.location = self._extract_location(sel, is_brand)
-        item.job_type = self._extract_label(sel, "Hình thức làm việc", is_brand)
+        item.job_type = self._extract_label(sel, "Loại hình làm việc", is_brand)
 
         # Experience: JS object first, then brand fallback, then sentinel value.
         experience = self._extract_from_js(sel, "experience")

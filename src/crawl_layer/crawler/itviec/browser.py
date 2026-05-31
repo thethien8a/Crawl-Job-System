@@ -72,6 +72,7 @@ class ItviecBrowser:
     async def __aenter__(self) -> "ItviecBrowser":
         self._browser = await uc.start(
             headless=self.headless,
+            sandbox=False,
             browser_args=list(BROWSER_ARGS),
         )
         # nodriver starts with one tab open already; reuse it.

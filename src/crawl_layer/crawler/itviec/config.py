@@ -76,6 +76,7 @@ PAGINATION_DELAY_RANGE = (2.0, 4.0)
 # Browser arguments mirror the original spider's stealth-tuned UC profile.
 BROWSER_ARGS: tuple[str, ...] = (
     "--no-sandbox",
+    "--disable-setuid-sandbox",
     "--disable-dev-shm-usage",
     "--disable-gpu",
     "--disable-software-rasterizer",

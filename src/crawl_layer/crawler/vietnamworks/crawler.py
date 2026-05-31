@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 SOURCE_NAME = "vietnamworks"
 ENTITY_NAME = "jobs"
-BATCH_SIZE = 10
+BATCH_SIZE = 20
 
 
 class VietnamWorksCrawler:
