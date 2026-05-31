@@ -1,0 +1,65 @@
+# === Git ===
+.git/
+.gitignore
+.gitattributes
+
+# === Python venv & cache ===
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# === IDE & editor ===
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# === Environment files ===
+.env
+.env.*
+
+# === Logs (chứa symlink gây lỗi Docker trên Windows) ===
+**/logs/
+*.log
+
+# === Temp & debug data ===
+temp_data/
+debug_output/
+tmp/
+*.jsonl
+*.parquet
+*.csv
+*.xlsx
+
+# === Jupyter checkpoints ===
+.ipynb_checkpoints/
+
+# === OS junk ===
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# === Docs (không cần trong image) ===
+documents/
+
+# === Docker files (tránh đệ quy) ===
+docker-compose*.yaml
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+# === Test & plan files ===
+**/test/
+*_test.py
+test_*.py
+**/plan/
+*plan.md
+
+# === Markdown & misc ===
+*.md
+LICENSE
