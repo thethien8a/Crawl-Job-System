@@ -1,26 +1,71 @@
-# AGENTS.md
+# Lakehouse-Lite — Agent Guide
 
-## Project Target
-- Data lakehouse for Vietnamese job postings from TopCV, VietnamWorks, and ITviec, focused on data roles; executable flow is crawlers -> local JSONL temp -> MinIO Bronze -> MinIO Silver Parquet.
-- Supabase, ClickHouse, Next.js, BI, orchestration, monitoring, and recommendation layers are placeholders or planned only.
+## Run from repo root only
 
-## Commands
-- Run Python module commands from the repo root; imports assume `src.*` and `src/` has no `__init__.py`.
-- Setup: `python -m venv venv`, `venv\Scripts\activate`, then `pip install -r requirements.txt`; `requirements.txt` is the only dependency manifest and there is no lockfile or `pyproject.toml`.
-- Start MinIO: `docker compose --env-file .env -f src/storage_layer/MinIO_S3/docker-compose.yaml up -d`; add `MINIO_ACCESS_KEY` and `MINIO_SECRET_KEY` to `.env` because `.env.example` only contains ITviec login vars, while Python falls back to `minio` / `minio123`.
-- Crawl TopCV: `python -m src.crawl_layer.crawler.topcv --keyword "data" --max-pages 2`.
-- Crawl VietnamWorks: `python -m src.crawl_layer.crawler.vietnamworks --keyword "data analyst" --max-pages 2 [--headless]`.
-- Crawl ITviec: `python -m src.crawl_layer.crawler.itviec --keyword "data" --max-pages 2 [--headless]`; requires `ITVIEC_USERNAME` and `ITVIEC_PASSWORD` in the root `.env`.
-- Validate the newest local temp JSONL before Bronze upload: `python -m src.storage_layer.MinIO_S3.layer.local_temp.validation.topcv_validate`, `...itviec_validate`, or `...vnworks_validate`.
-- Upload all local temp JSONL to Bronze and clear temp data: `python -m src.storage_layer.MinIO_S3.layer.bronze.main`.
-- Run Silver cleaning: `python -m src.storage_layer.MinIO_S3.layer.silver.cleaning.clean_<site>.main_process --from_date YYYY-MM-DD --to_date YYYY-MM-DD`; valid site dirs are `clean_topcv`, `clean_itviec`, and `clean_vnworks`.
-- Silver flags: `--no_save` dry-runs without MinIO upload; `--export_parquet` writes local debug Parquet under `src/storage_layer/MinIO_S3/layer/silver/cleaning/debug_output/`.
-- There is no pytest, lint, formatter, or typecheck config; files under `src/**/test/` are ad-hoc scripts, not a formal test suite.
+All `python -m src.*` commands require CWD = repo root. The `src/` directory has **no** `__init__.py`, so `python src/...` or imports from elsewhere will fail.
 
-## Pipeline Gotchas
-- Crawlers append to `src/crawl_layer/temp_data/<source>_jobs_YYYYMMDD.jsonl`; repeated runs accumulate rows until Bronze upload clears the directory.
-- Bronze paths are `<source>/jobs/year=YYYY/month=MM/day=DD/<source>_jobs_YYYYMMDD_HHMMSS.jsonl.gz`; bucket names come from `src/storage_layer/MinIO_S3/config/bucket.yml`.
-- Silver writer stores Parquet as `jobs/<source>/year=YYYY/month=MM/day=DD/clean_bronze_TIMESTAMP.parquet`; `SilverBucketPaths` currently formats `<source>/jobs/...`, so verify reader/writer path assumptions before relying on Silver reads.
-- VietnamWorks uses `vietnamworks` for temp/Bronze/Silver path prefixes, but JSON rows use `source_site="vietnamworks.com"`.
-- Silver cleaners read Bronze one day at a time across the inclusive date range and skip days with no Bronze objects.
-- ITviec selectors are intentionally noisy because class names are partially hashed; do not simplify them without testing the live page.
+## Quick start order
+
+```bash
+cp .env.example .env          # then fill ITVIEC_USERNAME/PASSWORD, MINIO keys
+docker compose -f src/storage_layer/MinIO_S3/docker-compose.yaml up -d
+python -m src.crawl_layer.crawler.topcv --keyword "data" --max-pages 2
+python -m src.storage_layer.MinIO_S3.layer.bronze.main
+python -m src.storage_layer.MinIO_S3.layer.silver.cleaning.clean_topcv.main_process --from_date YYYY-MM-DD --to_date YYYY-MM-DD
+```
+
+## Environment
+
+- MinIO defaults: `MINIO_ACCESS_KEY=minio` / `MINIO_SECRET_KEY=minio123`
+- `load_dotenv()` reads `.env` at import time; `IS_DOCKER=1` switches endpoint to `http://minio:9000`
+- ITviec crawler **requires** `ITVIEC_USERNAME` / `ITVIEC_PASSWORD`
+- Airflow DAGs require `FERNET_KEY`, `WEBSERVER_SECRET_KEY`, `HOST_REPO_PATH`, `PIPELINE_IMAGE`, `PIPELINE_NETWORK`
+
+## Crawler CLI
+
+| Source | Command | Notes |
+|--------|---------|-------|
+| TopCV | `python -m src.crawl_layer.crawler.topcv --keyword X --max-pages N` | HTTP-based, no browser |
+| VietnamWorks | `python -m src.crawl_layer.crawler.vietnamworks --keyword X --max-pages N [--headless]` | Browser (nodriver) |
+| ITviec | `python -m src.crawl_layer.crawler.itviec --keyword X --max-pages N [--headless]` | Browser + login from `.env` |
+
+Browser crawlers on Windows apply an asyncio `_ProactorBasePipeTransport` patch — do not remove.
+
+## Data flow
+
+1. **Crawlers append** to `src/crawl_layer/temp_data/<source>_jobs_YYYYMMDD.jsonl`
+2. **Bronze upload** (`bronze.main --source <site>` or all) gz-compresses JSONL, uploads to MinIO `bronze/<source>/jobs/year=.../`, then **clears `temp_data/`**
+3. **Validation** (`local_temp.validation.*_validate`) is optional, needs `pandas` + `great_expectations`
+4. **Silver cleaning** (`cleaning.<site>.main_process`) reads Bronze day-by-day, cleans via Polars, uploads Parquet to `silver/jobs/source_site=<site>/year=.../`
+   - Flags: `--from_date`, `--to_date`, `--no_save` (dry-run), `--export_parquet` (local debug dump)
+5. **Supabase** (`Supabase.scripts.load_silver_to_supabase`) is **implemented** — reads Silver Parquet, upserts to Postgres via `job_url`
+
+## Orchestration
+
+- Two `docker-compose.yaml` files: MinIO S3 and Airflow (LocalExecutor, DockerOperator)
+- Airflow DAGs use `DockerOperator` — business logic runs in sibling containers, never imported into Airflow
+- DAGs generated by factory (`_dag_factory.py`): crawl (every 4h) -> trigger validate+bronze -> silver+supabase (every 12h)
+- Crawl DAGs can be overridden via Trigger DAG w/ config JSON: `{"keyword": "...", "max_pages": N}`
+- Docker image: `docker build -t lakehouse-crawler:latest .`
+
+## Services
+
+| Service | URL |
+|---------|-----|
+| MinIO API | `http://localhost:9000` |
+| MinIO Console | `http://localhost:9001` |
+| Airflow Webserver | `http://localhost:8080` |
+
+## What does NOT exist
+
+- **No test framework** — `src/**/test/` files are ad-hoc scripts, not pytest
+- **No CI** (no `.github/`)
+- **No linter, formatter, or typechecker configuration**
+- **Serving layers** (Next.js, BI, ClickHouse, MotherDuck, monitoring, recommend) are **not implemented**
+
+## Conventions
+
+- Data processing uses **Polars**, not pandas (except validation scripts)
+- Taxonomy seeds: 12 CSV files in `.../silver/seeds/` for keyword extraction via flashtext
+- Silver schema enforced by `enforce_silver_schema()` — drops extras, adds nulls, bridges String->Boolean via Int64
+- Bronze bucket: `bronze`, Silver bucket: `silver` (from `config/bucket.yml`)

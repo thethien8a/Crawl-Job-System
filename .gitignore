@@ -31,7 +31,7 @@ htmlcov/
 .idea/
 *.swp
 *.swo
-
+.rooignore
 # OS files
 .DS_Store
 Thumbs.db
