@@ -2,12 +2,11 @@
 
 A data lakehouse pipeline for job postings from multiple Vietnamese recruitment platforms (TopCV, VietnamWorks, ITviec), focused on data-field roles such as Data Engineer, Data Scientist, Data Analyst, AI/ML Engineer, Business Intelligence, and Machine Learning Engineer.
 
-The pipeline follows a **Bronze -> Silver** medallion architecture stored in MinIO (S3-compatible), with planned future serving layers via Supabase (OLTP) and ClickHouse (OLAP).
+The pipeline follows a **Bronze -> Silver** medallion architecture stored in AWS S3, with planned future serving layers via Supabase (OLTP) and ClickHouse (OLAP).
 
 ## Quick Start
 ```bash
 docker compose --project-directory . -f src/orchestration_layer/docker-compose.yaml up -d
-docker compose --project-directory . -f src/storage_layer/MinIO_S3/docker-compose.yaml up -d
 ```
 
 ## Architecture Overview
@@ -22,7 +21,7 @@ docker compose --project-directory . -f src/storage_layer/MinIO_S3/docker-compos
                                │
                                ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│                     Storage Layer (MinIO)                           │
+│                     Storage Layer (AWS S3)                          │
 │                                                                     │
 │   Bronze Bucket                Silver Bucket                        │
 │   ┌──────────────────┐        ┌──────────────────┐                 │
@@ -70,17 +69,16 @@ Lakehouse-Lite/
 │   │   │   └── clean_temp.py     # clean_temp_directory
 │   │   └── test/                 # Ad-hoc test scripts
 │   ├── storage_layer/
-│   │   ├── MinIO_S3/             # MinIO object storage
-│   │   │   ├── docker-compose.yaml
+│   │   ├── MinIO_S3/             # AWS S3 object storage (legacy folder name kept)
 │   │   │   ├── config/
 │   │   │   │   ├── bucket.yml    # Bucket names: bronze, silver
-│   │   │   │   ├── key.py        # MINIO_ENDPOINT, ACCESS_KEY, SECRET_KEY
+│   │   │   │   ├── key.py        # AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION
 │   │   │   │   └── path.py       # BronzeBucketPaths, SilverBucketPaths
 │   │   │   ├── utils/
 │   │   │   │   └── minio_connect.py  # get_s3_client()
 │   │   │   └── layer/
 │   │   │       ├── bronze/       # Bronze layer: raw data upload
-│   │   │       │   └── main.py   # Upload temp JSONL -> MinIO Bronze
+│   │   │       │   └── main.py   # Upload temp JSONL -> S3 Bronze
 │   │   │       ├── local_temp/   # Local staging & validation
 │   │   │       │   └── validation/
 │   │   │       │       ├── topcv_validate.py
@@ -105,7 +103,7 @@ Lakehouse-Lite/
 │   │   │           │   └── clean_vnworks/   # VietnamWorks-specific cleaning
 │   │   │           ├── seeds/               # Taxonomy CSV files for classification
 │   │   │           ├── utils/
-│   │   │           │   ├── reader.py        # Read Bronze/Silver from MinIO
+│   │   │           │   ├── reader.py        # Read Bronze/Silver from S3
 │   │   │           │   ├── loader.py        # upload_silver_parquet
 │   │   │           │   ├── config_loader.py # load_config_yaml, read_seeds
 │   │   │           │   ├── flashtext_extractor.py  # HybridKeywordExtractor
@@ -155,7 +153,7 @@ Cleaned and enriched data with structured fields:
 
 ## Storage Layout
 
-### Bronze (MinIO)
+### Bronze (S3)
 
 ```
 bronze/
@@ -164,7 +162,7 @@ bronze/
 └── vietnamworks/jobs/year=2026/month=05/day=12/vietnamworks_jobs_20260512_170702.jsonl.gz
 ```
 
-### Silver (MinIO)
+### Silver (S3)
 
 ```
 silver/
@@ -212,17 +210,15 @@ cp .env.example .env
 
 Required variables:
 - `ITVIEC_USERNAME` / `ITVIEC_PASSWORD` - for ITviec crawler login
-- `MINIO_ACCESS_KEY` / `MINIO_SECRET_KEY` - for MinIO (defaults to `minio` / `minio123`)
+- `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` / `AWS_REGION` - for AWS S3
 
-### 3. Start MinIO
+### 3. Provision S3 Buckets
 
-```bash
-docker compose --env-file .env -f src/storage_layer/MinIO_S3/docker-compose.yaml up -d
-```
-
-MinIO will be available at:
-- API: `http://localhost:9000`
-- Console: `http://localhost:9001`
+In the AWS Console, create the two buckets referenced by
+[`src/storage_layer/MinIO_S3/config/bucket.yml`](src/storage_layer/MinIO_S3/config/bucket.yml)
+(by default `bronze` and `silver`; rename in the YAML if those names are already
+taken globally on S3). The IAM user behind your AWS keys needs
+`s3:ListBucket`, `s3:GetObject`, `s3:PutObject`, `s3:DeleteObject` on both.
 
 ### 4. Run Crawlers
 
@@ -245,7 +241,7 @@ Crawled data is appended to daily temp files at `src/crawl_layer/temp_data/<sour
 python -m src.storage_layer.MinIO_S3.layer.bronze.main
 ```
 
-This uploads all temp JSONL files to the MinIO Bronze bucket (compressed as `.jsonl.gz`) and then clears the local `temp_data` directory.
+This uploads all temp JSONL files to the S3 Bronze bucket (compressed as `.jsonl.gz`) and then clears the local `temp_data` directory.
 
 ### 6. Validate Temp Data (Optional)
 
@@ -297,7 +293,7 @@ Common CLI flags (via [`build_argument_parser`](src/storage_layer/MinIO_S3/layer
 | Browser Automation | nodriver (VietnamWorks, ITviec) |
 | HTTP Client | curl_cffi, aiohttp, requests (TopCV) |
 | HTML Parsing | lxml, parsel |
-| Object Storage | MinIO (S3-compatible) via boto3 |
+| Object Storage | AWS S3 via boto3 |
 | Keyword Extraction | flashtext (HybridKeywordExtractor) |
 | Containerization | Docker Compose |
 | License | Apache 2.0 |
@@ -307,7 +303,7 @@ Common CLI flags (via [`build_argument_parser`](src/storage_layer/MinIO_S3/layer
 | Layer | Status |
 |-------|--------|
 | Crawl Layer (TopCV, VietnamWorks, ITviec) | Implemented |
-| Bronze Layer (MinIO upload) | Implemented |
+| Bronze Layer (S3 upload) | Implemented |
 | Local Temp Validation | Implemented (requires unpinned deps) |
 | Silver Layer (cleaning + Parquet upload) | Implemented |
 | Supabase (OLTP serving) | Not implemented |
