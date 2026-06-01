@@ -38,6 +38,8 @@ Thumbs.db
 
 # Logs
 *.log
+logs/
+src/orchestration_layer/logs/
 
 # Data / Database (Lakehouse related)
 *.db
