@@ -50,7 +50,12 @@ def upload_silver_parquet(
     try:
         s3.head_bucket(Bucket=bucket)
     except Exception:
-        s3.create_bucket(Bucket=bucket)
+        s3.create_bucket(
+            Bucket=bucket,
+            CreateBucketConfiguration={
+                'LocationConstraint': s3.meta.region_name
+            }
+        )
 
     s3.put_object(
         Bucket=bucket,
