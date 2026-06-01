@@ -2,7 +2,7 @@ import polars as pl
 from datetime import datetime, timedelta
 from src.storage_layer.MinIO_S3.utils.minio_connect import get_s3_client
 from src.storage_layer.MinIO_S3.config.path import BronzeBucketPaths, SilverBucketPaths
-from src.storage_layer.MinIO_S3.config.key import MINIO_ENDPOINT, MINIO_ACCESS_KEY, MINIO_SECRET_KEY
+from src.storage_layer.MinIO_S3.config.key import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -10,10 +10,11 @@ logger = logging.getLogger(__name__)
 
 
 def _get_storage_options() -> dict:
+    # Polars/object_store reads region via "aws_region" (not "region_name").
     return {
-        "endpoint_url": MINIO_ENDPOINT,
-        "aws_access_key_id": MINIO_ACCESS_KEY,
-        "aws_secret_access_key": MINIO_SECRET_KEY,
+        "aws_access_key_id": AWS_ACCESS_KEY_ID,
+        "aws_secret_access_key": AWS_SECRET_ACCESS_KEY,
+        "aws_region": AWS_REGION,
     }
 
 def get_jobs_data_from_bronze(site: str, entity_name: str, from_date: str, to_date: str) -> pl.LazyFrame | None:
