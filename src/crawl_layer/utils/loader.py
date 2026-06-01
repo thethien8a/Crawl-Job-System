@@ -52,7 +52,12 @@ def load_to_bronze(bucket_name: str = "bronze", source_filter: str | None = None
     try:
         s3_client.head_bucket(Bucket=bucket_name)
     except Exception:
-        s3_client.create_bucket(Bucket=bucket_name)
+        s3_client.create_bucket(
+            Bucket=bucket_name,
+            CreateBucketConfiguration={
+                'LocationConstraint': s3_client.meta.region_name
+            }
+        )
 
     if not TEMP_DIR.exists():
         logger.info(f"Directory {TEMP_DIR} does not exist. Skip.")

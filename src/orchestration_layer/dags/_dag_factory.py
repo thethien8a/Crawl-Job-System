@@ -58,7 +58,6 @@ DEFAULT_ARGS: dict[str, Any] = {
 
 HOST_REPO_PATH = os.getenv("HOST_REPO_PATH")
 PIPELINE_IMAGE = os.getenv("PIPELINE_IMAGE", "lakehouse-pipeline:latest")
-PIPELINE_NETWORK = os.getenv("PIPELINE_NETWORK", "minio-s3_lakehouse_network")
 
 TEMP_DATA_MOUNT = Mount(
     source=f"{HOST_REPO_PATH}/src/crawl_layer/temp_data",
@@ -78,7 +77,8 @@ COMMON_MOUNTS = [TEMP_DATA_MOUNT, ENV_FILE_MOUNT]
 COMMON_DOCKER_KWARGS: dict[str, Any] = dict(
     image=PIPELINE_IMAGE,
     mounts=COMMON_MOUNTS,
-    network_mode=PIPELINE_NETWORK,
+    # No network_mode override: default Docker bridge gives outbound
+    # internet access, which is all we need to reach AWS S3.
     auto_remove="success",
     mount_tmp_dir=False,
     docker_url="unix:///var/run/docker.sock",
@@ -142,7 +142,7 @@ def create_validate_bronze_dag(site: str) -> DAG:
     """Return a DAG that validates local temp data then uploads to Bronze.
 
     Validation failure stops the pipeline for this site so corrupt data
-    never reaches MinIO.
+    never reaches the Bronze bucket on S3.
     """
     cfg = SITE_CONFIGS[site]
     dag_id = f"validate_bronze_{site}"
