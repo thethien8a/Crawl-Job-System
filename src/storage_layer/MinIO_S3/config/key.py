@@ -3,10 +3,8 @@ import os
 
 load_dotenv()
 
-if os.getenv("IS_DOCKER"):
-    MINIO_ENDPOINT = "http://minio:9000"
-else:
-    MINIO_ENDPOINT = "http://localhost:9000"
-    
-MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY", "minio")
-MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY", "minio123")
+# AWS S3 credentials read from .env at import time.
+# AWS_REGION must match the region where the bronze/silver buckets live.
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_REGION = os.getenv("AWS_REGION", "ap-southeast-1")
