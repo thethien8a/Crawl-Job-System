@@ -37,7 +37,7 @@ docker compose --project-directory . -f src/orchestration_layer/docker-compose.y
 ┌─────────────────────────────────────────────────────────────────────┐
 │                     Serving Layer                                   │
 │   Supabase (OLTP) ─► Job Search Web (Next.js)                     │
-│   ClickHouse (OLAP) ─► BI Dashboards                              │
+│   MotherDuck (OLAP) ─► BI Dashboards                              │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -307,7 +307,7 @@ Common CLI flags (via [`build_argument_parser`](src/storage_layer/MinIO_S3/layer
 | Local Temp Validation | Implemented (requires unpinned deps) |
 | Silver Layer (cleaning + Parquet upload) | Implemented |
 | Supabase (OLTP serving) | Not implemented |
-| ClickHouse (OLAP serving) | Not implemented |
+| MotherDuck (OLAP serving) | Not implemented |
 | Next.js (Job Search Web) | Not implemented |
 | BI Serving Layer | Not implemented |
 | Orchestrator Layer | Not implemented |

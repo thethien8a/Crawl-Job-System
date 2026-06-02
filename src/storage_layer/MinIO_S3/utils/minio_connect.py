@@ -1,4 +1,5 @@
 import boto3
+
 from src.storage_layer.MinIO_S3.config.key import (
     AWS_ACCESS_KEY_ID,
     AWS_SECRET_ACCESS_KEY,
@@ -14,3 +15,6 @@ def get_s3_client():
         aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
         region_name=AWS_REGION,
     )
+
+
+    
