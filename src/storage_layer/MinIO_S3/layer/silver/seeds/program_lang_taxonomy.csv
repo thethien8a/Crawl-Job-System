@@ -31,3 +31,64 @@ GraphQL,GraphQL,Ngôn ngữ truy vấn dữ liệu,Data Query Languages,graphql|
 Jinja,Jinja,Ngôn ngữ template dữ liệu,Data Template Languages,jinja|jinja2|dbt jinja
 Pig Latin,Pig Latin,Ngôn ngữ xử lý dữ liệu,Data Processing Languages,pig latin|apache pig
 PromQL,PromQL,Ngôn ngữ truy vấn giám sát,Monitoring Query Languages,promql|prometheus query language
+Dart,Dart,Ngôn ngữ lập trình,Programming Languages,dart|dart lang|flutter dart
+Elixir,Elixir,Ngôn ngữ lập trình,Programming Languages,elixir|elixir lang|phoenix framework
+Haskell,Haskell,Ngôn ngữ lập trình,Programming Languages,haskell|haskell lang|functional haskell
+OCaml,OCaml,Ngôn ngữ lập trình,Programming Languages,ocaml|objective caml|ml language
+F#,F#,Ngôn ngữ lập trình,Programming Languages,f#|fsharp|functional fsharp
+Clojure,Clojure,Ngôn ngữ lập trình,Programming Languages,clojure|clj|lisp clojure
+Erlang,Erlang,Ngôn ngữ lập trình,Programming Languages,erlang|erlang otp|concurrent erlang
+Fortran,Fortran,Ngôn ngữ lập trình,Programming Languages,fortran|fortran 90|fortran 95|fortran 2003
+COBOL,COBOL,Ngôn ngữ lập trình,Programming Languages,cobol|common business oriented
+Assembly,Assembly,Ngôn ngữ lập trình,Programming Languages,assembly|asm|x86|arm assembly|machine code
+Racket,Racket,Ngôn ngữ lập trình,Programming Languages,racket|scheme|racket lang
+Nim,Nim,Ngôn ngữ lập trình,Programming Languages,nim|nim lang|nimrod
+Zig,Zig,Ngôn ngữ lập trình,Programming Languages,zig|zig lang|zig programming
+Crystal,Crystal,Ngôn ngữ lập trình,Programming Languages,crystal|crystal lang|ruby-like crystal
+Groovy,Groovy,Ngôn ngữ lập trình,Programming Languages,groovy|groovy lang|jenkins groovy
+Delphi / Object Pascal,Delphi / Object Pascal,Ngôn ngữ lập trình,Programming Languages,delphi|object pascal|pascal delphi
+ABAP,ABAP,Ngôn ngữ lập trình,Programming Languages,abap|sap abap|advanced business application
+Apex,Apex,Ngôn ngữ lập trình,Programming Languages,apex|salesforce apex|force.com apex
+Solidity,Solidity,Ngôn ngữ lập trình,Programming Languages,solidity|smart contract|ethereum solidity|blockchain solidity
+Prolog,Prolog,Ngôn ngữ lập trình,Programming Languages,prolog|logic programming|prolog ai
+Lisp,Lisp,Ngôn ngữ lập trình,Programming Languages,lisp|common lisp|emacs lisp|scheme lisp
+Scheme,Scheme,Ngôn ngữ lập trình,Programming Languages,scheme|scheme lang|r5rs|r6rs|r7rs
+Ada,Ada,Ngôn ngữ lập trình,Programming Languages,ada|ada 95|ada 2005|ada programming
+COBOL,COBOL,Ngôn ngữ lập trình,Programming Languages,cobol|cobol legacy|mainframe cobol
+PL/SQL,PL/SQL,Ngôn ngữ lập trình,Programming Languages,plsql|pl/sql|oracle plsql|procedural sql
+T-SQL,T-SQL,Ngôn ngữ lập trình,Programming Languages,tsql|t-sql|sql server tsql|microsoft tsql
+Transact-SQL,Transact-SQL,Ngôn ngữ lập trình,Programming Languages,transact-sql|tsql|mssql sql
+KQL,KQL,Ngôn ngữ truy vấn dữ liệu,Data Query Languages,kql|kusto query language|azure data explorer kql|log analytics kql
+LogQL,LogQL,Ngôn ngữ truy vấn giám sát,Monitoring Query Languages,logql|loki logql|grafana logql
+Flux,Flux,Ngôn ngữ truy vấn giám sát,Monitoring Query Languages,flux|influxdb flux|time series flux
+SPL,SPL,Ngôn ngữ truy vấn giám sát,Monitoring Query Languages,spl|search processing language|splunk spl|splunk query
+Datalog,Datalog,Ngôn ngữ truy vấn dữ liệu,Data Query Languages,datalog|logic query|deductive database
+XQuery,XQuery,Ngôn ngữ truy vấn dữ liệu,Data Query Languages,xquery|xml query|xml xquery|xpath
+OCL,OCL,Ngôn ngữ truy vấn dữ liệu,Data Query Languages,ocl|object constraint language|uml ocl
+AQL,AQL,Ngôn ngữ truy vấn dữ liệu,Data Query Languages,aql|arangodb query language|graph query aql
+N1QL,N1QL,Ngôn ngữ truy vấn dữ liệu,Data Query Languages,n1ql|couchbase n1ql|sql for json
+CQL,CQL,Ngôn ngữ truy vấn dữ liệu,Data Query Languages,cql|cassandra query language|cqlsh
+MQL,MQL,Ngôn ngữ truy vấn dữ liệu,Data Query Languages,mql|mongodb query language|mongo query
+Pig Latin,Pig Latin,Ngôn ngữ xử lý dữ liệu,Data Processing Languages,pig latin|apache pig|pig script
+DQL,DQL,Ngôn ngữ truy vấn dữ liệu,Data Query Languages,dql|data query language|select query
+DML,DML,Ngôn ngữ thao tác dữ liệu,Data Manipulation Languages,dml|data manipulation language|insert|update|delete
+DDL,DDL,Ngôn ngữ định nghĩa dữ liệu,Data Definition Languages,ddl|data definition language|create table|alter table|drop table
+DCL,DCL,Ngôn ngữ điều khiển dữ liệu,Data Control Languages,dcl|data control language|grant|revoke
+TCL,TCL,Ngôn ngữ điều khiển giao dịch,Transaction Control Languages,tcl|transaction control language|commit|rollback|savepoint
+Wolfram Language,Wolfram Language,Ngôn ngữ lập trình,Programming Languages,wolfram|mathematica|wolfram language|wolfram script
+Apex,Salesforce Apex,Ngôn ngữ lập trình,Programming Languages,salesforce apex|force apex|apex trigger|apex class
+ABAP,ABAP,Ngôn ngữ lập trình,Programming Languages,sap abap|abap report|abap module|abap dictionary
+Visual Basic .NET,Visual Basic .NET,Ngôn ngữ lập trình,Programming Languages,vb\.net|visual basic net|vbnet
+Objective-C,Objective-C,Ngôn ngữ lập trình,Programming Languages,objective-c|objc|objective c|ios objective
+COBOL,COBOL,Ngôn ngữ lập trình,Programming Languages,cobol|mainframe|legacy cobol|cobol program
+Forth,Forth,Ngôn ngữ lập trình,Programming Languages,forth|stack-based forth|forth language
+Smalltalk,Smalltalk,Ngôn ngữ lập trình,Programming Languages,smalltalk|pharo|squeak|smalltalk-80
+ML,ML,Ngôn ngữ lập trình,Programming Languages,ml language|meta language|standard ml|sml
+Miranda,Miranda,Ngôn ngữ lập trình,Programming Languages,miranda|functional miranda|lazy miranda
+Elm,Elm,Ngôn ngữ lập trình,Programming Languages,elm|elm lang|functional elm|web elm
+PureScript,PureScript,Ngôn ngữ lập trình,Programming Languages,purescript|pure script|typed purescript
+Idris,Idris,Ngôn ngữ lập trình,Programming Languages,idris|dependent type|idris lang
+Agda,Agda,Ngôn ngữ lập trình,Programming Languages,agda|proof assistant|agda lang
+Coq,Coq,Ngôn ngữ lập trình,Programming Languages,coq|theorem prover|coq proof
+Lean,Lean,Ngôn ngữ lập trình,Programming Languages,lean|lean 3|lean 4|mathlib
+Isabelle,Isabelle,Ngôn ngữ lập trình,Programming Languages,isabelle|isabelle hol|proof assistant isabelle

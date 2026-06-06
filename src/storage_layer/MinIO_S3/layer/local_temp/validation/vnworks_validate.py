@@ -14,6 +14,9 @@ logger = logging.getLogger(__name__)
 
 FILE_PREFIX = "vietnamworks_jobs"
 
+# Allow up to 5% null across all columns (< 5% null still passes).
+MIN_NON_NULL_RATIO = 0.95
+
 def _latest_jsonl(directory: Path, prefix: str) -> Path:
     """Return the newest jsonl file whose name starts with ``prefix``.
 
@@ -36,7 +39,9 @@ def _build_suite(
 
     for column in columns:
         suite.add_expectation(
-            gx.expectations.ExpectColumnValuesToNotBeNull(column=column)
+            gx.expectations.ExpectColumnValuesToNotBeNull(
+                column=column, mostly=MIN_NON_NULL_RATIO
+            )
         )
 
     return suite

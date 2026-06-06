@@ -9,7 +9,6 @@ class SilverJobItem:
     # ==========================================
     # 1. METADATA & SOURCE
     # ==========================================
-    source_site: Optional[str] = None
     job_url: Optional[str] = None
     search_keyword: Optional[str] = None
     job_deadline: Optional[str] = None

@@ -6,7 +6,6 @@ Looker Studio,Looker Studio,BI & Trực quan hóa,BI & Visualization,looker stud
 Apache Superset,Apache Superset,BI & Trực quan hóa,BI & Visualization,superset|apache superset
 Metabase,Metabase,BI & Trực quan hóa,BI & Visualization,metabase
 Qlik,Qlik,BI & Trực quan hóa,BI & Visualization,\bqlik\b|qlikview|qlik sense
-AWS QuickSight,AWS QuickSight,BI & Trực quan hóa,BI & Visualization,quicksight|quick sight|aws quicksight
 Mode Analytics,Mode Analytics,BI & Trực quan hóa,BI & Visualization,mode analytics
 ThoughtSpot,ThoughtSpot,BI & Trực quan hóa,BI & Visualization,thoughtspot|thought spot
 Sisense,Sisense,BI & Trực quan hóa,BI & Visualization,sisense
@@ -43,18 +42,11 @@ Informatica,Informatica,ETL & Điều phối,ETL & Orchestration,informatica|pow
 SSIS,SSIS,ETL & Điều phối,ETL & Orchestration,\bssis\b|sql server integration services
 SAP DataServices,SAP DataServices,ETL & Điều phối,ETL & Orchestration,sap dataservices|sap data services|\bbods\b
 IBM DataStage,IBM DataStage,ETL & Điều phối,ETL & Orchestration,datastage|ibm datastage
-AWS Glue,AWS Glue,ETL & Điều phối,ETL & Orchestration,aws glue|glue job|glue crawler
-AWS Lambda,AWS Lambda,ETL & Điều phối,ETL & Orchestration,aws lambda|lambda function|serverless lambda
-AWS Step Functions,AWS Step Functions,ETL & Điều phối,ETL & Orchestration,step functions|step function|aws stepfunction
 AWS DMS,AWS DMS,ETL & Điều phối,ETL & Orchestration,\bdms\b|database migration service|data migration service
 Fivetran,Fivetran,ETL & Điều phối,ETL & Orchestration,fivetran|five tran
 Airbyte,Airbyte,ETL & Điều phối,ETL & Orchestration,airbyte|air byte
 Apache NiFi,Apache NiFi,ETL & Điều phối,ETL & Orchestration,\bnifi\b|apache nifi
 Sqoop,Sqoop,ETL & Điều phối,ETL & Orchestration,sqoop|apache sqoop
-Snowflake,Snowflake,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,snowflake|snow flake|snowsql
-BigQuery,BigQuery,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,bigquery|big query|google bigquery
-Amazon Redshift,Amazon Redshift,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,redshift|amazon redshift
-Databricks,Databricks,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,databricks|data bricks
 Delta Lake,Delta Lake,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,delta lake|delta table|delta live tables|\bdlt\b
 Apache Iceberg,Apache Iceberg,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,iceberg|apache iceberg
 Apache Hudi,Apache Hudi,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,\bhudi\b|apache hudi
@@ -76,7 +68,6 @@ MongoDB,MongoDB,CSDL vận hành,Operational Databases,mongodb|mongo db|\bmongo\
 Redis,Redis,CSDL vận hành,Operational Databases,\bredis\b
 Elasticsearch,Elasticsearch,CSDL vận hành,Operational Databases,elasticsearch|elastic search|opensearch
 Cassandra,Cassandra,CSDL vận hành,Operational Databases,cassandra|apache cassandra|scylladb
-DynamoDB,DynamoDB,CSDL vận hành,Operational Databases,dynamodb|dynamo db
 Neo4j,Neo4j,CSDL vận hành,Operational Databases,neo4j|graph database|csdl do thi
 Couchbase,Couchbase,CSDL vận hành,Operational Databases,couchbase|couch base
 SQLite,SQLite,CSDL vận hành,Operational Databases,sqlite|sq lite
@@ -86,9 +77,6 @@ Soda,Soda,MLOps & DevOps,MLOps & DevOps,\bsoda core\b|soda cl|soda data quality
 Monte Carlo Data,Monte Carlo Data,MLOps & DevOps,MLOps & DevOps,monte carlo data|monte carlo observability
 DVC,DVC,MLOps & DevOps,MLOps & DevOps,\bdvc\b|data version control
 Docker,Docker,MLOps & DevOps,MLOps & DevOps,docker|dockerfile|containerization
-Kubernetes,Kubernetes,MLOps & DevOps,MLOps & DevOps,kubernetes|\bk8s\b
-Terraform,Terraform,MLOps & DevOps,MLOps & DevOps,terraform|\biac\b|infrastructure as code
-Ansible,Ansible,MLOps & DevOps,MLOps & DevOps,ansible
 Jenkins,Jenkins,MLOps & DevOps,MLOps & DevOps,jenkins
 GitHub Actions,GitHub Actions,MLOps & DevOps,MLOps & DevOps,github actions|gh actions
 GitLab CI,GitLab CI,MLOps & DevOps,MLOps & DevOps,gitlab ci|gitlab-ci
@@ -120,7 +108,6 @@ KNIME,KNIME,ETL & Điều phối,ETL & Orchestration,knime|knime analytics
 RapidMiner,RapidMiner,ETL & Điều phối,ETL & Orchestration,rapidminer|rapid miner
 OpenRefine,OpenRefine,ETL & Điều phối,ETL & Orchestration,openrefine|open refine|google refine
 Trifacta,Trifacta,ETL & Điều phối,ETL & Orchestration,trifacta|data wrangler|wrangle data
-Dataform,Dataform,ETL & Điều phối,ETL & Orchestration,dataform|google dataform
 SQLMesh,SQLMesh,ETL & Điều phối,ETL & Orchestration,sqlmesh|sql mesh
 Coalesce,Coalesce,ETL & Điều phối,ETL & Orchestration,coalesce.io|coalesce data|coalesce snowflake
 Matillion,Matillion,ETL & Điều phối,ETL & Orchestration,matillion
@@ -158,7 +145,6 @@ ClearML,ClearML,MLOps & DevOps,MLOps & DevOps,clearml|clear ml
 Evidently AI,Evidently AI,MLOps & DevOps,MLOps & DevOps,evidently ai|evidentlyai|evidently
 Label Studio,Label Studio,MLOps & DevOps,MLOps & DevOps,label studio|labelstudio
 Snorkel,Snorkel,MLOps & DevOps,MLOps & DevOps,snorkel ai|snorkel labeling|snorkel
-Microsoft Fabric,Microsoft Fabric,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,microsoft fabric|fabric lakehouse|fabric warehouse|onelake
 Teradata,Teradata,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,teradata
 Vertica,Vertica,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,vertica
 Greenplum,Greenplum,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,greenplum|green plum
@@ -174,3 +160,127 @@ MetricFlow,MetricFlow,BI & Trực quan hóa,BI & Visualization,metricflow|metric
 LookML,LookML,BI & Trực quan hóa,BI & Visualization,lookml|looker modeling
 Hightouch,Hightouch,ETL & Điều phối,ETL & Orchestration,hightouch|reverse etl
 Census,Census,ETL & Điều phối,ETL & Orchestration,census reverse etl|census data
+Zoho Analytics,Zoho Analytics,BI & Trực quan hóa,BI & Visualization,zoho analytics|zoho bi|zoho reports
+Yellowfin BI,Yellowfin BI,BI & Trực quan hóa,BI & Visualization,yellowfin|yellowfin bi|yellowfin analytics
+Logi Analytics,Logi Analytics,BI & Trực quan hóa,BI & Visualization,logi analytics|logi report|logi ad
+Domo,Domo,BI & Trực quan hóa,BI & Visualization,domo|domo bi|domo analytics
+Holistics,Holistics,BI & Trực quan hóa,BI & Visualization,holistics|holistics bi|self-service analytics
+Grow.com,Grow.com,BI & Trực quan hóa,BI & Visualization,grow\.com|grow bi|grow dashboard
+Geckoboard,Geckoboard,BI & Trực quan hóa,BI & Visualization,geckoboard|gecko board|tv dashboard
+Klipfolio,Klipfolio,BI & Trực quan hóa,BI & Visualization,klipfolio|klip|klipfolio dashboard
+GoodData,GoodData,BI & Trực quan hóa,BI & Visualization,gooddata|good data|gooddata cloud
+Birst,Birst,BI & Trực quan hóa,BI & Visualization,birst|birst bi|infor birst
+Board,Board,BI & Trực quan hóa,BI & Visualization,board|board international|board bi
+Incorta,Incorta,BI & Trực quan hóa,BI & Visualization,incorta|incorta analytics|direct data
+Zenlytic,Zenlytic,BI & Trực quan hóa,BI & Visualization,zenlytic|zenlytic bi|ai analytics
+Preset,Preset,BI & Trực quan hóa,BI & Visualization,preset|preset io|preset cloud
+OpenSource BI,OpenSource BI,BI & Trực quan hóa,BI & Visualization,opensource bi|open source bi|redash|lightdash
+Hugging Face Inference API,Hugging Face Inference API,AI tạo sinh & LLM,GenAI & LLM Apps,huggingface inference|hf inference|inference api
+Replicate,Replicate,AI tạo sinh & LLM,GenAI & LLM Apps,replicate|replicate ai|replicate ml
+Together AI,Together AI,AI tạo sinh & LLM,GenAI & LLM Apps,together ai|together|together inference
+Anyscale,Anyscale,AI tạo sinh & LLM,GenAI & LLM Apps,anyscale|anyscale endpoint|ray serve
+Baseten,Baseten,AI tạo sinh & LLM,GenAI & LLM Apps,baseten|baseten co|model deployment
+Modal,Modal,AI tạo sinh & LLM,GenAI & LLM Apps,modal|modal com|serverless gpu
+RunPod,RunPod,AI tạo sinh & LLM,GenAI & LLM Apps,runpod|run pod|gpu cloud
+Latitude,Latitude,AI tạo sinh & LLM,GenAI & LLM Apps,latitude|latitude so|prompt management
+PromptLayer,PromptLayer,AI tạo sinh & LLM,GenAI & LLM Apps,promptlayer|prompt layer|prompt versioning
+Humanloop,Humanloop,AI tạo sinh & LLM,GenAI & LLM Apps,humanloop|human loop|llm platform
+LLMonitor,LLMonitor,AI tạo sinh & LLM,GenAI & LLM Apps,llmonitor|llm monitor|llm observability
+Arize Phoenix,Arize Phoenix,AI tạo sinh & LLM,GenAI & LLM Apps,arize phoenix|phoenix ai|llm tracing
+WhyLabs,WhyLabs,AI tạo sinh & LLM,GenAI & LLM Apps,whylabs|why labs|ai observability
+Galileo,Galileo,AI tạo sinh & LLM,GenAI & LLM Apps,galileo|galileo ai|llm evaluation
+Patronus AI,Patronus AI,AI tạo sinh & LLM,GenAI & LLM Apps,patronus|patronus ai|llm testing
+LangWatch,LangWatch,AI tạo sinh & LLM,GenAI & LLM Apps,langwatch|lang watch|llm monitoring
+OpenLLMetry,OpenLLMetry,AI tạo sinh & LLM,GenAI & LLM Apps,openllmetry|llm telemetry|traceloop
+Vespa,Vespa,CSDL Vector & Embedding,Vector DB & Embeddings,vespa|vespa ai|vespa engine
+Vald,Vald,CSDL Vector & Embedding,Vector DB & Embeddings,vald|vald vector|distributed vector
+Zilliz,Zilliz,CSDL Vector & Embedding,Vector DB & Embeddings,zilliz|zilliz cloud|milvus cloud
+Turbopuffer,Turbopuffer,CSDL Vector & Embedding,Vector DB & Embeddings,turbopuffer|turbo buffer|vector search
+Windmill,Windmill,ETL & Điều phối,ETL & Orchestration,windmill|windmill dev|workflow automation
+Temporal,Temporal,ETL & Điều phối,ETL & Orchestration,temporal|temporal io|workflow engine
+Apache DolphinScheduler,Apache DolphinScheduler,ETL & Điều phối,ETL & Orchestration,dolphinscheduler|apache dolphinscheduler|workflow scheduler
+Apache SeaTunnel,Apache SeaTunnel,ETL & Điều phối,ETL & Orchestration,seatunnel|apache seatunnel|data integration
+Estuary,Estuary,ETL & Điều phối,ETL & Orchestration,estuary|estuary dev|data streaming
+Sling,Sling,ETL & Điều phối,ETL & Orchestration,sling|sling data|data replication
+RudderStack,RudderStack,ETL & Điều phối,ETL & Orchestration,rudderstack|rudder stack|customer data platform
+Segment,Segment,ETL & Điều phối,ETL & Orchestration,segment|segment com|twilio segment
+mParticle,mParticle,ETL & Điều phối,ETL & Orchestration,mparticle|m particle|data collection
+Firebolt,Firebolt,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,firebolt|firebolt io|cloud data warehouse
+SingleStore,SingleStore,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,singlestore|single store|memsql
+Planetscale,Planetscale,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,planetscale|planet scale|serverless mysql
+Neon,Neon,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,neon|neon tech|serverless postgres
+Xata,Xata,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,xata|xata io|serverless database
+TiDB,TiDB,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,tidb|ti db|distributed sql
+OceanBase,OceanBase,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,oceanbase|ocean base|distributed database
+RisingWave,RisingWave,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,risingwave|rising wave|streaming database
+Materialize,Materialize,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,materialize|materialize inc|streaming sql
+CockroachDB,CockroachDB,CSDL vận hành,Operational Databases,cockroachdb|cockroach db|distributed postgres
+YugabyteDB,YugabyteDB,CSDL vận hành,Operational Databases,yugabytedb|yugabyte|distributed postgres
+ScyllaDB,ScyllaDB,CSDL vận hành,Operational Databases,scylladb|scylla db|cassandra alternative
+Dragonfly,Dragonfly,CSDL vận hành,Operational Databases,dragonfly|dragonfly db|redis alternative
+KeyDB,KeyDB,CSDL vận hành,Operational Databases,keydb|key db|redis fork
+Tile38,Tile38,CSDL vận hành,Operational Databases,tile38|tile 38|geospatial database
+Apache Kudu,Apache Kudu,CSDL vận hành,Operational Databases,kudu|apache kudu|columnar storage
+Apache HBase,Apache HBase,CSDL vận hành,Operational Databases,hbase|apache hbase|nosql hbase
+Valohai,Valohai,MLOps & DevOps,MLOps & DevOps,valohai|mlops platform|ml pipeline
+Scale AI,Scale AI,MLOps & DevOps,MLOps & DevOps,scale ai|scale data|data labeling
+Labelbox,Labelbox,MLOps & DevOps,MLOps & DevOps,labelbox|label box|data labeling
+Supervisely,Supervisely,MLOps & DevOps,MLOps & DevOps,supervisely|supervise ly|computer vision labeling
+CVAT,CVAT,MLOps & DevOps,MLOps & DevOps,cvat|computer vision annotation tool|opencv cvat
+Prodigy,Prodigy,MLOps & DevOps,MLOps & DevOps,prodigy|explosion prodigy|annotation tool
+Encord,Encord,MLOps & DevOps,MLOps & DevOps,encord|encord com|data labeling
+V7 Labs,V7 Labs,MLOps & DevOps,MLOps & DevOps,v7 labs|v7 darwin|auto annotation
+Roboflow,Roboflow,MLOps & DevOps,MLOps & DevOps,roboflow|robo flow|computer vision
+Satori,Satori,Quản trị dữ liệu,Data Governance,satori|satori cybozu|data security
+Varada,Varada,Quản trị dữ liệu,Data Governance,varada|varada co|data discovery
+Secoda,Secoda,Quản trị dữ liệu,Data Governance,secoda|secoda co|data catalog
+Datafold,Datafold,Quản trị dữ liệu,Data Governance,datafold|data fold|data diff
+DataGrail,DataGrail,Quản trị dữ liệu,Data Governance,datagrail|data grail|privacy management
+OneTrust,OneTrust,Quản trị dữ liệu,Data Governance,onetrust|one trust|privacy platform
+TrustArc,TrustArc,Quản trị dữ liệu,Data Governance,trustarc|trust arc|privacy compliance
+BigID,BigID,Quản trị dữ liệu,Data Governance,bigid|big id|data intelligence
+Privitar,Privitar,Quản trị dữ liệu,Data Governance,privitar|data privacy|data anonymization
+Databunker,Databunker,Quản trị dữ liệu,Data Governance,databunker|data bunker|secure vault
+Databand,Databand,Chất lượng dữ liệu,Data Quality,databand|data band|data observability
+Metaplane,Metaplane,Chất lượng dữ liệu,Data Quality,metaplane|meta plane|data observability
+Querybook,Querybook,Chất lượng dữ liệu,Data Quality,querybook|query book|query validation
+VS Code,VS Code,Môi trường phân tích,Analytics Environments,vscode|visual studio code|vs code
+PyCharm,PyCharm,Môi trường phân tích,Analytics Environments,pycharm|jetbrains pycharm|python ide
+DataGrip,DataGrip,Môi trường phân tích,Analytics Environments,datagrip|data grip|jetbrains database
+DBeaver,DBeaver,Môi trường phân tích,Analytics Environments,dbeaver|db ever|universal database tool
+TablePlus,TablePlus,Môi trường phân tích,Analytics Environments,tableplus|table plus|database client
+Beekeeper Studio,Beekeeper Studio,Môi trường phân tích,Analytics Environments,beekeeper|beekeeper studio|sql editor
+PopSQL,PopSQL,Môi trường phân tích,Analytics Environments,popsql|pop sql|collaborative sql
+DataSpell,DataSpell,Môi trường phân tích,Analytics Environments,dataspell|data spell|jetbrains data
+Hex,Hex,Môi trường phân tích,Analytics Environments,hex|hex tech|hex notebook
+Deepnote,Deepnote,Môi trường phân tích,Analytics Environments,deepnote|deep note|collaborative notebook
+Mode,Mode,Môi trường phân tích,Analytics Environments,mode|mode analytics|sql analytics
+Count,Count,Môi trường phân tích,Analytics Environments,count|count co|count analytics
+Rill,Rill,Môi trường phân tích,Analytics Environments,rill|rill data|rill developer
+Evidence,Evidence,Môi trường phân tích,Analytics Environments,evidence|evidence stf|sql reporting
+DataGrip,DataGrip,Môi trường phân tích,Analytics Environments,datagrip|data grip|database ide
+Docker Compose,Docker Compose,MLOps & DevOps,MLOps & DevOps,docker-compose|docker compose|compose file
+Podman,Podman,MLOps & DevOps,MLOps & DevOps,podman|pod man|container engine
+Containerd,Containerd,MLOps & DevOps,MLOps & DevOps,containerd|container daemon|container runtime
+CRI-O,CRI-O,MLOps & DevOps,MLOps & DevOps,cri-o|crio|kubernetes container runtime
+Packer,Packer,MLOps & DevOps,MLOps & DevOps,packer|hashicorp packer|image builder
+Vagrant,Vagrant,MLOps & DevOps,MLOps & DevOps,vagrant|hashicorp vagrant|vm manager
+Nomad,Nomad,MLOps & DevOps,MLOps & DevOps,nomad|hashicorp nomad|workload orchestrator
+Consul,Consul,MLOps & DevOps,MLOps & DevOps,consul|hashicorp consul|service mesh
+Vault,Vault,MLOps & DevOps,MLOps & DevOps,vault|hashicorp vault|secret management
+Boundary,Boundary,MLOps & DevOps,MLOps & DevOps,boundary|hashicorp boundary|access management
+Waypoint,Waypoint,MLOps & DevOps,MLOps & DevOps,waypoint|hashicorp waypoint|deployment workflow
+Spinnaker,Spinnaker,MLOps & DevOps,MLOps & DevOps,spinnaker|spinnaker cd|continuous delivery
+Tekton,Tekton,MLOps & DevOps,MLOps & DevOps,tekton|tekton cd|kubernetes native ci/cd
+Flagger,Flagger,MLOps & DevOps,MLOps & DevOps,flagger|flagger cd|canary deployment
+Knative,Knative,MLOps & DevOps,MLOps & DevOps,knative|k native|serverless kubernetes
+Istio,Istio,MLOps & DevOps,MLOps & DevOps,istio|istio io|service mesh
+Linkerd,Linkerd,MLOps & DevOps,MLOps & DevOps,linkerd|linkerd io|service mesh
+Envoy,Envoy,MLOps & DevOps,MLOps & DevOps,envoy|envoy proxy|service proxy
+Traefik,Traefik,MLOps & DevOps,MLOps & DevOps,traefik|traefik proxy|edge router
+NGINX,NGINX,MLOps & DevOps,MLOps & DevOps,nginx|nginx plus|web server
+HAProxy,HAProxy,MLOps & DevOps,MLOps & DevOps,haproxy|ha proxy|load balancer
+Caddy,Caddy,MLOps & DevOps,MLOps & DevOps,caddy|caddy server|web server
+AWS CloudFront,AWS CloudFront,MLOps & DevOps,MLOps & DevOps,cloudfront|aws cloudfront|cdn
+Azure Front Door,Azure Front Door,MLOps & DevOps,MLOps & DevOps,front door|azure front door|global load balancer
+Google Cloud CDN,Google Cloud CDN,MLOps & DevOps,MLOps & DevOps,cloud cdn|google cdn|content delivery

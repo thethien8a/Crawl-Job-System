@@ -34,3 +34,22 @@ IoT Analytics,IoT Analytics,Ứng dụng dữ liệu,Data Use Cases,iot analytic
 Search & Recommendation,Search & Recommendation,Ứng dụng dữ liệu,Data Use Cases,search ranking|recommendation|recommender|personalization|ca nhan hoa|he goi y
 Customer Churn,Customer Churn,Ứng dụng dữ liệu,Data Use Cases,churn prediction|customer churn|du doan roi bo|roi bo khach hang|retention model
 Customer Segmentation,Customer Segmentation,Ứng dụng dữ liệu,Data Use Cases,customer segmentation|phan khuc khach hang|customer clustering|rfm analysis|rfm segmentation
+Travel & Hospitality,Travel & Hospitality,Kiến thức nghiệp vụ,Domain Knowledge,travel|hospitality|du lich|khach san|hotel|booking|airbnb|tour|tourism| OTA|online travel agency
+Legal Tech,Legal Tech,Kiến thức nghiệp vụ,Domain Knowledge,legal tech|luat|legal technology|contract management|compliance tech|legal automation|phap ly|luat su
+HR Tech,HR Tech,Kiến thức nghiệp vụ,Domain Knowledge,hr tech|human resource technology|recruitment tech|talent management|hrms|human resource management system
+PropTech,PropTech,Kiến thức nghiệp vụ,Domain Knowledge,proptech|real estate tech|bat dong san cong nghe|property technology|realtech
+AgriTech,AgriTech,Kiến thức nghiệp vụ,Domain Knowledge,agritech|nong nghiep cong nghe|agricultural technology|smart farming|precision agriculture|farm tech
+FoodTech,FoodTech,Kiến thức nghiệp vụ,Domain Knowledge,foodtech|food tech|thuc pham cong nghe|food delivery|food service tech|restaurant tech
+InsurTech,InsurTech,Kiến thức nghiệp vụ,Domain Knowledge,insurtech|bao hiem cong nghe|insurance technology|digital insurance|claims automation
+RegTech,RegTech,Kiến thức nghiệp vụ,Domain Knowledge,regtech|regulatory technology|compliance technology|regulatory compliance|kiem tuan cong nghe
+WealthTech,WealthTech,Kiến thức nghiệp vụ,Domain Knowledge,wealthtech|wealth tech|quan ly tai san|asset management tech|robo advisor|investment platform
+LendingTech,LendingTech,Kiến thức nghiệp vụ,Domain Knowledge,lendingtech|lending tech|cho vay|peer to peer lending|p2p lending|credit tech|digital lending
+Crypto & Blockchain,Crypto & Blockchain,Kiến thức nghiệp vụ,Domain Knowledge,crypto|blockchain|tien ao|tiền điện tử|defi|decentralized finance|nft|web3|smart contract
+Social Media & Community,Social Media & Community,Kiến thức nghiệp vụ,Domain Knowledge,social media|social network|mang xa hoi|community platform|social platform|user generated content|ugc
+Streaming & Entertainment,Streaming & Entertainment,Kiến thức nghiệp vụ,Domain Knowledge,streaming|entertainment|giai tri|video streaming|music streaming|netflix|spotify|content platform
+Sports Tech,Sports Tech,Kiến thức nghiệp vụ,Domain Knowledge,sports tech|the thao cong nghe|sports analytics|fitness tech|wearable sports|esports
+Climate Tech & Carbon,Climate Tech & Carbon,Kiến thức nghiệp vụ,Domain Knowledge,climate tech|carbon|green tech|clean tech|carbon credit|carbon footprint|net zero|sustainability tech
+Space Tech,Space Tech,Kiến thức nghiệp vụ,Domain Knowledge,space tech|satellite|ve tinh|aerospace tech|space data|earth observation|remote sensing
+Smart City & Urban,Smart City & Urban,Kiến thức nghiệp vụ,Domain Knowledge,smart city|thong minh do thi|urban tech|city platform|iot city|smart urban|giao thong thong minh
+MarTech & AdTech,MarTech & AdTech,Kiến thức nghiệp vụ,Domain Knowledge,martech|adtech|marketing technology|advertising technology|programmatic|dsp|ssp|ad exchange|demand side platform
+Creator Economy,Creator Economy,Kiến thức nghiệp vụ,Domain Knowledge,creator economy|creator platform|nha sang tao noi dung|influencer platform|content monetization|creator tools

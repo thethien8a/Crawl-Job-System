@@ -4,9 +4,14 @@ from src.storage_layer.MinIO_S3.layer.silver.utils.config_loader import load_con
 ## Local Path
 CONFIG_PATH = Path(__file__).parent
 YAML_PATH = CONFIG_PATH / "bucket.yml"
+
+# Single source of truth for the entity name used across the medallion
+# pipeline (Bronze S3 key, Silver S3 key, Gold table name, Supabase table).
+DEFAULT_ENTITY_NAME = "jobs"
+
 ## Bucket Paths
 class BronzeBucketPaths:
-    def __init__(self, source_name: str, entity_name: str = "jobs", year: str = "*", month: str = "*", day: str = "*"):
+    def __init__(self, source_name: str, entity_name: str = DEFAULT_ENTITY_NAME, year: str = "*", month: str = "*", day: str = "*"):
         self.source_name = source_name
         self.entity_name = entity_name
         self.year = year
@@ -39,7 +44,7 @@ class BronzeBucketPaths:
 
 
 class SilverBucketPaths:
-    def __init__(self, source_site: str, entity_name: str = "jobs", year: str = "*", month: str = "*", day: str = "*"):
+    def __init__(self, source_site: str, entity_name: str = DEFAULT_ENTITY_NAME, year: str = "*", month: str = "*", day: str = "*"):
         self.source_site = source_site
         self.entity_name = entity_name
         self.year = year

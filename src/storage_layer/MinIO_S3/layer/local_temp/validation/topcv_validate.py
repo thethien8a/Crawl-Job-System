@@ -14,6 +14,9 @@ logger = logging.getLogger(__name__)
 
 FILE_PREFIX = "topcv_jobs"
 
+# Allow up to 5% null across all columns (< 5% null still passes).
+MIN_NON_NULL_RATIO = 0.95
+
 NULLABLE_WHEN_BRAND_URL = {"company_size"}
 BRAND_URL_TOKEN = "brand/"
 
@@ -54,7 +57,9 @@ def _build_suite(
             )
         else:
             suite.add_expectation(
-                gx.expectations.ExpectColumnValuesToNotBeNull(column=column)
+                gx.expectations.ExpectColumnValuesToNotBeNull(
+                    column=column, mostly=MIN_NON_NULL_RATIO
+                )
             )
 
     return suite

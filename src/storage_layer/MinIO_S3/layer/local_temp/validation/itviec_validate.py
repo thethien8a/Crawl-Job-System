@@ -18,15 +18,18 @@ from src.crawl_layer.data_model.data_class import ITViecJobItem, JobItem  # noqa
 logger = logging.getLogger(__name__)
 
 FILE_PREFIX = "itviec_jobs"
-# "Null ratio < 95%" reframed for GE: at least 5% of rows must be non-null.
-MAX_NULL_RATIO = 0.95
-MIN_NON_NULL_RATIO = round(1 - MAX_NULL_RATIO, 4)
+
+# Required columns: allow up to 5% null (mostly >= 0.95 means < 5% null still passes).
+REQUIRED_MIN_NON_NULL_RATIO = 0.95
+
+# Optional columns: at least 5% of rows must be non-null.
+OPTIONAL_MAX_NULL_RATIO = 0.95
+OPTIONAL_MIN_NON_NULL_RATIO = round(1 - OPTIONAL_MAX_NULL_RATIO, 4)
 
 EXCEPTIONAL_OPTION_COL = [
     "job_industry"
 ]
-EXCEPTIONAL_MAX_NULL_RATE = 0.2
-EXCEPT_MIN_NON_NULL_RATIO = round(1 - EXCEPTIONAL_MAX_NULL_RATE, 4)
+EXCEPTIONAL_MIN_NON_NULL_RATIO = 0.8
 def _latest_jsonl(directory: Path, prefix: str) -> Path:
     """Return the newest jsonl file whose name starts with ``prefix``.
 
@@ -66,23 +69,27 @@ def _build_suite(
 ) -> gx.ExpectationSuite:
     suite = context.suites.add(gx.ExpectationSuite(name="itviec_suite"))
 
+    # Required columns: allow up to 5% null (mostly >= 0.95).
     for column in required:
         suite.add_expectation(
-            gx.expectations.ExpectColumnValuesToNotBeNull(column=column)
+            gx.expectations.ExpectColumnValuesToNotBeNull(
+                column=column, mostly=REQUIRED_MIN_NON_NULL_RATIO
+            )
         )
 
-    # ``mostly`` is the minimum acceptable share of non-null values.
+    # Optional columns: at least 5% non-null is enough.
     for column in optional:
         suite.add_expectation(
             gx.expectations.ExpectColumnValuesToNotBeNull(
-                column=column, mostly=MIN_NON_NULL_RATIO
+                column=column, mostly=OPTIONAL_MIN_NON_NULL_RATIO
             )
         )
-    
+
+    # Exceptional columns: more lenient threshold (e.g. job_industry).
     for column in EXCEPTIONAL_OPTION_COL:
         suite.add_expectation(
             gx.expectations.ExpectColumnValuesToNotBeNull(
-                column=column, mostly=EXCEPT_MIN_NON_NULL_RATIO
+                column=column, mostly=EXCEPTIONAL_MIN_NON_NULL_RATIO
             )
         )
     

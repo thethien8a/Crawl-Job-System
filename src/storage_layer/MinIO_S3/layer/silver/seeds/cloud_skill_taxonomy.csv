@@ -65,3 +65,92 @@ Google Cloud Functions,Google Cloud Functions,Dịch vụ tính toán GCP,GCP Co
 Google Cloud Monitoring,Google Cloud Monitoring,Dịch vụ quản lý GCP,GCP Management Services,cloud monitoring|stackdriver|google cloud monitoring|cloud operations
 Google Cloud IAM,Google Cloud IAM,Dịch vụ bảo mật GCP,GCP Security Services,cloud iam|google iam|identity and access management gcp
 Google Cloud Secret Manager,Google Cloud Secret Manager,Dịch vụ bảo mật GCP,GCP Security Services,secret manager|google secret manager|gcp secrets
+AWS AppSync,AWS AppSync,Dịch vụ tích hợp AWS,AWS Integration Services,appsync|aws appsync|graphql aws
+AWS API Gateway,AWS API Gateway,Dịch vụ tích hợp AWS,AWS Integration Services,api gateway|aws api gateway|rest api aws
+AWS EventBridge,AWS EventBridge,Dịch vụ tích hợp AWS,AWS Integration Services,eventbridge|aws eventbridge|event bus
+AWS AppFlow,AWS AppFlow,Dịch vụ dữ liệu AWS,AWS Data Services,appflow|aws appflow|saas integration
+AWS Neptune,AWS Neptune,Dịch vụ dữ liệu AWS,AWS Data Services,neptune|amazon neptune|graph database aws
+AWS Timestream,AWS Timestream,Dịch vụ dữ liệu AWS,AWS Data Services,timestream|amazon timestream|time series database aws
+AWS OpenSearch,AWS OpenSearch,Dịch vụ dữ liệu AWS,AWS Data Services,opensearch|amazon opensearch|elasticsearch aws
+AWS ElastiCache,AWS ElastiCache,Dịch vụ dữ liệu AWS,AWS Data Services,elasticache|amazon elasticache|redis aws|memcached aws
+AWS Aurora,AWS Aurora,Dịch vụ dữ liệu AWS,AWS Data Services,aurora|amazon aurora|aurora postgresql|aurora mysql
+AWS DocumentDB,AWS DocumentDB,Dịch vụ dữ liệu AWS,AWS Data Services,documentdb|amazon documentdb|mongodb compatible aws
+AWS QuickSight,AWS QuickSight,Dịch vụ dữ liệu AWS,AWS Data Services,quicksight|amazon quicksight|bi aws
+AWS MSK,AWS MSK,Dịch vụ dữ liệu AWS,AWS Data Services,msk|amazon msk|managed streaming kafka
+AWS KMS,AWS KMS,Dịch vụ bảo mật AWS,AWS Security Services,kms|aws kms|key management service
+AWS WAF,AWS WAF,Dịch vụ bảo mật AWS,AWS Security Services,waf|aws waf|web application firewall
+AWS Shield,AWS Shield,Dịch vụ bảo mật AWS,AWS Security Services,shield|aws shield|ddos protection
+AWS GuardDuty,AWS GuardDuty,Dịch vụ bảo mật AWS,AWS Security Services,guardduty|aws guardduty|threat detection
+AWS Config,AWS Config,Dịch vụ quản lý AWS,AWS Management Services,aws config|config rules|compliance aws
+AWS Systems Manager,AWS Systems Manager,Dịch vụ quản lý AWS,AWS Management Services,systems manager|aws systems manager|ssm
+AWS CloudTrail,AWS CloudTrail,Dịch vụ quản lý AWS,AWS Management Services,cloudtrail|aws cloudtrail|api logging
+AWS Elastic Beanstalk,AWS Elastic Beanstalk,Dịch vụ tính toán AWS,AWS Compute Services,elastic beanstalk|beanstalk|aws beanstalk
+AWS Fargate,AWS Fargate,Dịch vụ tính toán AWS,AWS Compute Services,fargate|aws fargate|serverless containers
+AWS Batch,AWS Batch,Dịch vụ tính toán AWS,AWS Compute Services,aws batch|batch jobs|batch processing aws
+AWS Lightsail,AWS Lightsail,Dịch vụ tính toán AWS,AWS Compute Services,lightsail|amazon lightsail|vps aws
+Azure App Service,Azure App Service,Dịch vụ tính toán Azure,Azure Compute Services,app service|azure app service|web app azure
+Azure Container Apps,Azure Container Apps,Dịch vụ tính toán Azure,Azure Compute Services,container apps|azure container apps|serverless containers azure
+Azure Batch,Azure Batch,Dịch vụ tính toán Azure,Azure Compute Services,azure batch|batch azure|hpc azure
+Azure Spring Apps,Azure Spring Apps,Dịch vụ tính toán Azure,Azure Compute Services,spring apps|azure spring apps|spring cloud azure
+Azure DevOps,Azure DevOps,Dịch vụ quản lý Azure,Azure Management Services,azure devops|devops azure|azure boards|azure pipelines
+Azure Resource Manager,Azure Resource Manager,Dịch vụ quản lý Azure,Azure Management Services,arm|azure resource manager|arm template
+Azure Cost Management,Azure Cost Management,Dịch vụ quản lý Azure,Azure Management Services,cost management|azure cost management|cost analysis azure
+Azure Defender,Azure Defender,Dịch vụ bảo mật Azure,Azure Security Services,azure defender|microsoft defender cloud|cloud security posture
+Azure Sentinel,Azure Sentinel,Dịch vụ bảo mật Azure,Azure Security Services,sentinel|azure sentinel|siem azure
+Azure Purview,Azure Purview,Dịch vụ dữ liệu Azure,Azure Data Services,purview|azure purview|data governance azure
+Azure HDInsight,Azure HDInsight,Dịch vụ dữ liệu Azure,Azure Data Services,hdinsight|azure hdinsight|hadoop azure|spark azure
+Azure Databricks,Azure Databricks,Dịch vụ dữ liệu Azure,Azure Data Services,azure databricks|databricks azure
+Azure Analysis Services,Azure Analysis Services,Dịch vụ dữ liệu Azure,Azure Data Services,analysis services|azure analysis services|aas
+Azure Database for PostgreSQL,Azure Database for PostgreSQL,Dịch vụ dữ liệu Azure,Azure Data Services,azure postgresql|postgresql azure|azure database postgres
+Azure Database for MySQL,Azure Database for MySQL,Dịch vụ dữ liệu Azure,Azure Data Services,azure mysql|mysql azure|azure database mysql
+Azure Cache for Redis,Azure Cache for Redis,Dịch vụ dữ liệu Azure,Azure Data Services,azure redis|redis azure|azure cache redis
+Azure SignalR Service,Azure SignalR Service,Dịch vụ tích hợp Azure,Azure Integration Services,signalr|azure signalr|realtime azure
+Azure Event Grid,Azure Event Grid,Dịch vụ tích hợp Azure,Azure Integration Services,event grid|azure event grid|event routing
+Google Cloud Dataflow,Google Cloud Dataflow,Dịch vụ dữ liệu GCP,GCP Data Services,dataflow|cloud dataflow|stream processing gcp
+Google Cloud Data Catalog,Google Cloud Data Catalog,Dịch vụ dữ liệu GCP,GCP Data Services,data catalog|google data catalog|metadata gcp
+Google Cloud Memorystore,Google Cloud Memorystore,Dịch vụ dữ liệu GCP,GCP Data Services,memorystore|google memorystore|redis gcp
+Google Cloud Spanner,Google Cloud Spanner,Dịch vụ dữ liệu GCP,GCP Data Services,spanner|cloud spanner|distributed database gcp
+Google Cloud Data Fusion,Google Cloud Data Fusion,Dịch vụ dữ liệu GCP,GCP Data Services,data fusion|cloud data fusion|etl gcp
+Google Cloud Dataprep,Google Cloud Dataprep,Dịch vụ dữ liệu GCP,GCP Data Services,dataprep|cloud dataprep|data wrangling gcp
+Google Cloud Tasks,Google Cloud Tasks,Dịch vụ tích hợp GCP,GCP Integration Services,cloud tasks|google cloud tasks|task queue gcp
+Google Cloud Scheduler,Google Cloud Scheduler,Dịch vụ tích hợp GCP,GCP Integration Services,cloud scheduler|google cloud scheduler|cron job gcp
+Google Cloud API Gateway,Google Cloud API Gateway,Dịch vụ tích hợp GCP,GCP Integration Services,api gateway|google api gateway|api management gcp
+Google Cloud Build,Google Cloud Build,Dịch vụ DevOps GCP,GCP DevOps Services,cloud build|google cloud build|ci cd gcp
+Google Cloud Deploy,Google Cloud Deploy,Dịch vụ DevOps GCP,GCP DevOps Services,cloud deploy|google cloud deploy|cd gcp
+Google Artifact Registry,Google Artifact Registry,Dịch vụ DevOps GCP,GCP DevOps Services,artifact registry|google artifact registry|container registry gcp
+Google Cloud Source Repositories,Google Cloud Source Repositories,Dịch vụ DevOps GCP,GCP DevOps Services,source repositories|cloud source repos|git gcp
+VMware Cloud,VMware Cloud,Nền tảng đám mây,Cloud Platforms,vmware|vmware cloud|vcloud|vmc|vmware on aws
+DigitalOcean,DigitalOcean,Nền tảng đám mây,Cloud Platforms,digitalocean|digital ocean|do cloud|droplet
+Linode / Akamai,Linode / Akamai,Nền tảng đám mây,Cloud Platforms,linode|akamai|akamai linode|linode cloud
+Vultr,Vultr,Nền tảng đám mây,Cloud Platforms,vultr|vultr cloud
+OVHcloud,OVHcloud,Nền tảng đám mây,Cloud Platforms,ovh|ovhcloud|ovh cloud
+Hetzner,Hetzner,Nền tảng đám mây,Cloud Platforms,hetzner|hetzner cloud
+Scaleway,Scaleway,Nền tảng đám mây,Cloud Platforms,scaleway|scaleway cloud
+Tencent Cloud,Tencent Cloud,Nền tảng đám mây,Cloud Platforms,tencent cloud|tencent|qcLOUD
+Huawei Cloud,Huawei Cloud,Nền tảng đám mây,Cloud Platforms,huawei cloud|huawei
+Naver Cloud,Naver Cloud,Nền tảng đám mây,Cloud Platforms,naver cloud|naver
+Kubernetes,Kubernetes,Quản lý container,Container Management,kubernetes|\bk8s\b|k8s cluster|kubernetes cluster
+Docker Swarm,Docker Swarm,Quản lý container,Container Management,docker swarm|swarm mode|docker orchestration
+Amazon ECR,Amazon ECR,Quản lý container,Container Management,ecr|amazon ecr|elastic container registry
+Azure Container Registry,Azure Container Registry,Quản lý container,Container Management,acr|azure container registry|container registry azure
+Google Artifact Registry,Google Artifact Registry,Quản lý container,Container Management,gar|google artifact registry|gcr|google container registry
+Terraform,Terraform,Infrastructure as Code,Infrastructure as Code,terraform|tf|hashicorp terraform|iac terraform
+Pulumi,Pulumi,Infrastructure as Code,Infrastructure as Code,pulumi|pulumi iac
+AWS CDK,AWS CDK,Infrastructure as Code,Infrastructure as Code,cdk|aws cdk|cloud development kit
+Azure Bicep,Azure Bicep,Infrastructure as Code,Infrastructure as Code,bicep|azure bicep|bicep template
+Ansible,Ansible,Cấu hình & Tự động hóa,Configuration & Automation,ansible|ansible playbook|redhat ansible
+Chef,Chef,Cấu hình & Tự động hóa,Configuration & Automation,chef|chef infra|chef cookbook
+Puppet,Puppet,Cấu hình & Tự động hóa,Configuration & Automation,puppet|puppet enterprise|puppet forge
+SaltStack,SaltStack,Cấu hình & Tự động hóa,Configuration & Automation,salt|saltstack|salt state
+Cloudflare,Cloudflare,Mạng & CDN,Networking & CDN,cloudflare|cloudflare workers|cloudflare cdn|cloudflare dns
+Fastly,Fastly,Mạng & CDN,Networking & CDN,fastly|fastly cdn|edge computing fastly
+Akamai,Akamai,Mạng & CDN,Networking & CDN,akamai|akamai cdn|akamai edge
+AWS VPC,AWS VPC,Mạng AWS,AWS Networking Services,vpc|aws vpc|virtual private cloud
+Azure VNet,Azure VNet,Mạng Azure,Azure Networking Services,vnet|azure vnet|virtual network azure
+Google VPC,Google VPC,Mạng GCP,GCP Networking Services,vpc|google vpc|virtual private cloud gcp
+AWS Route 53,AWS Route 53,Mạng AWS,AWS Networking Services,route 53|aws route 53|dns aws
+Azure DNS,Azure DNS,Mạng Azure,Azure Networking Services,azure dns|dns azure
+Google Cloud DNS,Google Cloud DNS,Mạng GCP,GCP Networking Services,cloud dns|google cloud dns|dns gcp
+AWS Direct Connect,AWS Direct Connect,Mạng AWS,AWS Networking Services,direct connect|aws direct connect|dedicated connection
+Azure ExpressRoute,Azure ExpressRoute,Mạng Azure,Azure Networking Services,expressroute|azure expressroute|dedicated connection azure
+Google Cloud Interconnect,Google Cloud Interconnect,Mạng GCP,GCP Networking Services,cloud interconnect|google interconnect|dedicated connection gcp

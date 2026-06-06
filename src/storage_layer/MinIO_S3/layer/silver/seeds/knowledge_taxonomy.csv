@@ -145,3 +145,137 @@ SQL Performance Tuning,SQL Performance Tuning,Kho dữ liệu & Lakehouse,Wareho
 Batch Processing,Batch Processing,ETL & Điều phối,ETL & Orchestration,batch processing|xu ly batch|batch pipeline|batch job
 Real-time Analytics,Real-time Analytics,ETL & Điều phối,ETL & Orchestration,real-time analytics|realtime analytics|phan tich thoi gian thuc|near real-time
 Event-driven Architecture,Event-driven Architecture,ETL & Điều phối,ETL & Orchestration,event-driven architecture|event driven|event streaming|event sourcing
+DataOps,DataOps,Kỹ thuật dữ liệu,Data Engineering,dataops|data ops|data operations|continuous delivery data
+MLOps Engineering,MLOps Engineering,MLOps & DevOps,MLOps & DevOps,mlops engineering|mlops practices|mlops lifecycle
+LLMOps,LLMOps,MLOps & DevOps,MLOps & DevOps,llmops|llm ops|large language model operations
+AIOps,AIOps,MLOps & DevOps,MLOps & DevOps,aiops|ai operations|artificial intelligence operations
+Platform Engineering,Platform Engineering,Kiến trúc dữ liệu,Data Architecture,platform engineering|internal developer platform|idp|developer platform
+Data Mesh Architecture,Data Mesh Architecture,Kiến trúc dữ liệu,Data Architecture,data mesh|domain oriented|federated data|data product
+Data Fabric Architecture,Data Fabric Architecture,Kiến trúc dữ liệu,Data Architecture,data fabric|metadata driven|unified data layer
+Composable Data,Composable Data,Kiến trúc dữ liệu,Data Architecture,composable data|composable analytics|modular data
+Data Virtualization,Data Virtualization,Kiến trúc dữ liệu,Data Architecture,data virtualization|virtual data layer|data abstraction
+Data Federation,Data Federation,Kiến trúc dữ liệu,Data Architecture,data federation|federated query|unified data access
+Data Orchestration,Data Orchestration,ETL & Điều phối,ETL & Orchestration,data orchestration|workflow orchestration|pipeline orchestration
+Data Observability,Data Observability,Chất lượng dữ liệu,Data Quality,data observability|data monitoring|data health|data reliability
+Data Reliability,Data Reliability,Chất lượng dữ liệu,Data Quality,data reliability|data uptime|data sla|data availability
+Data Testing,Data Testing,Chất lượng dữ liệu,Data Quality,data testing|data validation|data quality testing|automated data tests
+Data Documentation,Data Documentation,Quản trị dữ liệu,Data Governance,data documentation|data wiki|data knowledge base|data dictionary
+Data Discovery,Data Discovery,Quản trị dữ liệu,Data Governance,data discovery|data exploration|data search|find data
+Data Classification,Data Classification,Quản trị dữ liệu,Data Governance,data classification|data categorization|data tagging|data labeling
+Data Retention,Data Retention,Quản trị dữ liệu,Data Governance,data retention|data lifecycle|data archiving|data deletion
+Data Sovereignty,Data Sovereignty,Quản trị dữ liệu,Data Governance,data sovereignty|data residency|data localization|data border
+Data Ethics,Data Ethics,Quản trị dữ liệu,Data Governance,data ethics|ethical data|responsible data|fair data
+Explainable AI,Explainable AI,AI tạo sinh & LLM,GenAI & LLM Apps,explainable ai|xai|model interpretability|model explainability
+Responsible AI,Responsible AI,AI tạo sinh & LLM,GenAI & LLM Apps,responsible ai|ethical ai|fair ai|trustworthy ai
+AI Governance,AI Governance,AI tạo sinh & LLM,GenAI & LLM Apps,ai governance|ai policy|ai regulation|ai compliance
+AI Safety,AI Safety,AI tạo sinh & LLM,GenAI & LLM Apps,ai safety|safe ai|ai alignment|ai risk
+AI Red Teaming,AI Red Teaming,AI tạo sinh & LLM,GenAI & LLM Apps,ai red team|adversarial testing|ai attack|ai vulnerability
+Prompt Injection,Prompt Injection,AI tạo sinh & LLM,GenAI & LLM Apps,prompt injection|prompt hacking|jailbreak|prompt attack
+Hallucination Detection,Hallucination Detection,AI tạo sinh & LLM,GenAI & LLM Apps,hallucination|ai hallucination|fact checking|grounding
+Retrieval Augmented Generation,Retrieval Augmented Generation,AI tạo sinh & LLM,GenAI & LLM Apps,rag|retrieval augmented generation|augmented generation
+Agentic AI,Agentic AI,AI tạo sinh & LLM,GenAI & LLM Apps,agentic ai|ai agent|autonomous agent|multi-agent system
+Multi-modal AI,Multi-modal AI,AI tạo sinh & LLM,GenAI & LLM Apps,multi-modal|multimodal ai|vision language|audio text
+Small Language Models,Small Language Models,AI tạo sinh & LLM,GenAI & LLM Apps,slm|small language model|edge ai|on-device llm
+Foundation Models,Foundation Models,AI tạo sinh & LLM,GenAI & LLM Apps,foundation model|pre-trained model|base model|large model
+Transfer Learning,Transfer Learning,Học máy cổ điển,Classical ML,transfer learning|pre-trained|fine-tuning|domain adaptation
+Federated Learning,Federated Learning,Học máy cổ điển,Classical ML,federated learning|distributed ml|privacy preserving ml
+Graph Neural Networks,Graph Neural Networks,Học sâu,Deep Learning,gnn|graph neural network|graph convolution|graph attention
+Diffusion Models,Diffusion Models,Học sâu,Deep Learning,diffusion model|denoising diffusion|score based|stable diffusion
+Generative Adversarial Networks,Generative Adversarial Networks,Học sâu,Deep Learning,gan|generative adversarial|adversarial training|generator discriminator
+Variational Autoencoders,Variational Autoencoders,Học sâu,Deep Learning,vae|variational autoencoder|latent space|probabilistic encoder
+Self-supervised Learning,Self-supervised Learning,Học sâu,Deep Learning,self-supervised|contrastive learning|simclr|moCo
+Meta-learning,Meta-learning,Học sâu,Deep Learning,meta-learning|learning to learn|few-shot|zero-shot learning
+Neural Architecture Search,Neural Architecture Search,Học sâu,Deep Learning,nas|neural architecture search|auto ml|automl
+Model Compression,Model Compression,Học sâu,Deep Learning,model compression|pruning|quantization|knowledge distillation
+Edge AI,Edge AI,Học sâu,Deep Learning,edge ai|on-device ml|tinyml|mobile ai|embedded ai
+Causal ML,Causal ML,Thống kê & Toán học,Statistics & Math,causal ml|causal machine learning|uplift modeling|treatment effect
+Bayesian Optimization,Bayesian Optimization,Thống kê & Toán học,Statistics & Math,bayesian optimization|gaussian process|hyperparameter optimization
+Monte Carlo Methods,Monte Carlo Methods,Thống kê & Toán học,Statistics & Math,monte carlo|simulation|markov chain|mcmc
+Graph Analytics,Graph Analytics,Thống kê & Toán học,Statistics & Math,graph analytics|network analysis|community detection|centrality
+Spatial Analytics,Spatial Analytics,Thống kê & Toán học,Statistics & Math,spatial analytics|geospatial analysis|spatial statistics|geo analytics
+Time Series Forecasting,Time Series Forecasting,Thống kê & Toán học,Statistics & Math,time series forecasting|arima|prophet|exponential smoothing
+Anomaly Detection,Anomaly Detection,Học máy cổ điển,Classical ML,anomaly detection|outlier detection|novelty detection|fraud detection
+Recommendation Engine,Recommendation Engine,Học máy cổ điển,Classical ML,recommendation engine|collaborative filtering|content-based|hybrid recommendation
+Natural Language Understanding,Natural Language Understanding,NLP,NLP,nlu|natural language understanding|intent recognition|entity extraction
+Natural Language Generation,Natural Language Generation,NLP,NLP,nlg|natural language generation|text generation|language generation
+Speech Recognition,Speech Recognition,NLP,NLP,asr|automatic speech recognition|speech to text|stt
+Text-to-Speech,Text-to-Speech,NLP,NLP,tts|text to speech|speech synthesis|voice synthesis
+Machine Translation,Machine Translation,NLP,NLP,mt|machine translation|neural translation|language translation
+Sentiment Analysis,Sentiment Analysis,NLP,NLP,sentiment analysis|opinion mining|sentiment classification|emotion detection
+Named Entity Recognition,Named Entity Recognition,NLP,NLP,ner|named entity recognition|entity extraction|entity recognition
+Question Answering,Question Answering,NLP,NLP,qa|question answering|conversational qa|open domain qa
+Summarization,Summarization,NLP,NLP,summarization|text summarization|abstractive summary|extractive summary
+Image Generation,Image Generation,Tầm nhìn máy tính,Computer Vision,image generation|text to image|image synthesis|generative image
+Video Analysis,Video Analysis,Tầm nhìn máy tính,Computer Vision,video analysis|video understanding|action recognition|video captioning
+3D Reconstruction,3D Reconstruction,Tầm nhìn máy tính,Computer Vision,3d reconstruction|point cloud|neural radiance field|nerf
+Medical Imaging,Medical Imaging,Tầm nhìn máy tính,Computer Vision,medical imaging|radiology|ct scan|mri analysis|x-ray analysis
+Autonomous Driving,Autonomous Driving,Tầm nhìn máy tính,Computer Vision,autonomous driving|self-driving|lidar|sensor fusion
+Data Visualization,Data Visualization,BI & Trực quan hóa,BI & Visualization,data visualization|data viz|chart design|infographic
+Interactive Dashboards,Interactive Dashboards,BI & Trực quan hóa,BI & Visualization,interactive dashboard|drill down|filter|dashboard design
+Geospatial Visualization,Geospatial Visualization,BI & Trực quan hóa,BI & Visualization,geospatial viz|map visualization|spatial visualization|choropleth
+Real-time Dashboards,Real-time Dashboards,BI & Trực quan hóa,BI & Visualization,real-time dashboard|live dashboard|streaming dashboard|operational dashboard
+Embedded Analytics,Embedded Analytics,BI & Trực quan hóa,BI & Visualization,embedded analytics|white label analytics|in-app analytics
+Augmented Analytics,Augmented Analytics,BI & Trực quan hóa,BI & Visualization,augmented analytics|ai-powered analytics|nlq|natural language query
+Data Storytelling,Data Storytelling,BI & Trực quan hóa,BI & Visualization,data storytelling|narrative visualization|data narrative|insight communication
+API Design,API Design,Kỹ thuật dữ liệu,Data Engineering,api design|rest api|graphql|api gateway|api management
+Microservices Architecture,Microservices Architecture,Kiến trúc dữ liệu,Data Architecture,microservices|service oriented|soa|distributed system
+Event Sourcing,Event Sourcing,Kiến trúc dữ liệu,Data Architecture,event sourcing|event log|event store|cqrs
+Domain-Driven Design,Domain-Driven Design,Kiến trúc dữ liệu,Data Architecture,ddd|domain driven design|bounded context|aggregate root
+Serverless Architecture,Serverless Architecture,Kiến trúc dữ liệu,Data Architecture,serverless|faas|function as a service|serverless design
+Container Orchestration,Container Orchestration,MLOps & DevOps,MLOps & DevOps,container orchestration|kubernetes|docker swarm|service mesh
+Infrastructure as Code,Infrastructure as Code,MLOps & DevOps,MLOps & DevOps,infrastructure as code|iac|terraform|cloudformation|pulumi
+GitOps,GitOps,MLOps & DevOps,MLOps & DevOps,gitops|git ops|declarative infrastructure|argocd
+Chaos Engineering,Chaos Engineering,MLOps & DevOps,MLOps & DevOps,chaos engineering|fault injection|resilience testing|chaos monkey
+Site Reliability Engineering,Site Reliability Engineering,MLOps & DevOps,MLOps & DevOps,sre|site reliability engineering|sla|slo|error budget
+Observability,Observability,MLOps & DevOps,MLOps & DevOps,observability|metrics|logs|traces|distributed tracing
+Cost Optimization,Cost Optimization,MLOps & DevOps,MLOps & DevOps,cost optimization|cloud cost|finops|cost management|resource optimization
+Capacity Planning,Capacity Planning,MLOps & DevOps,MLOps & DevOps,capacity planning|resource planning|scaling strategy|load forecasting
+Disaster Recovery,Disaster Recovery,MLOps & DevOps,MLOps & DevOps,disaster recovery|dr|backup strategy|rto|rpo|failover
+Business Continuity,Business Continuity,MLOps & DevOps,MLOps & DevOps,business continuity|bcp|high availability|fault tolerance
+Agile Methodology,Agile Methodology,Kỹ thuật phần mềm,Software Engineering,agile|scrum|kanban|sprint|agile methodology
+DevOps Culture,DevOps Culture,MLOps & DevOps,MLOps & DevOps,devops|dev ops|continuous delivery|ci cd culture
+Data Literacy,Data Literacy,Phân tích dữ liệu,Data Analytics,data literacy|data skills|data fluency|understanding data
+Statistical Thinking,Statistical Thinking,Thống kê & Toán học,Statistics & Math,statistical thinking|data driven|evidence based|statistical reasoning
+Experimental Design,Experimental Design,Thống kê & Toán học,Statistics & Math,experimental design|doe|design of experiments|factorial design
+Survey Methodology,Survey Methodology,Thống kê & Toán học,Statistics & Math,survey methodology|questionnaire design|sampling method|poll design
+Data Collection,Data Collection,Phân tích dữ liệu,Data Analytics,data collection|data gathering|data acquisition|data sourcing
+Data Integration,Data Integration,Kỹ thuật dữ liệu,Data Engineering,data integration|data consolidation|data consolidation|data unification
+Master Data Management,Master Data Management,Quản trị dữ liệu,Data Governance,mdm|master data management|golden record|single source of truth
+Data Modeling,Data Modeling,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,data modeling|dimensional modeling|entity relationship|er diagram
+ETL Design,ETL Design,ETL & Điều phối,ETL & Orchestration,etl design|etl architecture|etl patterns|data pipeline design
+Data Warehouse Architecture,Data Warehouse Architecture,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,data warehouse architecture|dwh architecture|enterprise data warehouse|edw
+Lakehouse Architecture,Lakehouse Architecture,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,lakehouse|data lakehouse|unified analytics|open table format
+Data Pipeline Patterns,Data Pipeline Patterns,ETL & Điều phối,ETL & Orchestration,data pipeline patterns|etl patterns|orchestration patterns|workflow design
+Change Data Capture,Change Data Capture,ETL & Điều phối,ETL & Orchestration,cdc|change data capture|data replication|incremental load
+Data Serialization,Data Serialization,Kỹ thuật dữ liệu,Data Engineering,data serialization|parquet|avro|protobuf|data format
+Data Compression,Data Compression,Kỹ thuật dữ liệu,Data Engineering,data compression|columnar storage|encoding|compression ratio
+Indexing Strategies,Indexing Strategies,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,indexing|b-tree|bitmap index|columnar index|index optimization
+Partitioning Strategies,Partitioning Strategies,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,partitioning|data partition|range partition|hash partition|list partition
+Data Sampling,Data Sampling,Thống kê & Toán học,Statistics & Math,data sampling|random sampling|stratified sampling|cluster sampling
+A/B Testing Design,A/B Testing Design,Thống kê & Toán học,Statistics & Math,ab test design|experiment design|split testing|multivariate testing
+Statistical Significance,Statistical Significance,Thống kê & Toán học,Statistics & Math,statistical significance|p-value|confidence interval|hypothesis testing
+Power Analysis,Power Analysis,Thống kê & Toán học,Statistics & Math,power analysis|sample size|effect size|statistical power
+Regression Analysis,Regression Analysis,Thống kê & Toán học,Statistics & Math,regression analysis|linear regression|logistic regression|multiple regression
+Classification Algorithms,Classification Algorithms,Học máy cổ điển,Classical ML,classification|decision tree|random forest|svm|naive bayes
+Clustering Algorithms,Clustering Algorithms,Học máy cổ điển,Classical ML,clustering|k-means|dbscan|hierarchical clustering|gaussian mixture
+Dimensionality Reduction,Dimensionality Reduction,Học máy cổ điển,Classical ML,dimensionality reduction|pca|tsne|umap|feature selection
+Ensemble Methods,Ensemble Methods,Học máy cổ điển,Classical ML,ensemble methods|bagging|boosting|stacking|voting classifier
+Feature Selection,Feature Selection,Học máy cổ điển,Classical ML,feature selection|feature importance|variable selection|feature ranking
+Feature Engineering,Feature Engineering,Học máy cổ điển,Classical ML,feature engineering|feature creation|feature transformation|feature extraction
+Hyperparameter Tuning,Hyperparameter Tuning,Học máy cổ điển,Classical ML,hyperparameter tuning|grid search|random search|bayesian optimization
+Cross-validation,Cross-validation,Thống kê & Toán học,Statistics & Math,cross-validation|k-fold|stratified k-fold|leave one out
+Model Interpretation,Model Interpretation,Học máy cổ điển,Classical ML,model interpretation|shap|lime|feature importance|model explainability
+Model Deployment,Model Deployment,MLOps & DevOps,MLOps & DevOps,model deployment|model serving|model inference|production model
+Model Monitoring,Model Monitoring,MLOps & DevOps,MLOps & DevOps,model monitoring|model drift|data drift|concept drift|performance monitoring
+Model Versioning,Model Versioning,MLOps & DevOps,MLOps & DevOps,model versioning|model registry|experiment tracking|model lineage
+A/B Testing Models,A/B Testing Models,MLOps & DevOps,MLOps & DevOps,model ab testing|champion challenger|canary deployment|shadow deployment
+Data Encryption,Data Encryption,Bảo mật dữ liệu,Data Security,data encryption|aes|rsa|encryption at rest|encryption in transit
+Data Masking,Data Masking,Bảo mật dữ liệu,Data Security,data masking|data anonymization|pii protection|data obfuscation
+Access Control,Access Control,Bảo mật dữ liệu,Data Security,access control|rbac|abac|iam|permission management
+Data Audit,Data Audit,Quản trị dữ liệu,Data Governance,data audit|audit trail|data logging|compliance audit
+Regulatory Compliance,Regulatory Compliance,Quản trị dữ liệu,Data Governance,regulatory compliance|gdpr|ccpa|pdpa|data protection regulation
+Data Anonymization,Data Anonymization,Bảo mật dữ liệu,Data Security,data anonymization|k-anonymity|differential privacy|pseudonymization
+Consent Management,Consent Management,Quản trị dữ liệu,Data Governance,consent management|user consent|opt-in|opt-out|privacy consent
+Data Portability,Data Portability,Quản trị dữ liệu,Data Governance,data portability|data export|data migration|data transfer
+Right to be Forgotten,Right to be Forgotten,Quản trị dữ liệu,Data Governance,right to be forgotten|data deletion|erasure request|gdpr article 17
+Data Minimization,Data Minimization,Quản trị dữ liệu,Data Governance,data minimization|purpose limitation|data collection principle|privacy by design

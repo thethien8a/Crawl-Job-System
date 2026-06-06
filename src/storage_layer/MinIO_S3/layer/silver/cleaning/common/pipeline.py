@@ -15,6 +15,7 @@ from typing import Callable
 
 import polars as pl
 
+from src.storage_layer.MinIO_S3.config.path import DEFAULT_ENTITY_NAME
 from src.storage_layer.MinIO_S3.layer.silver.data_model.data_class import (
     silver_schema_to_polars,
 )
@@ -63,6 +64,33 @@ def enforce_silver_schema(
     return df.select(exprs)
 
 
+# Columns that must be non-null for a row to be worth processing.
+# Rows missing any of these are dropped before cleaning starts.
+ESSENTIAL_COLUMNS = ("job_title", "company_name")
+
+
+def filter_essential_rows(df: pl.DataFrame) -> pl.DataFrame:
+    """Drop rows where any *essential* column is null.
+
+    A job without a title or company name is not useful downstream, so we
+    discard it early to avoid wasting cleaning work on garbage rows.
+    """
+    before = df.height
+    # Only filter on columns that actually exist in the DataFrame --
+    # some sites may not carry every essential column yet.
+    cols_present = [c for c in ESSENTIAL_COLUMNS if c in df.columns]
+    if cols_present:
+        df = df.filter(~pl.any_horizontal(pl.col(c).is_null() for c in cols_present))
+    after = df.height
+    dropped = before - after
+    if dropped:
+        logger.info(
+            "filter_essential_rows: dropped %d/%d rows missing %s",
+            dropped, before, cols_present,
+        )
+    return df
+
+
 # Local directory for CSV debug dumps; created on demand.
 SILVER_DEBUG_DIR = Path(__file__).parents[2] / "debug_output"
 
@@ -71,7 +99,7 @@ def build_argument_parser(site: str) -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=f"Silver cleaner for {site}")
     parser.add_argument("--from_date", required=True, help="Inclusive start date YYYY-MM-DD")
     parser.add_argument("--to_date", required=True, help="Inclusive end date YYYY-MM-DD")
-    parser.add_argument("--entity_name", default="jobs")
+    parser.add_argument("--entity_name", default=DEFAULT_ENTITY_NAME)
     parser.add_argument(
         "--no_save",
         action="store_true",
@@ -120,6 +148,7 @@ def run_pipeline(
             continue
             
         df = lazy.collect()
+        df = filter_essential_rows(df)
         cleaned = clean_fn(df)
         cleaned = enforce_silver_schema(cleaned, SILVER_SCHEMA)
 

@@ -126,3 +126,99 @@ Semantic Kernel,Semantic Kernel,AI tạo sinh & LLM,GenAI & LLM Apps,semantic ke
 Guidance,Guidance,AI tạo sinh & LLM,GenAI & LLM Apps,\bguidance\b|microsoft guidance
 MediaPipe,MediaPipe,Tầm nhìn máy tính,Computer Vision,mediapipe|media pipe
 PaddleOCR,PaddleOCR,Tầm nhìn máy tính,Computer Vision,paddleocr|paddle ocr
+EasyOCR,EasyOCR,Tầm nhìn máy tính,Computer Vision,easyocr|easy ocr
+Tesseract,Tesseract,Tầm nhìn máy tính,Computer Vision,tesseract|tesseract ocr|ocr engine
+MMOCR,MMOCR,Tầm nhìn máy tính,Computer Vision,mmocr|mm ocr|text detection|text recognition
+PaddlePaddle,PaddlePaddle,Học sâu,Deep Learning,paddlepaddle|paddle|baidu paddle
+MindSpore,MindSpore,Học sâu,Deep Learning,mindspore|mind spore|huawei mindspore
+MXNet,MXNet,Học sâu,Deep Learning,mxnet|apache mxnet
+Caffe,Caffe,Học sâu,Deep Learning,caffe|caffe2|deep learning caffe
+Chainer,Chainer,Học sâu,Deep Learning,chainer|preferred networks
+Theano,Theano,Học sâu,Deep Learning,theano|deep learning theano
+FastAPI,FastAPI,Web & API,Web & API,fastapi|fast api|python api
+Flask,Flask,Web & API,Web & API,flask|python flask|microframework
+Django,Django,Web & API,Web & API,django|python django|django rest|drf
+Express.js,Express.js,Web & API,Web & API,express|expressjs|express js|node express
+NestJS,NestJS,Web & API,Web & API,nestjs|nest js|nest framework
+Spring Boot,Spring Boot,Web & API,Web & API,spring boot|springboot|java spring
+FastHTML,FastHTML,Web & API,Web & API,fasthtml|fast html
+NiceGUI,NiceGUI,Web & API,Web & API,nicegui|nice gui
+Textual,Textual,Web & API,Web & API,textual|textual tui|python tui
+Reflex,Reflex,Web & API,Web & API,reflex|reflex framework|python fullstack
+Taipy,Taipy,Web & API,Web & API,taipy|taipy gui|taipy web
+Solara,Solara,Web & API,Web & API,solara|solara python|solara framework
+Panel HoloViz,Panel HoloViz,BI & Trực quan hóa,BI & Visualization,panel|holoviz panel|python panel
+Voila,Voila,BI & Trực quan hóa,BI & Visualization,voila|voila dashboard|jupyter voila
+Mermaid,Mermaid,BI & Trực quan hóa,BI & Visualization,mermaid|mermaid js|diagram
+Graphviz,Graphviz,BI & Trực quan hóa,BI & Visualization,graphviz|dot graph|graph visualization
+NetworkX,NetworkX,Xử lý dữ liệu Python,Python Data Processing,networkx|network x|graph python
+CuGraph,CuGraph,Xử lý dữ liệu GPU,GPU Data Processing,cugraph|rapids cugraph|gpu graph
+CuML,CuML,Xử lý dữ liệu GPU,GPU Data Processing,cuml|rapids cuml|gpu machine learning
+CuSpatial,CuSpatial,Xử lý dữ liệu GPU,GPU Data Processing,cuspatial|rapids cuspatial|gpu spatial
+Triton Inference Server,Triton Inference Server,MLOps & DevOps,MLOps & DevOps,triton|triton server|nvidia triton inference
+Bento,Bento,MLOps & DevOps,MLOps & DevOps,bento|bento service|bento deployment
+ZenML,ZenML,MLOps & DevOps,MLOps & DevOps,zenml|zen ml|mlops zenml
+Metaflow,Metaflow,MLOps & DevOps,MLOps & DevOps,metaflow|netflix metaflow|mlops metaflow
+Polyaxon,Polyaxon,MLOps & DevOps,MLOps & DevOps,polyaxon|mlops polyaxon
+CML,CML,MLOps & DevOps,MLOps & DevOps,cml|continuous machine learning
+Dagshub,Dagshub,MLOps & DevOps,MLOps & DevOps,dagshub|dags hub|mlops dagshub
+Pachyderm,Pachyderm,MLOps & DevOps,MLOps & DevOps,pachyderm|data versioning|pipeline pachyderm
+SQLModel,SQLModel,Truy vấn & biến đổi dữ liệu,Data Query & Transformation,sqlmodel|sql model|python orm
+Tortoise ORM,Tortoise ORM,Truy vấn & biến đổi dữ liệu,Data Query & Transformation,tortoise|tortoise orm|async orm
+Peewee,Peewee,Truy vấn & biến đổi dữ liệu,Data Query & Transformation,peewee|peewee orm|python orm
+Datasette,Datasette,Truy vấn & biến đổi dữ liệu,Data Query & Transformation,datasette|data exploration|sql datasette
+Fugue,Fugue,Xử lý dữ liệu phân tán,Distributed Data Processing,fugue|fugue framework|distributed python
+Hamilton,Hamilton,Xử lý dữ liệu Python,Python Data Processing,hamilton|hamilton data|feature engineering hamilton
+Koalas,Koalas,Xử lý dữ liệu phân tán,Distributed Data Processing,koalas|databricks koalas|pandas on spark
+Bottleneck,Bottleneck,Xử lý dữ liệu Python,Python Data Processing,bottleneck|fast numpy|numpy acceleration
+NumExpr,NumExpr,Xử lý dữ liệu Python,Python Data Processing,numexpr|numeric expression|fast numpy
+Vaex,Vaex,Xử lý dữ liệu phân tán,Distributed Data Processing,vaex|out-of-core|lazy dataframe
+DuckDB Py,DuckDB Py,Truy vấn & biến đổi dữ liệu,Data Query & Transformation,duckdb|duckdb python|sql analytics
+MotherDuck,MotherDuck,Truy vấn & biến đổi dữ liệu,Data Query & Transformation,motherduck|mother duck|cloud duckdb
+ClickHouse Py,ClickHouse Py,Truy vấn & biến đổi dữ liệu,Data Query & Transformation,clickhouse|clickhouse python|olap clickhouse
+Pinecone Py,Pinecone Py,CSDL Vector & Embedding,Vector DB & Embeddings,pinecone|pinecone python|vector database pinecone
+Weaviate Py,Weaviate Py,CSDL Vector & Embedding,Vector DB & Embeddings,weaviate|weaviate python|vector search weaviate
+Qdrant Py,Qdrant Py,CSDL Vector & Embedding,Vector DB & Embeddings,qdrant|qdrant python|vector qdrant
+Chroma Py,Chroma Py,CSDL Vector & Embedding,Vector DB & Embeddings,chroma|chromadb python|vector chroma
+Milvus Py,Milvus Py,CSDL Vector & Embedding,Vector DB & Embeddings,milvus|pymilvus|vector milvus
+FAISS Py,FAISS Py,CSDL Vector & Embedding,Vector DB & Embeddings,faiss|faiss python|similarity search faiss
+LanceDB Py,LanceDB Py,CSDL Vector & Embedding,Vector DB & Embeddings,lancedb|lance python|vector lancedb
+OpenLLMetry,OpenLLMetry,Fine-tuning & LLMOps,Fine-tuning & LLMOps,openllmetry|llm telemetry|traceloop
+PromptFlow,PromptFlow,AI tạo sinh & LLM,GenAI & LLM Apps,promptflow|prompt flow|microsoft promptflow
+Flowise,Flowise,AI tạo sinh & LLM,GenAI & LLM Apps,flowise|flowise ai|no code llm
+LangFlow,LangFlow,AI tạo sinh & LLM,GenAI & LLM Apps,langflow|lang flow|visual langchain
+Dify,Dify,AI tạo sinh & LLM,GenAI & LLM Apps,dify|dify ai|llm platform
+FastGPT,FastGPT,AI tạo sinh & LLM,GenAI & LLM Apps,fastgpt|fast gpt|knowledge base
+AnythingLLM,AnythingLLM,AI tạo sinh & LLM,GenAI & LLM Apps,anythingllm|anything llm|local llm
+LocalAI,LocalAI,AI tạo sinh & LLM,GenAI & LLM Apps,localai|local ai|openai compatible
+LM Studio,LM Studio,AI tạo sinh & LLM,GenAI & LLM Apps,lm studio|lmstudio|local llm ui
+Jan AI,Jan AI,AI tạo sinh & LLM,GenAI & LLM Apps,jan|jan ai|local ai jan
+GPT4All,GPT4All,AI tạo sinh & LLM,GenAI & LLM Apps,gpt4all|gpt4-all|local gpt
+MLX,MLX,Học sâu,Deep Learning,mlx|apple mlx|apple silicon ml
+Core ML,Core ML,Học sâu,Deep Learning,core ml|coreml|apple machine learning
+TensorRT-LLM,TensorRT-LLM,Fine-tuning & LLMOps,Fine-tuning & LLMOps,tensorrt-llm|tensorrt llm|nvidia tensorrt llm
+DeepSpeed,DeepSpeed,Học sâu,Deep Learning,deepspeed|deep speed|microsoft deepspeed
+Megatron-LM,Megatron-LM,Học sâu,Deep Learning,megatron|megatron-lm|nvidia megatron
+ColossalAI,ColossalAI,Học sâu,Deep Learning,colossalai|colossal ai|distributed training
+FlexFlow,FlexFlow,Học sâu,Deep Learning,flexflow|flex flow|distributed llm
+Alpaca,Alpaca,Fine-tuning & LLMOps,Fine-tuning & LLMOps,alpaca|stanford alpaca|alpaca loRA
+Vicuna,Vicuna,Fine-tuning & LLMOps,Fine-tuning & LLMOps,vicuna|lmsys vicuna|chat vicuna
+Guanaco,Guanaco,Fine-tuning & LLMOps,Fine-tuning & LLMOps,guanaco|qlora guanaca|peft guanaco
+Mistral Fine-tune,Mistral Fine-tune,Fine-tuning & LLMOps,Fine-tuning & LLMOps,mistral fine-tune|finetune mistral|mistral training
+Phi,Phi,Fine-tuning & LLMOps,Fine-tuning & LLMOps,phi|microsoft phi|phi-2|phi-3
+Gemma,Gemma,Fine-tuning & LLMOps,Fine-tuning & LLMOps,gemma|google gemma|gemma 2
+Qwen Fine-tune,Qwen Fine-tune,Fine-tuning & LLMOps,Fine-tuning & LLMOps,qwen fine-tune|finetune qwen|qwen training
+Yi,Yi,Fine-tuning & LLMOps,Fine-tuning & LLMOps,yi|01 ai yi|yi model
+DBRX,DBRX,Fine-tuning & LLMOps,Fine-tuning & LLMOps,dbrx|databricks dbrx|dbrx instruct
+Mixtral,Mixtral,Fine-tuning & LLMOps,Fine-tuning & LLMOps,mixtral|mixtral 8x7b|mixtral of experts
+Command R,Command R,AI tạo sinh & LLM,GenAI & LLM Apps,command r|cohere command|command r plus
+Jamba,Jamba,AI tạo sinh & LLM,GenAI & LLM Apps,jamba|ai21 jamba|jamba instruct
+Falcon,Falcon,AI tạo sinh & LLM,GenAI & LLM Apps,falcon|tii falcon|falcon instruct
+StarCoder,StarCoder,AI tạo sinh & LLM,GenAI & LLM Apps,starcoder|bigcode starcoder|code generation
+CodeLlama,CodeLlama,AI tạo sinh & LLM,GenAI & LLM Apps,codellama|code llama|meta code llm
+DeepSeek Coder,DeepSeek Coder,AI tạo sinh & LLM,GenAI & LLM Apps,deepseek coder|deepseek code|coder deepseek
+WizardLM,WizardLM,AI tạo sinh & LLM,GenAI & LLM Apps,wizardlm|wizard lm|wizard model
+Nous Hermes,Nous Hermes,AI tạo sinh & LLM,GenAI & LLM Apps,nous hermes|nous research|hermes model
+OpenChat,OpenChat,AI tạo sinh & LLM,GenAI & LLM Apps,openchat|open chat|cql filter
+Zephyr,Zephyr,AI tạo sinh & LLM,GenAI & LLM Apps,zephyr|huggingface zephyr|zephyr 7b
+Solar,Solar,AI tạo sinh & LLM,GenAI & LLM Apps,solar|upstage solar|solar pro
