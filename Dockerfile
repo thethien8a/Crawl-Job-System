@@ -2,10 +2,16 @@
 
 FROM python:3.11-slim
 
+# CHROME_BIN: nodriver's PATH-based auto-detect (find_chrome_executable) is
+# fragile inside DockerOperator-spawned containers — the inherited PATH
+# sometimes drops /usr/bin and the binary lookup fails. Setting CHROME_BIN
+# lets the crawler pass an explicit `browser_executable_path` to uc.start()
+# and skip auto-detect entirely.
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     DEBIAN_FRONTEND=noninteractive \
-    IS_DOCKER=1
+    IS_DOCKER=1 \
+    CHROME_BIN=/usr/bin/google-chrome
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         wget gnupg ca-certificates \
@@ -17,9 +23,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
     && apt-get install -y --no-install-recommends /tmp/chrome.deb \
     && rm /tmp/chrome.deb \
-    && apt-get purge -y --auto-remove wget gnupg \
+    && apt-get purge -y gnupg \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && test -x "$CHROME_BIN" \
+    && "$CHROME_BIN" --version
 
 WORKDIR /app
 
