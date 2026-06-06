@@ -2,9 +2,10 @@
 
 A data lakehouse pipeline for job postings from multiple Vietnamese recruitment platforms (TopCV, VietnamWorks, ITviec), focused on data-field roles such as Data Engineer, Data Scientist, Data Analyst, AI/ML Engineer, Business Intelligence, and Machine Learning Engineer.
 
-The pipeline follows a **Bronze -> Silver** medallion architecture stored in AWS S3, with planned future serving layers via Supabase (OLTP) and ClickHouse (OLAP).
+The pipeline follows a **Bronze → Silver → Gold** medallion architecture stored in AWS S3, with serving layers via Supabase (OLTP) and MotherDuck (OLAP). Orchestration is handled by Apache Airflow with DockerOperator.
 
 ## Quick Start
+
 ```bash
 docker compose --project-directory . -f src/orchestration_layer/docker-compose.yaml up -d
 ```
@@ -24,20 +25,28 @@ docker compose --project-directory . -f src/orchestration_layer/docker-compose.y
 │                     Storage Layer (AWS S3)                          │
 │                                                                     │
 │   Bronze Bucket                Silver Bucket                        │
-│   ┌──────────────────┐        ┌──────────────────┐                 │
-│   │ source/jobs/      │        │ jobs/source/      │                │
-│   │  year=YYYY/       │  clean │  year=YYYY/       │                │
-│   │  month=MM/        │ ─────► │  month=MM/        │                │
-│   │  day=DD/          │        │  day=DD/          │                │
-│   │  *.jsonl.gz       │        │  *.parquet        │                │
-│   └──────────────────┘        └──────────────────┘                 │
+│   ┌──────────────────┐        ┌──────────────────────────┐         │
+│   │ <source>/jobs/    │        │ jobs/source_site=<site>/  │         │
+│   │  year=YYYY/       │  clean │  year=YYYY/               │         │
+│   │  month=MM/        │ ─────► │  month=MM/                │         │
+│   │  day=DD/          │        │  day=DD/                  │         │
+│   │  *.jsonl.gz       │        │  *.parquet                │         │
+│   └──────────────────┘        └──────────────────────────┘         │
+│                                                                     │
+│   Gold (MotherDuck) — reads Silver Parquet directly from S3         │
+│   ┌──────────────────────────────────────────────────┐             │
+│   │  gold.jobs (fact)                                 │             │
+│   │  gold.dim_date, gold.job_industries,              │             │
+│   │  gold.job_benefits, gold.job_requirements         │             │
+│   │  gold.dim_*_taxonomy (dimension tables)           │             │
+│   └──────────────────────────────────────────────────┘             │
 └──────────────────────────────┬──────────────────────────────────────┘
                                │
-                               ▼ (planned, not yet implemented)
+                               ▼
 ┌─────────────────────────────────────────────────────────────────────┐
 │                     Serving Layer                                   │
-│   Supabase (OLTP) ─► Job Search Web (Next.js)                     │
-│   MotherDuck (OLAP) ─► BI Dashboards                              │
+│   Supabase (OLTP) ─► Job Search Web (Next.js, planned)            │
+│   MotherDuck (OLAP) ─► BI Dashboards (Power BI)                   │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -50,6 +59,7 @@ Lakehouse-Lite/
 ├── .env.example                  # Environment variables template
 ├── .gitignore
 ├── AGENTS.md                     # Agent instructions & pipeline notes
+├── Dockerfile                    # python:3.11-slim + Chrome + xvfb
 ├── LICENSE                       # Apache 2.0
 ├── requirements.txt              # Pinned Python dependencies
 ├── documents/
@@ -71,14 +81,14 @@ Lakehouse-Lite/
 │   ├── storage_layer/
 │   │   ├── MinIO_S3/             # AWS S3 object storage (legacy folder name kept)
 │   │   │   ├── config/
-│   │   │   │   ├── bucket.yml    # Bucket names: bronze, silver
-│   │   │   │   ├── key.py        # AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION
-│   │   │   │   └── path.py       # BronzeBucketPaths, SilverBucketPaths
+│   │   │   │   ├── bucket.yml    # Bucket names (thethien-lakehouse-lite-bronze/silver)
+│   │   │   │   ├── key.py        # AWS credentials from .env
+│   │   │   │   └── path.py       # BronzeBucketPaths, SilverBucketPaths, DEFAULT_ENTITY_NAME
 │   │   │   ├── utils/
 │   │   │   │   └── minio_connect.py  # get_s3_client()
 │   │   │   └── layer/
 │   │   │       ├── bronze/       # Bronze layer: raw data upload
-│   │   │       │   └── main.py   # Upload temp JSONL -> S3 Bronze
+│   │   │       │   └── main.py   # Upload temp JSONL → S3 Bronze (--source flag)
 │   │   │       ├── local_temp/   # Local staging & validation
 │   │   │       │   └── validation/
 │   │   │       │       ├── topcv_validate.py
@@ -86,10 +96,10 @@ Lakehouse-Lite/
 │   │   │       │       └── vnworks_validate.py
 │   │   │       └── silver/       # Silver layer: cleaned data
 │   │   │           ├── data_model/
-│   │   │           │   └── data_class.py   # SilverJobItem
+│   │   │           │   └── data_class.py   # SilverJobItem (single source of truth for schema)
 │   │   │           ├── cleaning/
 │   │   │           │   ├── common/          # Shared cleaning functions
-│   │   │           │   │   ├── pipeline.py  # run_pipeline, main_for_site
+│   │   │           │   │   ├── pipeline.py  # run_pipeline, main_for_site, enforce_silver_schema
 │   │   │           │   │   ├── clean_benefit.py
 │   │   │           │   │   ├── clean_company_name.py
 │   │   │           │   │   ├── clean_job_title.py
@@ -110,17 +120,40 @@ Lakehouse-Lite/
 │   │   │           │   ├── clean_text.py    # HTML/bullet cleanup
 │   │   │           │   └── normalize_data.py
 │   │   │           └── test/                # Ad-hoc test scripts
-│   │   ├── MotherDuck/            # (placeholder, not implemented)
-│   │   └── Supabase/              # (placeholder, not implemented)
-│   ├── bi_serving_layer/          # (placeholder, not implemented)
+│   │   ├── MotherDuck/            # Gold layer (OLAP) — star schema for BI
+│   │   │   ├── client.py          # MotherDuckClient (DuckDB connection + S3 secret)
+│   │   │   ├── config.py          # Gold schema, table names, column mappings
+│   │   │   ├── main.py            # Entry point → load_silver_to_gold
+│   │   │   ├── schema/
+│   │   │   │   └── data_class.py  # GoldJobItem dataclass
+│   │   │   └── scripts/
+│   │   │       ├── load_silver_to_gold.py     # Full Gold star-schema rebuild
+│   │   │       └── load_taxonomy_to_gold.py   # Taxonomy CSVs → dim tables
+│   │   └── Supabase/              # Serving layer (OLTP) — job search backend
+│   │       ├── schema/
+│   │       │   └── data_class.py  # JobData dataclass (7 columns for search)
+│   │       └── scripts/
+│   │           ├── config.py      # Table DDL, UPSERT SQL, type mapping
+│   │           ├── connection_config.py  # psycopg2 connection
+│   │           └── load_silver_to_supabase.py  # Silver → Supabase UPSERT
+│   ├── orchestration_layer/       # Apache Airflow (Docker Compose)
+│   │   ├── docker-compose.yaml    # Airflow 2.10.3 + Postgres 16
+│   │   ├── config/
+│   │   ├── dags/
+│   │   │   ├── _dag_factory.py    # Single source of pipeline shape (SITE_CONFIGS)
+│   │   │   ├── crawl_*.py         # 1-line DAG wrappers (topcv, itviec, vietnamworks)
+│   │   │   ├── validate_bronze_*.py
+│   │   │   ├── silver_*.py
+│   │   │   └── supabase_load_all.py
+│   │   └── plugins/
+│   ├── serving_layer/             # (placeholder, not implemented)
 │   ├── monitoring_layer/          # (placeholder, not implemented)
-│   ├── orchestrator_layer/        # (placeholder, not implemented)
 │   └── recommend_layer/           # (placeholder, not implemented)
 ```
 
 ## Data Models
 
-### Bronze - [`JobItem`](src/crawl_layer/data_model/data_class.py:3)
+### Bronze — [`JobItem`](src/crawl_layer/data_model/data_class.py)
 
 Raw scraped data shared across all sources:
 
@@ -139,37 +172,64 @@ Raw scraped data shared across all sources:
 | `benefits` | `str` | Benefits (raw text) |
 | `requirements` | `str` | Requirements (raw text) |
 
-### Silver - [`SilverJobItem`](src/storage_layer/MinIO_S3/layer/silver/data_model/data_class.py:4)
+### Silver — [`SilverJobItem`](src/storage_layer/MinIO_S3/layer/silver/data_model/data_class.py:8)
 
-Cleaned and enriched data with structured fields:
+Cleaned and enriched data with structured fields. The dataclass is the **single source of truth** for the Silver schema — adding or removing a field here automatically propagates to the entire pipeline via [`silver_schema_to_polars()`](src/storage_layer/MinIO_S3/layer/silver/data_model/data_class.py:108).
 
-- **Industry enrichment**: `job_industries` (multi-label list), `job_industry_primary`, `job_industry_l1` (rollup group), `industry_mapping_method`, `industry_mapping_confidence`
-- **Structured requirements** (12 taxonomy-backed categories):
-  - `require_programming_languages`, `require_databases`, `require_cloud_platforms`, `require_cloud_services`
-  - `require_big_data_tools`, `require_ml_frameworks`, `require_visualization_tools`
-  - `require_nlp_skills`, `require_cv_skills`, `require_devops_tools`
-  - `require_domain_knowledge`, `require_foreign_languages`
-- **Boolean flags**: `has_sql_requirement`, `has_python_requirement`, `has_cloud_requirement`, `has_ml_requirement`, `has_big_data_requirement`
+Key enrichment categories:
+
+- **Job title**: `clean_job_title`, `job_title_special_keywords` (extracted skills in title)
+- **Company**: `company_name_canonical` (normalized), `company_size`, `min_company_size`, `max_company_size`
+- **Location**: `clean_location` (normalized), `is_vietnam`
+- **Industry**: `job_industry_clean` (multi-label list), `job_industry_unmapped`
+- **Job details**: `job_type`, `job_position`, `experience_level`, `min_exp_level`, `max_exp_level`, `education_level`
+- **Salary**: `min_monthly_salary`, `max_monthly_salary`
+- **Benefits**: `benefits_text_clean`, `benefits_categories_vi` (categorized list)
+- **Description**: `job_description_cleaned`
+- **Requirements**: `requirements_cleaned`, plus 9 taxonomy-backed lists:
+  - `require_programming_languages`, `require_frameworks`, `require_tools`
+  - `require_cloud_skills`, `require_knowledge`, `require_domain_knowledge`
+  - `require_foreign_languages`, `require_domain_university`
+
+### Gold — `GoldJobItem` (MotherDuck star schema)
+
+Curated BI projection modeled as a star schema for Power BI:
+
+| Table | Description |
+|-------|-------------|
+| `gold.jobs` | Fact table: one row per `job_url` with scalar columns + `source_site` + `date_key` FK |
+| `gold.dim_date` | Date dimension: contiguous calendar from 2023-01-01, with year/quarter/month/day/weekday attributes |
+| `gold.job_industries` | Bridge: unnested `job_industry_clean` → `(job_url, industry)` |
+| `gold.job_benefits` | Bridge: unnested `benefits_categories_vi` → `(job_url, benefit)` |
+| `gold.job_requirements` | Bridge: all `require_*` + `job_title_special_keywords` → `(job_url, requirement_type, value)` |
+| `gold.dim_*_taxonomy` | Dimension tables loaded from Silver seed CSVs |
+
+### Supabase — [`JobData`](src/storage_layer/Supabase/schema/data_class.py:3)
+
+Lightweight projection for job search (7 columns): `job_url`, `job_title`, `company_name`, `location`, `job_deadline`, `job_title_special_keywords`, `source_site`.
 
 ## Storage Layout
 
 ### Bronze (S3)
 
 ```
-bronze/
-├── itviec/jobs/year=2026/month=05/day=12/itviec_jobs_20260512_170702.jsonl.gz
+s3://<bronze-bucket>/
 ├── topcv/jobs/year=2026/month=05/day=12/topcv_jobs_20260512_170702.jsonl.gz
+├── itviec/jobs/year=2026/month=05/day=12/itviec_jobs_20260512_170702.jsonl.gz
 └── vietnamworks/jobs/year=2026/month=05/day=12/vietnamworks_jobs_20260512_170702.jsonl.gz
 ```
 
 ### Silver (S3)
 
 ```
-silver/
-├── jobs/itviec/year=2026/month=05/day=12/clean_bronze_20260512_170702.parquet
-├── jobs/topcv/year=2026/month=05/day=12/clean_bronze_20260512_170702.parquet
-└── jobs/vietnamworks/year=2026/month=05/day=12/clean_bronze_20260512_170702.parquet
+s3://<silver-bucket>/
+└── jobs/
+    ├── source_site=topcv/year=2026/month=05/day=12/clean_bronze_20260512_170702.parquet
+    ├── source_site=itviec/year=2026/month=05/day=12/clean_bronze_20260512_170702.parquet
+    └── source_site=vietnamworks/year=2026/month=05/day=12/clean_bronze_20260512_170702.parquet
 ```
+
+> Silver uses Hive-partitioning with `source_site=<site>` (not `source/`). MotherDuck reads these Parquet files directly from S3 via `read_parquet(..., hive_partitioning=true)`.
 
 ## Taxonomy Seeds
 
@@ -197,30 +257,43 @@ The Silver cleaning layer uses 12 CSV taxonomy files stored in [`src/storage_lay
 ```bash
 python -m venv venv
 venv\Scripts\activate        # Windows
+# or: source venv/bin/activate  # Linux/macOS
 pip install -r requirements.txt
 ```
 
 ### 2. Configure Environment Variables
 
-Copy `.env.example` to `.env` and fill in required values:
+Copy [`.env.example`](.env.example) to `.env` and fill in required values:
 
 ```bash
 cp .env.example .env
 ```
 
 Required variables:
-- `ITVIEC_USERNAME` / `ITVIEC_PASSWORD` - for ITviec crawler login
-- `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` / `AWS_REGION` - for AWS S3
+- `ITVIEC_USERNAME` / `ITVIEC_PASSWORD` — for ITviec crawler login
+- `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` / `AWS_REGION` — for AWS S3
+- `SUPABASE_HOST` / `SUPABASE_PORT` / `SUPABASE_DATABASE` / `SUPABASE_USER` / `SUPABASE_PASSWORD` — for Supabase serving layer
+- `MOTHERDUCK_TOKEN` — for MotherDuck Gold layer
+
+For Airflow orchestration, also configure:
+- `FERNET_KEY` / `WEBSERVER_SECRET_KEY` / `_AIRFLOW_WWW_USER_USERNAME` / `_AIRFLOW_WWW_USER_PASSWORD`
+- `HOST_REPO_PATH` — absolute path to this repo on the host filesystem
+- `PIPELINE_IMAGE` — Docker image name (default: `lakehouse-pipeline:latest`)
+- `AIRFLOW_UID` (default: `50000`)
 
 ### 3. Provision S3 Buckets
 
-In the AWS Console, create the two buckets referenced by
-[`src/storage_layer/MinIO_S3/config/bucket.yml`](src/storage_layer/MinIO_S3/config/bucket.yml)
-(by default `bronze` and `silver`; rename in the YAML if those names are already
-taken globally on S3). The IAM user behind your AWS keys needs
-`s3:ListBucket`, `s3:GetObject`, `s3:PutObject`, `s3:DeleteObject` on both.
+Create the two buckets referenced in [`src/storage_layer/MinIO_S3/config/bucket.yml`](src/storage_layer/MinIO_S3/config/bucket.yml) (`thethien-lakehouse-lite-bronze` and `thethien-lakehouse-lite-silver`). Rename them in the YAML if those names are already taken globally on S3.
 
-### 4. Run Crawlers
+The IAM user needs `s3:ListBucket`, `s3:GetObject`, `s3:PutObject`, `s3:DeleteObject` on both buckets.
+
+### 4. Build the Pipeline Docker Image
+
+```bash
+docker build -t lakehouse-pipeline:latest .
+```
+
+### 5. Run Crawlers
 
 ```bash
 # TopCV (HTTP-based, no browser needed)
@@ -235,17 +308,21 @@ python -m src.crawl_layer.crawler.itviec --keyword "data" --max-pages 2 [--headl
 
 Crawled data is appended to daily temp files at `src/crawl_layer/temp_data/<source>_jobs_YYYYMMDD.jsonl`.
 
-### 5. Upload to Bronze
+### 6. Upload to Bronze
 
 ```bash
+# All sites
 python -m src.storage_layer.MinIO_S3.layer.bronze.main
+
+# Single site
+python -m src.storage_layer.MinIO_S3.layer.bronze.main --source topcv
+python -m src.storage_layer.MinIO_S3.layer.bronze.main --source itviec
+python -m src.storage_layer.MinIO_S3.layer.bronze.main --source vietnamworks
 ```
 
-This uploads all temp JSONL files to the S3 Bronze bucket (compressed as `.jsonl.gz`) and then clears the local `temp_data` directory.
+Compresses temp `.jsonl` → `.jsonl.gz` and uploads to S3 Bronze, then clears the source's temp files.
 
-### 6. Validate Temp Data (Optional)
-
-Before Bronze upload, you can validate the local temp JSONL files:
+### 7. Validate Temp Data (Optional)
 
 ```bash
 python -m src.storage_layer.MinIO_S3.layer.local_temp.validation.topcv_validate
@@ -253,9 +330,7 @@ python -m src.storage_layer.MinIO_S3.layer.local_temp.validation.itviec_validate
 python -m src.storage_layer.MinIO_S3.layer.local_temp.validation.vnworks_validate
 ```
 
-> Note: These scripts require `pandas` and `great_expectations`, which are not pinned in `requirements.txt`.
-
-### 7. Run Silver Cleaning
+### 8. Run Silver Cleaning
 
 ```bash
 # TopCV Silver
@@ -271,31 +346,89 @@ python -m src.storage_layer.MinIO_S3.layer.silver.cleaning.clean_vnworks.main_pr
     --from_date 2026-05-01 --to_date 2026-05-12
 ```
 
-Common CLI flags (via [`build_argument_parser`](src/storage_layer/MinIO_S3/layer/silver/cleaning/common/pipeline.py:27)):
-- `--from_date` (required) - Inclusive start date, format `YYYY-MM-DD`
-- `--to_date` (required) - Inclusive end date, format `YYYY-MM-DD`
-- `--entity_name` (default: `jobs`)
-- `--no_save` - Dry run: skip Parquet upload, just log cleaned row count
+Common CLI flags (via [`build_argument_parser`](src/storage_layer/MinIO_S3/layer/silver/cleaning/common/pipeline.py:97)):
+
+| Flag | Description |
+|------|-------------|
+| `--from_date` (required) | Inclusive start date, `YYYY-MM-DD` |
+| `--to_date` (required) | Inclusive end date, `YYYY-MM-DD` |
+| `--entity_name` | Entity name (default: `jobs`) |
+| `--no_save` | Dry run: skip Parquet upload, log cleaned row count |
+| `--export_parquet` | Dump cleaned Parquet to `debug_output/` for inspection |
+
+### 9. Load to Supabase (OLTP Serving)
+
+```bash
+python -m src.storage_layer.Supabase.scripts.load_silver_to_supabase \
+    --from_date 2026-05-01 --to_date 2026-05-12
+```
+
+Idempotent: runs `CREATE TABLE IF NOT EXISTS`, then UPSERTs on `job_url`. Processes all three sites with per-site commits.
+
+### 10. Build Gold Layer (MotherDuck OLAP)
+
+```bash
+# Load Silver → Gold star schema
+python -m src.storage_layer.MotherDuck.main
+
+# Load taxonomy CSVs → dimension tables
+python -m src.storage_layer.MotherDuck.scripts.load_taxonomy_to_gold
+```
+
+Gold does a full refresh (`CREATE OR REPLACE TABLE`) each run — fully idempotent. MotherDuck reads Silver Parquet directly from S3; no data flows through the local process.
+
+## Orchestration (Airflow)
+
+Boot the orchestration stack:
+
+```bash
+docker compose --project-directory . -f src/orchestration_layer/docker-compose.yaml up -d
+```
+
+Airflow webserver available at `http://localhost:8080`.
+
+### DAG Architecture
+
+All business logic runs inside sibling `lakehouse-pipeline` containers via `DockerOperator`. Airflow only orchestrates — it never imports crawler/storage modules directly.
+
+[`_dag_factory.py`](src/orchestration_layer/dags/_dag_factory.py) is the single source of pipeline shape. Per-site DAG files (`crawl_topcv.py`, `silver_topcv.py`, ...) are 1-line wrappers.
+
+| DAG | Schedule | Description |
+|-----|----------|-------------|
+| `crawl_<site>` | `0 */3 * * *` | Crawl → triggers `validate_bronze_<site>` (decoupled) |
+| `validate_bronze_<site>` | None (triggered) | Validate temp → upload Bronze |
+| `silver_<site>` | `0 */8 * * *` | Bronze → Silver cleaning |
+| `supabase_load_all` | `0 */6 * * *` | Silver → Supabase UPSERT (all sites) |
+
+**Requirements for DockerOperator:**
+- `HOST_REPO_PATH` env var (absolute path to repo on host) — needed for bind mounts of `temp_data/` and `.env`
+- `shm_size=2GB` on containers (required for Chrome)
+- Browser-based crawlers run under `xvfb-run` in containers
 
 ## Pipeline Behavior
 
 - **Crawlers append** to the same daily temp file (`<source>_jobs_YYYYMMDD.jsonl`). Repeated runs accumulate data until the Bronze loader processes and clears `temp_data`.
-- **Bronze upload** partitions data by date: `source/jobs/year=YYYY/month=MM/day=DD/source_jobs_YYYYMMDD_HHMMSS.jsonl.gz`.
-- **Silver cleaning** reads Bronze day-by-day within the specified date range, applies site-specific and common cleaning functions, then uploads cleaned Parquet to the Silver bucket.
-- **Silver upload** path: `jobs/source/year=YYYY/month=MM/day=DD/clean_bronze_TIMESTAMP.parquet`.
+- **Bronze upload** partitions data by date: `<source>/jobs/year=YYYY/month=MM/day=DD/<source>_jobs_YYYYMMDD_HHMMSS.jsonl.gz`.
+- **Silver cleaning** reads Bronze day-by-day within the specified date range, applies site-specific and common cleaning functions, then uploads cleaned Parquet to the Silver bucket at `jobs/source_site=<site>/year=YYYY/month=MM/day=DD/clean_bronze_TIMESTAMP.parquet`.
+- **Silver schema** is derived from [`SilverJobItem`](src/storage_layer/MinIO_S3/layer/silver/data_model/data_class.py:8) via `silver_schema_to_polars()`. The cleaning order is load-bearing: `drop_unecessary_cols(df)` must run first; `clean_location` and `apply_industry_cleaning` drop the original columns.
+- **Supabase load** is idempotent: `CREATE TABLE IF NOT EXISTS` + UPSERT on `job_url`. Per-site commits give partial progress on failure.
+- **Gold build** is a full refresh (`CREATE OR REPLACE TABLE`). Keeps only the newest snapshot per `job_url` (newest day wins, within a day newest file wins).
 
 ## Tech Stack
 
 | Component | Technology |
 |-----------|------------|
-| Language | Python 3.13 |
+| Language | Python 3.11 |
 | Data Processing | Polars |
 | Browser Automation | nodriver (VietnamWorks, ITviec) |
 | HTTP Client | curl_cffi, aiohttp, requests (TopCV) |
 | HTML Parsing | lxml, parsel |
 | Object Storage | AWS S3 via boto3 |
 | Keyword Extraction | flashtext (HybridKeywordExtractor) |
-| Containerization | Docker Compose |
+| OLAP / Gold | MotherDuck (DuckDB), read_parquet from S3 |
+| OLTP / Serving | Supabase (PostgreSQL), psycopg2 |
+| Orchestration | Apache Airflow 2.10.3 with DockerOperator |
+| Containerization | Docker, Docker Compose |
 | License | Apache 2.0 |
 
 ## Implementation Status
@@ -304,13 +437,12 @@ Common CLI flags (via [`build_argument_parser`](src/storage_layer/MinIO_S3/layer
 |-------|--------|
 | Crawl Layer (TopCV, VietnamWorks, ITviec) | Implemented |
 | Bronze Layer (S3 upload) | Implemented |
-| Local Temp Validation | Implemented (requires unpinned deps) |
+| Local Temp Validation | Implemented |
 | Silver Layer (cleaning + Parquet upload) | Implemented |
-| Supabase (OLTP serving) | Not implemented |
-| MotherDuck (OLAP serving) | Not implemented |
+| Gold Layer (MotherDuck star schema + taxonomy) | Implemented |
+| Supabase (OLTP serving) | Implemented |
+| Airflow Orchestration (DAG factory + DockerOperator) | Implemented |
 | Next.js (Job Search Web) | Not implemented |
-| BI Serving Layer | Not implemented |
-| Orchestrator Layer | Not implemented |
 | Recommend Layer | Not implemented |
 | Monitoring Layer | Not implemented |
 
@@ -318,4 +450,8 @@ Common CLI flags (via [`build_argument_parser`](src/storage_layer/MinIO_S3/layer
 
 - Code uses absolute `src.*` imports; `src/` has no package `__init__.py`. All commands must run from the repo root.
 - There is no pytest/lint/format/typecheck config. Files under `src/**/test/` are ad-hoc scripts, not formal test suites.
-- The `requirements.txt` is the only pinned dependency source. Validation scripts additionally require `pandas` and `great_expectations`.
+- The [`requirements.txt`](requirements.txt) is the only pinned dependency source.
+- Bucket names are **hardcoded** in [`bucket.yml`](src/storage_layer/MinIO_S3/config/bucket.yml). Fork or rename them — they are globally unique on S3.
+- The `MinIO_S3` folder name is **legacy** — it talks to real AWS S3 via `boto3`, not MinIO.
+- The Dockerfile uses `python:3.11-slim` (not 3.13). `IS_DOCKER=1` is set so modules can branch on container vs. local execution.
+- `CHROME_BIN=/usr/bin/google-chrome` is set explicitly in the Dockerfile because nodriver's `find_chrome_executable` is unreliable inside DockerOperator-spawned containers.
