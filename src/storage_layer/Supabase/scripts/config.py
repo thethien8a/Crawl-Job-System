@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from dataclasses import fields
 from typing import get_origin, get_args
+from src.storage_layer.MinIO_S3.config.path import DEFAULT_ENTITY_NAME
 from src.storage_layer.Supabase.schema.data_class import JobData
 
 load_dotenv()
@@ -21,10 +22,10 @@ SUPABASE_USER = os.getenv("SUPABASE_USER")
 SUPABASE_PASSWORD = os.getenv("SUPABASE_PASSWORD")
 
 # Silver layer entity name; matches the MinIO Silver path convention "jobs/source_site=.../..."
-SILVER_ENTITY_NAME = "jobs"
+SILVER_ENTITY_NAME = DEFAULT_ENTITY_NAME
 
 # Target Supabase table and the column used as the UPSERT conflict key
-TARGET_TABLE = "jobs"
+TARGET_TABLE = DEFAULT_ENTITY_NAME
 CONFLICT_KEY = "job_url"
 
 # Rows per bulk upsert; large enough to amortize roundtrip latency without blowing the wire protocol
