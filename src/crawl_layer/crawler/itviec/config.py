@@ -8,8 +8,10 @@ ITviec class names are partially hashed and look noisy on purpose.
 
 from __future__ import annotations
 
+from src.storage_layer.MinIO_S3.config.path import DEFAULT_ENTITY_NAME
+
 SOURCE_NAME = "itviec"
-ENTITY_NAME = "jobs"
+ENTITY_NAME = DEFAULT_ENTITY_NAME
 
 BASE_URL = "https://itviec.com"
 LOGIN_URL = "https://itviec.com/sign_in"

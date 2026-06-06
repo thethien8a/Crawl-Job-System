@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import os
 import random
 
 import nodriver as uc
@@ -35,11 +36,22 @@ class VietnamWorksBrowser:
         self._tab: uc.Tab | None = None
 
     async def __aenter__(self) -> "VietnamWorksBrowser":
-        self._browser = await uc.start(
-            headless=self.headless,
-            sandbox=False,
-            browser_args=list(BROWSER_ARGS),
-        )
+        kwargs = {
+            "headless": self.headless,
+            "sandbox": False,
+            "browser_args": list(BROWSER_ARGS),
+        }
+
+        # nodriver's PATH-based auto-detect fails in DockerOperator-spawned
+        # containers (the inherited PATH sometimes drops /usr/bin). When
+        # CHROME_BIN is set — Dockerfile pins it to /usr/bin/google-chrome —
+        # bypass auto-detect entirely.
+        chrome_bin = os.getenv("CHROME_BIN")
+        if chrome_bin:
+            kwargs["browser_executable_path"] = chrome_bin
+
+        logger.info("Starting browser with kwargs: %s", kwargs)
+        self._browser = await uc.start(**kwargs)
         self._tab = self._browser.main_tab
         return self
 

@@ -4,11 +4,12 @@ from datetime import datetime
 from typing import Union, List, Dict
 from src.crawl_layer.config.path import TEMP_DIR
 from src.crawl_layer.utils.clean_temp import clean_temp_directory
+from src.storage_layer.MinIO_S3.config.path import DEFAULT_ENTITY_NAME
 from src.storage_layer.MinIO_S3.utils.minio_connect import get_s3_client
 import logging
 logger = logging.getLogger(__name__)
 
-def save_to_temp(data: Union[Dict, List[Dict]], source_name: str, entity_name: str = 'jobs'):
+def save_to_temp(data: Union[Dict, List[Dict]], source_name: str, entity_name: str = DEFAULT_ENTITY_NAME):
     """
     Save the scraped data to the local temp directory as JSON Lines (.jsonl).
     The data will be automatically grouped by the current date.

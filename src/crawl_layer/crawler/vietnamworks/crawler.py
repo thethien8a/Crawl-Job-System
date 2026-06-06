@@ -7,6 +7,7 @@ from dataclasses import asdict
 
 from src.crawl_layer.data_model.data_class import VietnamWorksJobItem as JobItem
 from src.crawl_layer.utils.loader import save_to_temp
+from src.storage_layer.MinIO_S3.config.path import DEFAULT_ENTITY_NAME
 
 from .browser import VietnamWorksBrowser
 from .parser import VietnamWorksParser
@@ -15,7 +16,7 @@ from .config import DEFAULT_KEYWORD
 logger = logging.getLogger(__name__)
 
 SOURCE_NAME = "vietnamworks"
-ENTITY_NAME = "jobs"
+ENTITY_NAME = DEFAULT_ENTITY_NAME
 BATCH_SIZE = 20
 
 

@@ -16,6 +16,7 @@ from dataclasses import asdict
 
 from src.crawl_layer.data_model.data_class import TopCVJobItem
 from src.crawl_layer.utils.loader import save_to_temp
+from src.storage_layer.MinIO_S3.config.path import DEFAULT_ENTITY_NAME
 
 from .config import BASE_URL
 from .http_client import TopcvHttpClient
@@ -25,7 +26,7 @@ from .utils import encode_input
 logger = logging.getLogger(__name__)
 
 SOURCE_NAME = "topcv"
-ENTITY_NAME = "jobs"
+ENTITY_NAME = DEFAULT_ENTITY_NAME
 
 
 class TopcvCrawler:
