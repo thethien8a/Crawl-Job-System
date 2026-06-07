@@ -19,7 +19,7 @@ import logging
 from contextlib import closing
 
 from psycopg2.extras import execute_values
-
+import polars as pl
 from src.storage_layer.MinIO_S3.layer.silver.utils.reader import get_jobs_silver_by_site
 
 from .config import (
@@ -42,9 +42,28 @@ def _load_site(conn, site: str, from_date: str, to_date: str) -> int:
         logger.info("No Silver data for %s in %s..%s", site, from_date, to_date)
         return 0
 
+    # Silver layer produces both raw and cleaned columns (e.g. job_title + clean_job_title).
+    # Map cleaned column names to the target Supabase column names so the frontend
+    # receives cleaned values while the DB schema stays unchanged.
+    _CLEANED_TO_TARGET = {
+        "clean_job_title": "job_title",
+        "clean_location": "location",
+        "clean_company_name": "company_name",
+    }
+
+    select_exprs = []
+    for col in JOB_DATA_COLUMNS:
+        cleaned_src = next(
+            (c for c, t in _CLEANED_TO_TARGET.items() if t == col), None
+        )
+        if cleaned_src:
+            select_exprs.append(pl.col(cleaned_src).alias(col))
+        else:
+            select_exprs.append(pl.col(col))
+
     df = (
         lazy_df
-        .select(JOB_DATA_COLUMNS)
+        .select(select_exprs)
         .unique(subset=[CONFLICT_KEY], keep="any")
         .collect()
     )

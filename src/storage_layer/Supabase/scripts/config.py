@@ -25,7 +25,7 @@ SUPABASE_PASSWORD = os.getenv("SUPABASE_PASSWORD")
 SILVER_ENTITY_NAME = DEFAULT_ENTITY_NAME
 
 # Target Supabase table and the column used as the UPSERT conflict key
-TARGET_TABLE = DEFAULT_ENTITY_NAME
+TARGET_TABLE = "ready_jobs"
 CONFLICT_KEY = "job_url"
 
 # Rows per bulk upsert; large enough to amortize roundtrip latency without blowing the wire protocol
