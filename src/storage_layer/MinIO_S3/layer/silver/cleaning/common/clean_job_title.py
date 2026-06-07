@@ -57,14 +57,18 @@ def clean_job_title(df: pl.DataFrame, column_name: str = "job_title", new_column
     # 2. Thông tin về lương
     salary_pattern = r'(?i)(-\s*)?(up\s*to|upto|lương|salary|thu nhập)\s*[:\d].*?(\)|$)'
     
-    # 3. Nội dung nằm trong ngoặc (kỹ năng, tiếng Anh phụ đề, phòng ban) 
-    bracket_pattern = r'\(.*?\)'
-    
+    # 3. Nội dung nằm trong ngoặc (kỹ năng, tiếng Anh phụ đề, phòng ban)
+    #    Also catches trailing incomplete parentheses like " - ("
+    bracket_pattern = r'\(.*?\)|\([^)]*$'
+
     # 4. Các cụm theo sau dấu gạch ngang (phòng ban, địa điểm, domain)
     department_pattern = r'(?i)\s*-\s*(khối|phòng|ban|domain|k\.cntt|hà nội|hồ chí minh|tmo|\d+ năm|game|snop).*'
-    
+
     # 5. Cụm tiền tố thừa như CV/CVCC, Chuyên Viên/, Chuyên Viên Chính
     prefix_pattern = r'(?i)^(cv/cvcc|chuyên viên/|chuyên viên chính|cv/ cvcc)\s*'
+
+    # 6. Trailing dashes left after incomplete bracket removal
+    trailing_dash_pattern = r'\s*-\s*$'
 
     return df.with_columns(
         pl.col(column_name).cast(pl.String)
@@ -73,6 +77,7 @@ def clean_job_title(df: pl.DataFrame, column_name: str = "job_title", new_column
         .str.replace_all(department_pattern, '', literal=False)
         .str.replace_all(bracket_pattern, '', literal=False)
         .str.replace_all(prefix_pattern, '', literal=False)
+        .str.replace_all(trailing_dash_pattern, '', literal=False)
         .str.replace_all(r'\s+', ' ', literal=False)
         .str.strip_chars()
         .str.to_titlecase()

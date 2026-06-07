@@ -68,7 +68,8 @@ def main_clean_company(df: pl.DataFrame, column_name: str = RAW_COLUMN) -> pl.Da
     NFC -> clean_2 (strip URLs, "(SHB)"-style bracketed text, special chars
     while keeping case) -> clean_1 (strip legal forms + uppercase) ->
     map_canonical_company (exact-join with the seed mapping to add
-    `company_name_canonical`).
+    `company_name_canonical`) -> clean_company_name (coalesce canonical with
+    raw company_name so unmapped companies still have a usable name).
 
     `clean_2` must run BEFORE `clean_1` so bracketed text is dropped while
     the parentheses are still intact; otherwise `clean_1` strips just the
@@ -78,4 +79,8 @@ def main_clean_company(df: pl.DataFrame, column_name: str = RAW_COLUMN) -> pl.Da
     df = clean_2(df, column_name)
     df = clean_1(df, column_name, new_column_name=column_name)
     df = map_canonical_company(df, source_col=column_name)
+    df = df.with_columns(
+        pl.coalesce(pl.col("company_name_canonical"), pl.col(column_name))
+        .alias("clean_company_name")
+    )
     return df
