@@ -122,14 +122,16 @@ class ItviecBrowser:
 
         logger.info("Navigated to login page")
 
-        email_input = await tab.wait_for(
-            selector=EMAIL_INPUT_SELECTOR, timeout=LOGIN_TIMEOUT
+        email_input = await self._select_when_ready(
+            EMAIL_INPUT_SELECTOR, LOGIN_TIMEOUT
         )
         await email_input.click()
         await email_input.clear_input()
         await email_input.send_keys(username)
 
-        password_input = await tab.select(PASSWORD_INPUT_SELECTOR)
+        password_input = await self._select_when_ready(
+            PASSWORD_INPUT_SELECTOR, LOGIN_TIMEOUT
+        )
         await password_input.click()
 
         await password_input.clear_input()
@@ -154,6 +156,38 @@ class ItviecBrowser:
 
         logger.info("Logged in to ITviec")
         await self._dismiss_post_login_modal()
+
+    async def _select_when_ready(self, selector: str, timeout: float):
+        """Resolve a CSS selector, surviving CDP node-id churn.
+
+        On a slow/headless host (e.g. the Docker DAG container) the sign-in
+        page is often still committing its document while we probe it, so the
+        document handle nodriver fetches goes stale between calls and
+        `tab.select` raises "Could not find node with given id [code: -32000]".
+        Unlike the windowed local run, that race fires before login completes.
+        Retrying with fresh queries works around it the same way
+        `_wait_for_logged_in_marker` does for the post-login redirect.
+        """
+        tab = self.tab
+        loop = asyncio.get_event_loop()
+        deadline = loop.time() + timeout
+        last_error: Exception | None = None
+
+        while loop.time() < deadline:
+            try:
+                element = await tab.select(
+                    selector, timeout=LOGIN_MARKER_RETRY_TIMEOUT
+                )
+                if element is not None:
+                    return element
+            except Exception as e:
+                last_error = e
+            await asyncio.sleep(LOGIN_MARKER_RETRY_INTERVAL)
+
+        raise ItviecLoginError(
+            f"Login input never became ready: {selector}"
+            + (f" (last error: {last_error})" if last_error else "")
+        )
 
     async def _wait_for_logged_in_marker(self) -> bool:
         """Poll for the logged-in marker, surviving CDP node-id churn.
