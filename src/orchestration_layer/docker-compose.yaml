@@ -16,7 +16,7 @@ x-airflow-common:
     AIRFLOW__API_AUTH__JWT_ISSUER: ${AIRFLOW__API_AUTH__JWT_ISSUER:-airflow}
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
     HOST_REPO_PATH: ${HOST_REPO_PATH}
-    PIPELINE_IMAGE: ${PIPELINE_IMAGE:-lakehouse-pipeline:latest}
+    PIPELINE_IMAGE: ${PIPELINE_IMAGE:-lakehouse-crawler:latest}
   volumes:
     - ./src/orchestration_layer/dags:/opt/airflow/dags
     - ./src/orchestration_layer/logs:/opt/airflow/logs

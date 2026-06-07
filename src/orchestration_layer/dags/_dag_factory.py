@@ -57,7 +57,7 @@ DEFAULT_ARGS: dict[str, Any] = {
 }
 
 HOST_REPO_PATH = os.getenv("HOST_REPO_PATH")
-PIPELINE_IMAGE = os.getenv("PIPELINE_IMAGE", "lakehouse-pipeline:latest")
+PIPELINE_IMAGE = os.getenv("PIPELINE_IMAGE", "lakehouse-crawler:latest")
 
 TEMP_DATA_MOUNT = Mount(
     source=f"{HOST_REPO_PATH}/src/crawl_layer/temp_data",
@@ -102,6 +102,7 @@ def create_crawl_dag(site: str) -> DAG:
         schedule=CRAWL_SCHEDULE,
         start_date=START_DATE,
         catchup=False,
+        max_active_runs=1,
         default_args=DEFAULT_ARGS,
         params={
             "keyword": CRAWL_KEYWORD,
@@ -153,6 +154,7 @@ def create_validate_bronze_dag(site: str) -> DAG:
         schedule=None,
         start_date=START_DATE,
         catchup=False,
+        max_active_runs=1,
         default_args=DEFAULT_ARGS,
         tags=["lakehouse", "validate", "bronze", site],
     ) as dag:
@@ -193,6 +195,7 @@ def create_silver_dag(site: str) -> DAG:
         schedule=CLEAN_SCHEDULE,
         start_date=START_DATE,
         catchup=False,
+        max_active_runs=1,
         default_args=DEFAULT_ARGS,
         params={
             "from_date": today,
@@ -224,6 +227,7 @@ def create_supabase_dag() -> DAG:
         schedule=LOAD_SUPABASE_SCHEDULE,
         start_date=START_DATE,
         catchup=False,
+        max_active_runs=1,
         default_args=DEFAULT_ARGS,
         params={
             "from_date": today,
@@ -238,6 +242,59 @@ def create_supabase_dag() -> DAG:
                 "python -m src.storage_layer.Supabase.scripts.load_silver_to_supabase "
                 "--from_date {{ params.from_date }} --to_date {{ params.to_date }}"
             ),
+            **COMMON_DOCKER_KWARGS,
+        )
+
+    return dag
+
+def create_load_silver_to_gold_dag() -> DAG:
+    """Return a DAG that loads all Silver data into MotherDuck Gold layer.
+
+    Schedule mirrors ``supabase_load_all`` so Gold stays current after Silver runs.
+    """
+    dag_id = "load_silver_to_gold"
+
+    with DAG(
+        dag_id=dag_id,
+        description="Load Silver parquet data into MotherDuck Gold layer (DockerOperator)",
+        schedule=LOAD_SUPABASE_SCHEDULE,
+        start_date=START_DATE,
+        catchup=False,
+        max_active_runs=1,
+        default_args=DEFAULT_ARGS,
+        tags=["lakehouse", "motherduck", "gold"],
+    ) as dag:
+
+        load_silver_to_gold = DockerOperator(
+            task_id="load_silver_to_gold",
+            command="python -m src.storage_layer.MotherDuck.scripts.load_silver_to_gold",
+            **COMMON_DOCKER_KWARGS,
+        )
+
+    return dag
+
+
+def create_load_taxonomy_to_gold_dag() -> DAG:
+    """Return a DAG that loads taxonomy CSVs into MotherDuck Gold dimension tables.
+
+    Manual trigger only — taxonomy seeds change rarely.
+    """
+    dag_id = "load_taxonomy_to_gold"
+
+    with DAG(
+        dag_id=dag_id,
+        description="Load taxonomy CSV seeds into MotherDuck Gold dim tables (DockerOperator)",
+        schedule=None,
+        start_date=START_DATE,
+        catchup=False,
+        max_active_runs=1,
+        default_args=DEFAULT_ARGS,
+        tags=["lakehouse", "motherduck", "gold", "taxonomy"],
+    ) as dag:
+
+        load_taxonomy_to_gold = DockerOperator(
+            task_id="load_taxonomy_to_gold",
+            command="python -m src.storage_layer.MotherDuck.scripts.load_taxonomy_to_gold",
             **COMMON_DOCKER_KWARGS,
         )
 
