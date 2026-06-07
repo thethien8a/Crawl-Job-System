@@ -1,46 +1,6 @@
-"""Build the Gold layer in MotherDuck from Silver Parquet on S3.
-
-Gold is a curated projection of Silver for BI (Power BI via MotherDuck),
-modeled as a star schema: a ``gold.jobs`` fact (one row per ``job_url``) with
-``dim_date`` / ``dim_source`` dimensions and multi-valued bridge tables.
-
-The Silver cleaning pipeline can run more than once a day (each run appends a
-new ``clean_bronze_<timestamp>.parquet`` under the same day partition) and a job
-is re-crawled across days, so the same job appears in several files. A single
-window function keeps only the newest snapshot per job:
-
-    newest day wins, and within a day the newest file (``filename``) wins.
-
-MotherDuck reads Silver straight from S3 via the persistent secret created by
-``MotherDuckClient.setup_s3_credentials`` -- no data flows through this process.
-
-Data is currently small, so every run does a full refresh with
-``CREATE OR REPLACE TABLE`` (fully idempotent, no stale-row bookkeeping).
-
-**Table layout** — a star schema for Power BI.
-
-Fact:
-- ``gold.jobs`` — one row per ``job_url`` (degenerate key); scalar columns plus
-  the ``source_site`` and ``date_key`` foreign keys.
-
-Dimensions:
-- ``gold.dim_date`` — one row per calendar date (contiguous): ``date_key``
-  (yyyymmdd) + ``full_date`` and calendar attributes for time intelligence.
-
-Multi-valued bridges (join to ``gold.jobs`` on ``job_url``):
-- ``gold.job_industries`` — unnested ``job_industry_clean`` ``(job_url, industry)``.
-- ``gold.job_benefits`` — unnested ``benefits_categories_vi`` ``(job_url, benefit)``.
-- ``gold.job_requirements`` — unnested ``require_*`` + ``job_title_special_keywords``
-  ``(job_url, requirement_type, value)``.
-
-A temporary ``gold._staging`` table is created first so S3 is scanned exactly
-once; it is dropped after all target tables are rebuilt.
-
-Run:
-    python -m src.storage_layer.MotherDuck.scripts.load_silver_to_gold
-"""
-
 import logging
+from dataclasses import fields
+from typing import Union, get_args, get_origin
 
 from src.storage_layer.MotherDuck.client import MotherDuckClient
 from src.storage_layer.MotherDuck.config import (
@@ -56,9 +16,23 @@ from src.storage_layer.MotherDuck.config import (
     MOTHERDUCK_DATABASE,
     SILVER_PARQUET_GLOB,
 )
+from src.storage_layer.MotherDuck.schema.data_class import GoldJobItem
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+NONE_TYPE = type(None)
+DUCKDB_TYPE_BY_PYTHON_TYPE = {
+    str: "VARCHAR",
+    int: "BIGINT",
+    float: "DOUBLE",
+    bool: "BOOLEAN",
+}
+LEGACY_COLUMN_FALLBACKS = {
+    "clean_company_name": ("company_name_canonical", "company_name"),
+    "clean_job_title": ("job_title",),
+    "clean_location": ("location",),
+}
 
 
 def _qualified(table_name: str) -> str:
@@ -66,7 +40,81 @@ def _qualified(table_name: str) -> str:
     return f"{GOLD_SCHEMA}.{table_name}"
 
 
-def build_all_gold_sql() -> list[tuple[str, str]]:
+def _unwrap_optional(python_type: type) -> type:
+    origin = get_origin(python_type)
+    if origin is not Union:
+        return python_type
+
+    non_none_types = [arg for arg in get_args(python_type) if arg is not NONE_TYPE]
+    return non_none_types[0] if non_none_types else python_type
+
+
+def _duckdb_type(python_type: type) -> str:
+    unwrapped_type = _unwrap_optional(python_type)
+    origin = get_origin(unwrapped_type)
+
+    if origin is list:
+        inner_types = get_args(unwrapped_type)
+        inner_type = inner_types[0] if inner_types else str
+        return f"{_duckdb_type(inner_type)}[]"
+
+    return DUCKDB_TYPE_BY_PYTHON_TYPE.get(unwrapped_type, "VARCHAR")
+
+
+GOLD_COLUMN_TYPES = {
+    field.name: _duckdb_type(field.type)
+    for field in fields(GoldJobItem)
+}
+GOLD_COLUMN_TYPES.update({column: "VARCHAR" for column in GOLD_DATE_COLUMNS})
+
+
+def _fallback_expression(column_name: str, available_columns: set[str]) -> str | None:
+    fallback_columns = [
+        fallback_column
+        for fallback_column in LEGACY_COLUMN_FALLBACKS.get(column_name, ())
+        if fallback_column in available_columns
+    ]
+    if not fallback_columns:
+        return None
+
+    return f"COALESCE({', '.join(fallback_columns)})"
+
+
+def _select_expression(column_name: str, available_columns: set[str]) -> str:
+    column_type = GOLD_COLUMN_TYPES.get(column_name, "VARCHAR")
+
+    if column_name in available_columns:
+        return column_name
+
+    fallback_expression = _fallback_expression(column_name, available_columns)
+    if fallback_expression:
+        return f"CAST({fallback_expression} AS {column_type}) AS {column_name}"
+
+    return f"CAST(NULL AS {column_type}) AS {column_name}"
+
+
+def _read_silver_parquet_sql() -> str:
+    return f"""
+    read_parquet(
+        '{SILVER_PARQUET_GLOB}',
+        hive_partitioning = true,
+        filename = true,
+        union_by_name = true
+    )
+    """
+
+
+def get_silver_columns(client: MotherDuckClient) -> set[str]:
+    rows = client.con.sql(
+        f"""
+        DESCRIBE SELECT *
+        FROM {_read_silver_parquet_sql()}
+        """
+    ).fetchall()
+    return {row[0] for row in rows}
+
+
+def build_all_gold_sql(silver_columns: set[str]) -> list[tuple[str, str]]:
     """Return ordered list of ``(description, sql)`` to rebuild all Gold tables.
 
     The list is designed to be executed sequentially:
@@ -85,7 +133,8 @@ def build_all_gold_sql() -> list[tuple[str, str]]:
     # columns to unnest, and the date columns used to build dim_date + date_key.
     list_col_names = list(LIST_FIELD_TO_CHILD.keys())
     all_cols = ",\n            ".join(
-        GOLD_JOBS_COLUMNS + list_col_names + GOLD_DATE_COLUMNS
+        _select_expression(column_name, silver_columns)
+        for column_name in GOLD_JOBS_COLUMNS + list_col_names + GOLD_DATE_COLUMNS
     )
     # The fact keeps job_url + all scalars (including the source_site FK).
     fact_cols = ",\n            ".join(GOLD_JOBS_COLUMNS)
@@ -101,11 +150,7 @@ def build_all_gold_sql() -> list[tuple[str, str]]:
     CREATE OR REPLACE TABLE {staging} AS
     SELECT
         {all_cols}
-    FROM read_parquet(
-        '{SILVER_PARQUET_GLOB}',
-        hive_partitioning = true,
-        filename = true
-    )
+    FROM {_read_silver_parquet_sql()}
     QUALIFY row_number() OVER (
         PARTITION BY job_url
         ORDER BY year DESC, month DESC, day DESC, filename DESC
@@ -237,7 +282,8 @@ def main() -> None:
     client.execute_statement(f'USE "{MOTHERDUCK_DATABASE}"')
     client.execute_statement(f"CREATE SCHEMA IF NOT EXISTS {GOLD_SCHEMA}")
 
-    statements = build_all_gold_sql()
+    silver_columns = get_silver_columns(client)
+    statements = build_all_gold_sql(silver_columns)
 
     for description, sql in statements:
         logger.info("Executing: %s", description)

@@ -21,7 +21,7 @@ class GoldJobItem:
     # ==========================================
     # 3. COMPANY
     # ==========================================
-    company_name_canonical: Optional[str] = None
+    clean_company_name: Optional[str] = None
     min_company_size: Optional[int] = None
     max_company_size: Optional[int] = None
 
