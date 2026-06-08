@@ -29,8 +29,7 @@ SILVER_PARQUET_GLOB = (
 )
 
 # Child tables that hold unnested List[str] values for BI-friendly querying.
-# Each child table has columns: (job_url, value) plus a discriminator column
-# where applicable (e.g. requirement_type). They join back to gold.jobs on job_url.
+# Each child table joins back to gold.jobs through the compact integer job_id.
 GOLD_INDUSTRIES_TABLE = "job_industries"       # unnested from job_industry_clean
 GOLD_BENEFITS_TABLE = "job_benefits"           # unnested from benefits_categories_vi
 GOLD_REQUIREMENTS_TABLE = "job_requirements"   # unnested from all require_* columns

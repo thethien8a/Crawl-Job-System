@@ -29,7 +29,7 @@ class GoldJobItem:
     # 4. LOCATION
     # ==========================================
     clean_location: Optional[str] = None
-    is_vietnam: Optional[str] = None
+    is_vietnam: Optional[bool] = None
 
     # ==========================================
     # 5. INDUSTRY
