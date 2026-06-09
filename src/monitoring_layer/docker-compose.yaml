@@ -11,12 +11,15 @@ services:
 
   prometheus:
     image: prom/prometheus:v3.12.0
-    command:
-      - "--config.file=/etc/prometheus/prometheus.yml"
-      - "--storage.tsdb.path=/prometheus"
+    entrypoint: /bin/sh
+    command: ["/etc/prometheus/entrypoint.sh"]
     volumes:
-      - ./src/monitoring_layer/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./src/monitoring_layer/prometheus_entrypoint.sh:/etc/prometheus/entrypoint.sh:ro
+      - ./src/monitoring_layer/prometheus.yml:/etc/prometheus/prometheus.template.yml:ro
       - prometheus-data:/prometheus
+    environment:
+      - SUPABASE_PROJECT_REF=${SUPABASE_PROJECT_REF}
+      - SUPABASE_METRICS_SECRET_KEY=${SUPABASE_METRICS_SECRET_KEY}
     ports:
       - "9090:9090"
     depends_on:
