@@ -1,0 +1,55 @@
+# statsd-exporter mapping for Airflow metrics.
+mappings:
+  # Per-task run time: airflow.dag.<dag_id>.<task_id>.duration
+  - match: "airflow.dag.*.*.duration"
+    name: "airflow_task_duration"
+    labels:
+      dag_id: "$1"
+      task_id: "$2"
+
+  # DAG run wall-clock time, split by final state
+  - match: "airflow.dagrun.duration.success.*"
+    name: "airflow_dagrun_duration_success"
+    labels:
+      dag_id: "$1"
+  - match: "airflow.dagrun.duration.failed.*"
+    name: "airflow_dagrun_duration_failed"
+    labels:
+      dag_id: "$1"
+
+  # Delay between scheduled time and actual start (scheduler lag per DAG)
+  - match: "airflow.dagrun.schedule_delay.*"
+    name: "airflow_dagrun_schedule_delay"
+    labels:
+      dag_id: "$1"
+
+  # Operator-level success/failure counts (e.g. DockerOperator)
+  # NOTE: glob matching does not support "_*" suffixes; use regex for these.
+  - match: "airflow\\.operator_successes_(.*)"
+    match_type: regex
+    name: "airflow_operator_successes"
+    labels:
+      operator: "$1"
+  - match: "airflow\\.operator_failures_(.*)"
+    match_type: regex
+    name: "airflow_operator_failures"
+    labels:
+      operator: "$1"
+
+  # Pool capacity gauges (default pool unless custom pools are added)
+  - match: "airflow.pool.open_slots.*"
+    name: "airflow_pool_open_slots"
+    labels:
+      pool: "$1"
+  - match: "airflow.pool.queued_slots.*"
+    name: "airflow_pool_queued_slots"
+    labels:
+      pool: "$1"
+  - match: "airflow.pool.running_slots.*"
+    name: "airflow_pool_running_slots"
+    labels:
+      pool: "$1"
+  - match: "airflow.pool.starving_tasks.*"
+    name: "airflow_pool_starving_tasks"
+    labels:
+      pool: "$1"

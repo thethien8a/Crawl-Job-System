@@ -1,0 +1,27 @@
+services:
+  statsd-exporter:
+    image: prom/statsd-exporter:v0.28.0
+    command:
+      - "--statsd.mapping-config=/etc/statsd/statsd_mapping.yml"
+    volumes:
+      - ./src/monitoring_layer/statsd_mapping.yml:/etc/statsd/statsd_mapping.yml:ro
+    ports:
+      - "9102:9102"   # /metrics endpoint Prometheus scrapes
+    restart: always
+
+  prometheus:
+    image: prom/prometheus:v3.12.0
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+    volumes:
+      - ./src/monitoring_layer/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    depends_on:
+      - statsd-exporter
+    restart: always
+
+volumes:
+  prometheus-data:
