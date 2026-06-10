@@ -4,7 +4,7 @@ services:
     command:
       - "--statsd.mapping-config=/etc/statsd/statsd_mapping.yml"
     volumes:
-      - ./src/monitoring_layer/statsd_mapping.yml:/etc/statsd/statsd_mapping.yml:ro
+      - ./src/monitoring_layer/prometheus/statsd_mapping.yml:/etc/statsd/statsd_mapping.yml:ro
     ports:
       - "9102:9102"   # /metrics endpoint Prometheus scrapes
     restart: always
@@ -14,8 +14,8 @@ services:
     entrypoint: /bin/sh
     command: ["/etc/prometheus/entrypoint.sh"]
     volumes:
-      - ./src/monitoring_layer/prometheus_entrypoint.sh:/etc/prometheus/entrypoint.sh:ro
-      - ./src/monitoring_layer/prometheus.yml:/etc/prometheus/prometheus.template.yml:ro
+      - ./src/monitoring_layer/prometheus/entrypoint.sh:/etc/prometheus/entrypoint.sh:ro
+      - ./src/monitoring_layer/prometheus/prometheus.yml:/etc/prometheus/prometheus.template.yml:ro
       - prometheus-data:/prometheus
     environment:
       - SUPABASE_PROJECT_REF=${SUPABASE_PROJECT_REF}
@@ -26,5 +26,17 @@ services:
       - statsd-exporter
     restart: always
 
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - ./src/monitoring_layer/grafana/datasources.yml:/etc/grafana/provisioning/datasources/prometheus.yml:ro
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    restart: always
+
 volumes:
   prometheus-data:
+  grafana-data:
