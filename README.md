@@ -454,4 +454,4 @@ All business logic runs inside sibling `lakehouse-pipeline` containers via `Dock
 - Bucket names are **hardcoded** in [`bucket.yml`](src/storage_layer/MinIO_S3/config/bucket.yml). Fork or rename them — they are globally unique on S3.
 - The `MinIO_S3` folder name is **legacy** — it talks to real AWS S3 via `boto3`, not MinIO.
 - The Dockerfile uses `python:3.11-slim` (not 3.13). `IS_DOCKER=1` is set so modules can branch on container vs. local execution.
-- `CHROME_BIN=/usr/bin/google-chrome` is set explicitly in the Dockerfile because nodriver's `find_chrome_executable` is unreliable inside DockerOperator-spawned containers.
+- `CHROME_BIN=/usr/bin/google-chrome` is set explicitly in the Dockerfile because nodriver's `find_chrome_executable` is unreliable inside DockerOperator-spawned containers. On `amd64` the image installs Google Chrome; on other CPU architectures it installs distro Chromium and symlinks it to the same path.
