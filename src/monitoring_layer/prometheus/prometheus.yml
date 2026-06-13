@@ -11,7 +11,7 @@ scrape_configs:
   # Airflow metrics
   - job_name: airflow
     static_configs:
-      - targets: ["statsd-exporter:9102"]
+      - targets: ["${AIRFLOW_STATSD_EXPORTER_TARGET}"]
 
   # Supabase Metrics API
   - job_name: supabase

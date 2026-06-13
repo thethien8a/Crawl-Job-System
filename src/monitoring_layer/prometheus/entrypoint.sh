@@ -11,6 +11,7 @@ cp "$TEMPLATE" "$CONFIG"
 
 # Replace placeholder strings with values from environment.
 # Uses pipe delimiter to avoid conflicts with URLs containing slashes.
+sed -i "s|\${AIRFLOW_STATSD_EXPORTER_TARGET}|${AIRFLOW_STATSD_EXPORTER_TARGET}|g" "$CONFIG"
 sed -i "s|\${SUPABASE_PROJECT_REF}|${SUPABASE_PROJECT_REF}|g" "$CONFIG"
 sed -i "s|\${SUPABASE_METRICS_SECRET_KEY}|${SUPABASE_METRICS_SECRET_KEY}|g" "$CONFIG"
 
