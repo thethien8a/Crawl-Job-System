@@ -43,6 +43,7 @@ SITE_CONFIGS: dict[str, dict[str, str]] = {
     },
 }
 
+MID_NIGHT_SCHEDULE = "0 0 * * *"
 CLEAN_SCHEDULE = "0 */8 * * *"
 LOAD_SUPABASE_SCHEDULE = "0 */6 * * *"
 CRAWL_SCHEDULE = "0 */3 * * *"
@@ -295,6 +296,94 @@ def create_load_taxonomy_to_gold_dag() -> DAG:
         load_taxonomy_to_gold = DockerOperator(
             task_id="load_taxonomy_to_gold",
             command="python -m src.storage_layer.MotherDuck.scripts.load_taxonomy_to_gold",
+            **COMMON_DOCKER_KWARGS,
+        )
+
+    return dag
+
+def create_cluster_company_name_dag() -> DAG:
+    """Return a DAG that clusters company names using fuzzy matching.
+
+    Manual trigger only — pass date range via *Trigger DAG w/ config*.
+    """
+    dag_id = "cluster_company_name"
+    today = datetime.now().strftime("%Y-%m-%d")
+
+    with DAG(
+        dag_id=dag_id,
+        description="Cluster company names using fuzzy matching (DockerOperator)",
+        schedule=None,
+        start_date=START_DATE,
+        catchup=False,
+        max_active_runs=1,
+        default_args=DEFAULT_ARGS,
+        params={
+            "from_date": today,
+            "to_date": today,
+        },
+        tags=["lakehouse", "fuzzy", "cluster", "company_name"],
+    ) as dag:
+
+        cluster_company_name = DockerOperator(
+            task_id="cluster_company_name",
+            command=(
+                "python -m src.storage_layer.MinIO_S3.layer.silver.utils.script_fuzzy "
+                "--from_date {{ params.from_date }} --to_date {{ params.to_date }}"
+            ),
+            **COMMON_DOCKER_KWARGS,
+        )
+
+    return dag
+
+
+def create_bronze_dashboard_dag() -> DAG:
+    """Return a DAG that generates the Bronze business dashboard.
+
+    Runs at midnight to generate a static HTML report from S3 Bronze objects.
+    """
+    dag_id = "generate_bronze_dashboard"
+
+    with DAG(
+        dag_id=dag_id,
+        description="Generate Bronze business dashboard HTML (DockerOperator)",
+        schedule=MID_NIGHT_SCHEDULE,
+        start_date=START_DATE,
+        catchup=False,
+        max_active_runs=1,
+        default_args=DEFAULT_ARGS,
+        tags=["lakehouse", "dashboard", "bronze", "monitoring"],
+    ) as dag:
+
+        generate_bronze_dashboard = DockerOperator(
+            task_id="generate_bronze_dashboard",
+            command="python -m src.monitoring_layer.business.bronze_dashboard",
+            **COMMON_DOCKER_KWARGS,
+        )
+
+    return dag
+
+
+def create_silver_dashboard_dag() -> DAG:
+    """Return a DAG that generates the Silver business dashboard.
+
+    Runs at midnight to generate a static HTML report from S3 Silver data.
+    """
+    dag_id = "generate_silver_dashboard"
+
+    with DAG(
+        dag_id=dag_id,
+        description="Generate Silver business dashboard HTML (DockerOperator)",
+        schedule=MID_NIGHT_SCHEDULE,
+        start_date=START_DATE,
+        catchup=False,
+        max_active_runs=1,
+        default_args=DEFAULT_ARGS,
+        tags=["lakehouse", "dashboard", "silver", "monitoring"],
+    ) as dag:
+
+        generate_silver_dashboard = DockerOperator(
+            task_id="generate_silver_dashboard",
+            command="python -m src.monitoring_layer.business.silver_dashboard",
             **COMMON_DOCKER_KWARGS,
         )
 

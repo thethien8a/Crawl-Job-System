@@ -31,10 +31,22 @@ x-airflow-common:
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
+    statsd-exporter:
+      condition: service_started
     postgres:
       condition: service_healthy
 
 services:
+  statsd-exporter:
+    image: prom/statsd-exporter:v0.28.0
+    command:
+      - "--statsd.mapping-config=/etc/statsd/statsd_mapping.yml"
+    volumes:
+      - ./src/monitoring_layer/prometheus/statsd_mapping.yml:/etc/statsd/statsd_mapping.yml:ro
+    ports:
+      - "9102:9102"
+    restart: always
+
   postgres:
     image: postgres:16
     environment:
