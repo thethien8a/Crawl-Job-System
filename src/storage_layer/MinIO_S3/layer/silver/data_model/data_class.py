@@ -23,8 +23,6 @@ class SilverJobItem:
     # ==========================================
     # 3. COMPANY INFO
     # ==========================================
-    company_name: Optional[str] = None
-    company_name_canonical: Optional[str] = None
     clean_company_name: Optional[str] = None
     company_size: Optional[str] = None
     min_company_size: Optional[int] = None

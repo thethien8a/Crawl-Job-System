@@ -1,32 +1,30 @@
-import pandas as pd
 import polars as pl
 import numpy as np
 import re
 import logging
+import argparse
 from pathlib import Path
 from rapidfuzz import process, fuzz
 
-from src.storage_layer.MinIO_S3.layer.silver.utils.reader import get_jobs_data_from_silver
+from src.storage_layer.MinIO_S3.layer.silver.utils.reader import get_jobs_silver_by_site
 from src.storage_layer.MinIO_S3.layer.silver.utils.config_loader import read_seeds
 
 logger = logging.getLogger(__name__)
 
 OUTPUT_PATH = Path(__file__).parent / "clusters_review.csv"
-SOURCE_COLUMN = "company_name"
-# Cột dẫn xuất chỉ dùng để tính similarity. company_name gốc giữ nguyên trong output.
+SOURCE_COLUMN = "clean_company_name"
+# Cột dẫn xuất chỉ dùng để tính similarity. clean_company_name gốc giữ nguyên trong output.
 MATCHING_COLUMN = "matching_key"
-SOURCE_TAG_COLUMN = "source_tag"
-# Tag để phân biệt nguồn input khi review cluster.
-TAG_UNMAPPED = "unmapped"
-TAG_SEED_CANONICAL = "seed_canonical"
+HAS_IN_MAPPING_COLUMN = "has_in_company_mapping"
 # Sites đang được crawl. Hardcode để fuzzy chạy được kể cả khi 1 site chưa có Silver data
 # (reader trả None thì skip site đó).
 SILVER_SITES = ["topcv", "vietnamworks", "itviec"]
 SEED_FILE_NAME = "company_mapping.csv"
+DEFAULT_ENTITY_NAME = "jobs"
 
 # Industry / sector stopwords: các từ mô tả LĨNH VỰC (không phải brand) làm token_set_ratio
 # bị inflate. Strip chúng đi để brand token dominate điểm số.
-# CHỈ áp dụng cho matching_key, KHÔNG đụng vào company_name gốc.
+# CHỈ áp dụng cho matching_key, KHÔNG đụng vào clean_company_name gốc.
 # Sắp cụm dài lên trước để regex ưu tiên match cụm dài.
 INDUSTRY_STOPWORDS = [
     "ĐẦU TƯ THƯƠNG MẠI PHÁT TRIỂN CÔNG NGHỆ",
@@ -206,143 +204,157 @@ def build_clusters(names: list[str], threshold: int, len_ratio_min: float) -> li
     return [find(i) for i in range(n)]
 
 
-def apply_keyword_mappings(series: pd.Series) -> pd.Series:
+def apply_keyword_mappings(names: list[str]) -> list[str]:
     """
     Thay thế các cụm từ tiếng Việt đặc trưng thành brand/tên viết tắt phổ biến.
     Áp dụng trên chuỗi đã uppercase, dùng word boundary để tránh cắt nhầm.
     """
-    s = series.copy()
-    for pattern, replacement in MAPPING_KEYWORDS:
-        s = s.str.replace(r'\b' + re.escape(pattern) + r'\b', replacement, regex=True)
-    s = s.str.replace(r'\s+', ' ', regex=True).str.strip()
-    return s
+    mapped_names = []
+    for name in names:
+        mapped_name = name
+        for pattern, replacement in MAPPING_KEYWORDS:
+            mapped_name = re.sub(r'\b' + re.escape(pattern) + r'\b', replacement, mapped_name)
+        mapped_names.append(re.sub(r'\s+', ' ', mapped_name).strip())
+    return mapped_names
 
 
-def build_matching_key(series: pd.Series) -> pd.Series:
+def build_matching_key(names: list[str]) -> list[str]:
     """
-    Tạo matching_key bằng cách strip industry stopwords khỏi company_name (đã uppercase).
+    Tạo matching_key bằng cách strip industry stopwords khỏi clean_company_name (đã uppercase).
     Dùng \\b boundary để không cắt nhầm giữa từ. Pattern build từ list đã sort dài-trước.
     """
     pattern = r'\b(' + '|'.join(re.escape(w) for w in INDUSTRY_STOPWORDS) + r')\b'
-    s = series.str.replace(pattern, ' ', regex=True)
-    s = s.str.replace(r'\s+', ' ', regex=True).str.strip()
-    return s
+    return [re.sub(r'\s+', ' ', re.sub(pattern, ' ', name)).strip() for name in names]
 
 
-def load_unmapped_from_silver() -> pd.DataFrame:
+def load_unique_company_names_from_silver(
+    entity_name: str,
+    from_date: str,
+    to_date: str,
+) -> pl.DataFrame:
     """
-    Concat Silver của tất cả sites, filter company_name_canonical is null, lấy distinct company_name.
-    Cần company_name_canonical column tồn tại trong Silver schema (do map_canonical_company tạo ra).
+    Concat Silver của tất cả sites, lấy distinct clean_company_name để cluster.
     """
     frames: list[pl.LazyFrame] = []
     for site in SILVER_SITES:
-        lf = get_jobs_data_from_silver(site)
+        lf = get_jobs_silver_by_site(site, entity_name, from_date, to_date)
         if lf is not None:
-            frames.append(lf.select([SOURCE_COLUMN, "company_name_canonical"]))
+            frames.append(lf.select(SOURCE_COLUMN))
 
     if not frames:
-        return pd.DataFrame(columns=[SOURCE_COLUMN])
+        return pl.DataFrame({SOURCE_COLUMN: []}, schema={SOURCE_COLUMN: pl.String})
 
-    unmapped = (
+    return (
         pl.concat(frames, how="diagonal_relaxed")
-        .filter(pl.col("company_name_canonical").is_null())
-        .select(SOURCE_COLUMN)
+        .select(pl.col(SOURCE_COLUMN).str.to_uppercase().str.strip_chars())
         .unique()
         .drop_nulls()
         .collect()
-        .to_pandas()
     )
-    return unmapped
 
 
-def load_seed_canonicals() -> pd.DataFrame:
+def load_seed_canonicals() -> pl.DataFrame:
     """
-    Lấy distinct canonical_name từ seed CSV (đã được fuzzy phân loại sẵn) để làm "anchor".
-    Anchor giúp cluster mới gộp được vào canonical đã tồn tại thay vì tạo cluster cô lập.
+    Lấy distinct canonical_name từ seed CSV để flag name đã có trong mapping.
     """
     seed = read_seeds(SEED_FILE_NAME)
     return (
         seed.select(pl.col("canonical_name").str.to_uppercase().str.strip_chars().alias(SOURCE_COLUMN))
         .unique()
         .drop_nulls()
-        .to_pandas()
     )
 
 
-def build_fuzzy_input() -> pd.DataFrame:
+def build_fuzzy_input(entity_name: str, from_date: str, to_date: str) -> pl.DataFrame:
     """
-    Trả về DataFrame [company_name, source_tag]. Nếu 1 name xuất hiện ở cả 2 nguồn,
-    ưu tiên giữ tag seed_canonical để khi review biết đây là anchor đã được validate.
+    Trả về DataFrame [clean_company_name, has_in_company_mapping] từ unique Silver names.
     """
-    unmapped = load_unmapped_from_silver()
-    unmapped[SOURCE_TAG_COLUMN] = TAG_UNMAPPED
+    silver_names = load_unique_company_names_from_silver(entity_name, from_date, to_date)
+    if silver_names.is_empty():
+        return silver_names.with_columns(pl.lit(None).cast(pl.Int64).alias(HAS_IN_MAPPING_COLUMN))
 
     canonicals = load_seed_canonicals()
-    canonicals[SOURCE_TAG_COLUMN] = TAG_SEED_CANONICAL
+    return (
+        silver_names.join(
+            canonicals.with_columns(pl.lit(1).alias(HAS_IN_MAPPING_COLUMN)),
+            on=SOURCE_COLUMN,
+            how="left",
+        )
+        .with_columns(pl.col(HAS_IN_MAPPING_COLUMN).fill_null(0).cast(pl.Int64))
+        .select(SOURCE_COLUMN, HAS_IN_MAPPING_COLUMN)
+    )
 
-    combined = pd.concat([canonicals, unmapped], ignore_index=True)
-    return combined.drop_duplicates(subset=[SOURCE_COLUMN], keep="first").reset_index(drop=True)
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Build fuzzy company-name clusters from Silver data.")
+    parser.add_argument("--from_date", required=True, help="Inclusive start date YYYY-MM-DD")
+    parser.add_argument("--to_date", required=True, help="Inclusive end date YYYY-MM-DD")
+    parser.add_argument("--entity_name", default=DEFAULT_ENTITY_NAME)
+    return parser.parse_args()
 
 
 def main() -> None:
-    df = build_fuzzy_input()
-    if df.empty:
-        logger.info("No company names to cluster (silver empty + seed empty). Exiting.")
+    args = parse_args()
+    df = build_fuzzy_input(args.entity_name, args.from_date, args.to_date)
+    if df.is_empty():
+        logger.info("No company names to cluster (silver empty). Exiting.")
         return
 
-    upper_names = df[SOURCE_COLUMN]
+    upper_names = df.get_column(SOURCE_COLUMN).to_list()
     mapped_names = apply_keyword_mappings(upper_names)
-    df[MATCHING_COLUMN] = build_matching_key(mapped_names)
+    matching_keys = build_matching_key(mapped_names)
 
-    # Nếu matching_key rỗng (toàn industry stopwords), fallback dùng company_name gốc
+    # Nếu matching_key rỗng (toàn industry stopwords), fallback dùng clean_company_name gốc
     # để không mất row trong quá trình so similarity.
-    empty_mask = df[MATCHING_COLUMN].str.len() == 0
-    df.loc[empty_mask, MATCHING_COLUMN] = df.loc[empty_mask, SOURCE_COLUMN]
+    matching_keys = [key or source for key, source in zip(matching_keys, upper_names)]
+    df = df.with_columns(pl.Series(MATCHING_COLUMN, matching_keys))
 
-    names = df[MATCHING_COLUMN].tolist()
+    names = df.get_column(MATCHING_COLUMN).to_list()
 
     logger.info("Computing similarity for %d names (threshold=%d, len_ratio>=%f)...", len(names), THRESHOLD, LEN_RATIO_MIN)
     raw_cluster_ids = build_clusters(names, THRESHOLD, LEN_RATIO_MIN)
 
-    df = df.assign(_raw_cluster=raw_cluster_ids)
+    df = df.with_columns(pl.Series("_raw_cluster", raw_cluster_ids))
 
     # Đánh số lại cluster_id liên tục từ 1, sắp theo cluster lớn trước để review dễ
-    cluster_sizes = df["_raw_cluster"].value_counts()
-    # Chỉ giữ cluster mixed (có cả unmapped và seed_canonical) hoặc cluster unmapped >=2.
-    # Cluster toàn seed_canonical bỏ qua vì đã được validate trước đó.
+    cluster_sizes = df.group_by("_raw_cluster").len().rename({"len": "cluster_size"})
     review_clusters = _select_review_clusters(df, cluster_sizes)
 
     cluster_id_map = {raw_id: new_id for new_id, raw_id in enumerate(review_clusters, start=1)}
 
-    review_df = df[df["_raw_cluster"].isin(review_clusters)].copy()
-    review_df["cluster_id"] = review_df["_raw_cluster"].map(cluster_id_map)
-    review_df["cluster_size"] = review_df["_raw_cluster"].map(cluster_sizes)
+    cluster_meta = cluster_sizes.with_columns(
+        pl.col("_raw_cluster")
+        .replace(cluster_id_map, default=None)
+        .cast(pl.Int64)
+        .alias("cluster_id")
+    ).drop_nulls("cluster_id")
 
-    # Sort: seed_canonical lên đầu mỗi cluster làm anchor visual, kế đến matching_key
-    review_df = review_df.sort_values(
-        by=["cluster_size", "cluster_id", SOURCE_TAG_COLUMN, MATCHING_COLUMN],
-        ascending=[False, True, True, True],
+    review_df = df.join(cluster_meta, on="_raw_cluster", how="inner")
+
+    # Ưu tiên tên đã có mapping lên đầu mỗi cluster để làm anchor visual.
+    review_df = review_df.sort(
+        by=["cluster_size", "cluster_id", HAS_IN_MAPPING_COLUMN, MATCHING_COLUMN],
+        descending=[True, False, True, False],
     )
 
-    review_df = review_df[["cluster_id", "cluster_size", SOURCE_COLUMN, SOURCE_TAG_COLUMN, MATCHING_COLUMN]]
+    review_df = review_df.select("cluster_id", "cluster_size", SOURCE_COLUMN, HAS_IN_MAPPING_COLUMN, MATCHING_COLUMN)
 
-    review_df.to_csv(OUTPUT_PATH, index=False, encoding="utf-8-sig")
+    OUTPUT_PATH.write_text(review_df.write_csv(), encoding="utf-8-sig")
 
-    logger.info("Saved %d rows in %d clusters -> %s", len(review_df), len(review_clusters), OUTPUT_PATH)
-    logger.info("Singletons / pure-seed clusters skipped: %d", len(df) - len(review_df))
+    logger.info("Saved %d rows in %d clusters -> %s", review_df.height, len(review_clusters), OUTPUT_PATH)
+    logger.info("Singleton clusters skipped: %d", df.height - review_df.height)
 
 
-def _select_review_clusters(df: pd.DataFrame, cluster_sizes: pd.Series) -> list[int]:
+def _select_review_clusters(df: pl.DataFrame, cluster_sizes: pl.DataFrame) -> list[int]:
     """
-    Cluster đáng review: (a) mixed (có ít nhất 1 unmapped + 1 seed_canonical) hoặc
-    (b) thuần unmapped với >= 2 members. Cluster thuần seed_canonical đã validate => skip.
+    Cluster đáng review: cluster có ít nhất 2 unique clean_company_name.
     """
-    cluster_tags = df.groupby("_raw_cluster")[SOURCE_TAG_COLUMN].agg(set)
-    is_mixed = cluster_tags.apply(lambda tags: TAG_UNMAPPED in tags and TAG_SEED_CANONICAL in tags)
-    is_pure_unmapped = cluster_tags.apply(lambda tags: tags == {TAG_UNMAPPED})
-    multi_member = cluster_sizes >= 2
-    keep_mask = (is_mixed) | (is_pure_unmapped & multi_member)
-    return keep_mask[keep_mask].index.tolist()
+    return (
+        cluster_sizes
+        .filter(pl.col("cluster_size") >= 2)
+        .get_column("_raw_cluster")
+        .to_list()
+    )
 
 
 if __name__ == "__main__":
