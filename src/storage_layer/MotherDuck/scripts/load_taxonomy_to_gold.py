@@ -9,10 +9,12 @@ Run:
 """
 
 import logging
+import tempfile
 from pathlib import Path
 
 from src.storage_layer.MotherDuck.client import MotherDuckClient
 from src.storage_layer.MotherDuck.config import GOLD_SCHEMA, MOTHERDUCK_DATABASE
+from src.storage_layer.MinIO_S3.layer.silver.utils.config_loader import read_seeds
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -48,15 +50,7 @@ def main() -> None:
 
         logger.info("Loading %s into %s", csv_file.name, qualified_table)
 
-        # Ensure forward slashes for DuckDB's read_csv
-        file_path_str = str(csv_file).replace("\\", "/")
-
-        sql = f"""
-        CREATE OR REPLACE TABLE {qualified_table} AS
-        SELECT * FROM read_csv_auto('{file_path_str}', header=True)
-        """
-
-        client.execute_statement(sql)
+        load_taxonomy_csv(client, csv_file.name, qualified_table)
 
         # Print final row counts for verification
         row_count = client.con.sql(f"SELECT count(*) FROM {qualified_table}").fetchone()[
@@ -65,6 +59,24 @@ def main() -> None:
         logger.info(
             "%s.%s: %d rows", MOTHERDUCK_DATABASE, qualified_table, row_count
         )
+
+
+def load_taxonomy_csv(client: MotherDuckClient, csv_file_name: str, qualified_table: str) -> None:
+    taxonomy_df = read_seeds(csv_file_name)
+    temp_file = tempfile.NamedTemporaryFile(suffix=".csv", delete=False)
+    temp_path = Path(temp_file.name)
+    temp_file.close()
+
+    try:
+        taxonomy_df.write_csv(temp_path)
+        file_path_str = str(temp_path).replace("\\", "/").replace("'", "''")
+        sql = f"""
+        CREATE OR REPLACE TABLE {qualified_table} AS
+        SELECT * FROM read_csv_auto('{file_path_str}', header=True)
+        """
+        client.execute_statement(sql)
+    finally:
+        temp_path.unlink(missing_ok=True)
 
 
 if __name__ == "__main__":

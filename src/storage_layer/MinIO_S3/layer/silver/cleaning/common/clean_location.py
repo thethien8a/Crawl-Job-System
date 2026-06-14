@@ -1,15 +1,11 @@
-from pathlib import Path
-
 import polars as pl
 
+from src.storage_layer.MinIO_S3.layer.silver.utils.config_loader import read_seeds
 from src.storage_layer.MinIO_S3.layer.silver.utils.normalize_data import remove_vietnamese_accents
-
-SEEDS_DIR = Path(__file__).parent.parent.parent / "seeds"
-LOCATION_MAPPING_PATH = SEEDS_DIR / "location_mapping.csv"
 
 
 def load_location_taxonomy() -> pl.DataFrame:
-    return pl.read_csv(str(LOCATION_MAPPING_PATH))
+    return read_seeds("location_mapping.csv")
 
 
 def build_location_mapping_expr(taxonomy_df: pl.DataFrame, source_col: str = "location_no_accent") -> pl.Expr:
