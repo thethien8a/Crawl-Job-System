@@ -49,6 +49,8 @@ src/orchestration_layer/logs/
 *.xlsx
 *.xls
 *.json
+!src/monitoring_layer/grafana/dashboards/
+!src/monitoring_layer/grafana/dashboards/*.json
 *.jsonl
 *.ndjson
 *.avro

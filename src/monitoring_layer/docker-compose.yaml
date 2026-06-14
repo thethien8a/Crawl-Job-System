@@ -38,8 +38,11 @@ services:
       - GF_SERVER_SERVE_FROM_SUB_PATH=true
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+      - GF_AUTH_BASIC_ENABLED=false
     volumes:
       - ./src/monitoring_layer/grafana/datasources.yml:/etc/grafana/provisioning/datasources/prometheus.yml:ro
+      - ./src/monitoring_layer/grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/lakehouse-lite.yml:ro
+      - ./src/monitoring_layer/grafana/dashboards:/etc/grafana/provisioning/dashboards/lakehouse-lite:ro
       - grafana-data:/var/lib/grafana
     expose:
       - "3000"
