@@ -25,6 +25,7 @@ executing==2.2.1
 flashtext==2.7
 frozenlist==1.8.0
 great_expectations==1.17.2
+gspread==6.2.1
 idna==3.13
 ipykernel==7.2.0
 ipython==9.13.0

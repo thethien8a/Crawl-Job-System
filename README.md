@@ -274,6 +274,7 @@ Required variables:
 - `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` / `AWS_REGION` — for AWS S3
 - `SUPABASE_HOST` / `SUPABASE_PORT` / `SUPABASE_DATABASE` / `SUPABASE_USER` / `SUPABASE_PASSWORD` — for Supabase serving layer
 - `MOTHERDUCK_TOKEN` — for MotherDuck Gold layer
+- `GOOGLE_SHEETS_CREDENTIALS_FILE` / `GOOGLE_SHEETS_SPREADSHEET_ID` — optional Google Sheets source for Silver seeds and `clusters_review.csv`
 
 For Airflow orchestration, also configure:
 - `FERNET_KEY` / `WEBSERVER_SECRET_KEY` / `_AIRFLOW_WWW_USER_USERNAME` / `_AIRFLOW_WWW_USER_PASSWORD`
@@ -425,6 +426,7 @@ All business logic runs inside sibling `lakehouse-pipeline` containers via `Dock
 | HTML Parsing | lxml, parsel |
 | Object Storage | AWS S3 via boto3 |
 | Keyword Extraction | flashtext (HybridKeywordExtractor) |
+| Editable Taxonomy Store | Google Sheets via gspread |
 | OLAP / Gold | MotherDuck (DuckDB), read_parquet from S3 |
 | OLTP / Serving | Supabase (PostgreSQL), psycopg2 |
 | Orchestration | Apache Airflow 2.10.3 with DockerOperator |
