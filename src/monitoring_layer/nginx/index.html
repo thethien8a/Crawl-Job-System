@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lakehouse-Lite Dashboards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --line: #e2e8f0;
+      --text: #0f172a;
+      --muted: #475569;
+      --accent: #2563eb;
+      --accent-light: #eff6ff;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    main {
+      width: min(680px, calc(100% - 48px));
+      margin: 60px auto;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-header {
+      margin-bottom: 36px;
+      padding: 40px 44px;
+      background: linear-gradient(135deg, var(--accent) 0%, #3b82f6 100%);
+      border-radius: var(--radius-xl);
+      color: white;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-header::after {
+      content: "";
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 220px;
+      height: 220px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 50%;
+    }
+
+    .page-header h1 {
+      margin: 0 0 10px;
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .page-header p {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.85);
+      max-width: 480px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .dashboards {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .dashboard-link {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 22px 26px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      box-shadow: var(--shadow-card);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+      position: relative;
+    }
+
+    .dashboard-link:hover {
+      border-color: #93c5fd;
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
+
+    .dashboard-link:active {
+      transform: translateY(0);
+    }
+
+    .dashboard-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 46px;
+      height: 46px;
+      border-radius: var(--radius-md);
+      font-size: 22px;
+      flex-shrink: 0;
+      font-weight: 700;
+    }
+
+    .bronze .dashboard-icon {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .silver .dashboard-icon {
+      background: #e0e7ff;
+      color: #4338ca;
+    }
+
+    .grafana .dashboard-icon {
+      background: #ffedd5;
+      color: #ea580c;
+    }
+
+    .dashboard-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .dashboard-label {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    .dashboard-hint {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .arrow {
+      margin-left: auto;
+      font-size: 18px;
+      color: #94a3b8;
+      transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    .dashboard-link:hover .arrow {
+      color: var(--accent);
+      transform: translateX(4px);
+    }
+
+    .footer-note {
+      margin-top: 32px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 560px) {
+      main { margin: 32px auto; }
+
+      .page-header {
+        padding: 28px 24px;
+      }
+
+      .page-header h1 {
+        font-size: 26px;
+      }
+
+      .dashboard-link {
+        padding: 16px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="page-header">
+      <div class="eyebrow">Monitoring Layer</div>
+      <h1>Lakehouse-Lite Dashboards</h1>
+      <p>Truy cập nhanh Bronze, Silver & Grafana dashboards — dữ liệu được tổng hợp tự động từ S3 object storage.</p>
+    </header>
+
+    <nav class="dashboards" aria-label="Dashboard links">
+      <a href="bronze_dashboard.html" class="dashboard-link bronze">
+        <div class="dashboard-icon" aria-hidden="true">B</div>
+        <div class="dashboard-meta">
+          <span class="dashboard-label">Bronze Dashboard</span>
+          <span class="dashboard-hint">Raw ingested data — volume, freshness, source breakdown</span>
+        </div>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+
+      <a href="silver_dashboard.html" class="dashboard-link silver">
+        <div class="dashboard-icon" aria-hidden="true">S</div>
+        <div class="dashboard-meta">
+          <span class="dashboard-label">Silver Dashboard</span>
+          <span class="dashboard-hint">Cleaned & enriched data — quality metrics, taxonomy coverage</span>
+        </div>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+
+      <a href="/grafana/" class="dashboard-link grafana">
+        <div class="dashboard-icon" aria-hidden="true">G</div>
+        <div class="dashboard-meta">
+          <span class="dashboard-label">Grafana</span>
+          <span class="dashboard-hint">Operational metrics from Prometheus</span>
+        </div>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </nav>
+
+  </main>
+</body>
+</html>

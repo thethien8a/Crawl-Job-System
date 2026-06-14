@@ -406,6 +406,35 @@ All business logic runs inside sibling `lakehouse-pipeline` containers via `Dock
 - `shm_size=2GB` on containers (required for Chrome)
 - Browser-based crawlers run under `xvfb-run` in containers
 
+## Dashboards (Bronze/Silver, with login)
+
+The Bronze and Silver business dashboards are static HTML files generated from S3 data. An nginx service in the monitoring stack serves them behind HTTP Basic Auth so they can be exposed on a host (e.g. EC2) without being public.
+
+1. **Generate the HTML** (needs AWS credentials; files are git-ignored):
+
+   ```bash
+   python -m src.monitoring_layer.business.bronze_dashboard
+   python -m src.monitoring_layer.business.silver_dashboard
+   ```
+
+2. **Set credentials** in `.env` (see `.env.example`):
+
+   ```bash
+   DASHBOARD_USER=admin
+   DASHBOARD_PASSWORD=<choose-a-strong-password>
+   DASHBOARD_PORT=8081
+   ```
+
+3. **Start the dashboards service** (run from the repo root):
+
+   ```bash
+   docker compose --project-directory . -f src/monitoring_layer/docker-compose.yaml up -d dashboards
+   ```
+
+Visit `http://<host>:8081/` for a landing page linking to both dashboards (or `/bronze_dashboard.html` / `/silver_dashboard.html` directly). The browser prompts for the username/password. The credentials file is generated inside the container at startup from `DASHBOARD_USER`/`DASHBOARD_PASSWORD` — nothing secret is committed.
+
+**On EC2:** open the chosen port (`8081` by default) in the instance Security Group. Basic Auth sends credentials base64-encoded, so for anything beyond a quick internal share put it behind HTTPS (reverse proxy / load balancer) and/or restrict the Security Group to your IP.
+
 ## Pipeline Behavior
 
 - **Crawlers append** to the same daily temp file (`<source>_jobs_YYYYMMDD.jsonl`). Repeated runs accumulate data until the Bronze loader processes and clears `temp_data`.

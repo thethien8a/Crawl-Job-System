@@ -1,0 +1,24 @@
+# Single-login entry point for the monitoring layer.
+# Caddy owns authentication so backend services can stay private on the Docker network.
+# Generate MONITORING_AUTH_PASSWORD_HASH with:
+#   docker run --rm caddy:alpine caddy hash-password --plaintext 'replace-me'
+
+{$MONITORING_DOMAIN:localhost} {
+    basic_auth {
+        {$MONITORING_AUTH_USER} {$MONITORING_AUTH_PASSWORD_HASH}
+    }
+
+    redir / /business/ 308
+    redir /business /business/ 308
+    redir /grafana /grafana/ 308
+
+    handle_path /business/* {
+        reverse_proxy dashboards:80
+    }
+
+    handle /grafana/* {
+        reverse_proxy grafana:3000
+    }
+
+    respond "Not found" 404
+}
