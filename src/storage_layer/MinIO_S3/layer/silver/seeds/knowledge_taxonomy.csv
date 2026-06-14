@@ -33,7 +33,6 @@ Deep Learning,Deep Learning,Học sâu,Deep Learning,deep learning|hoc sau|neura
 Reinforcement Learning,Reinforcement Learning,Học sâu,Deep Learning,reinforcement learning|hoc tang cuong|\brl\b|q-learning|policy gradient
 Tokenization,Tokenization,NLP,NLP,tokenization|tokenizer|\bbpe\b|wordpiece|sentencepiece|byte-pair encoding
 NER,NER,NLP,NLP,\bner\b|named entity recognition|nhan dien thuc the
-Sentiment Analysis,Sentiment Analysis,NLP,NLP,sentiment analysis|phan tich cam xuc|opinion mining
 Topic Modeling,Topic Modeling,NLP,NLP,topic modeling|\blda\b|latent dirichlet
 Text Classification,Text Classification,NLP,NLP,text classification|phan loai van ban|document classification
 NLP,NLP,NLP,NLP,\bnlp\b|natural language processing|xu ly ngon ngu tu nhien
@@ -72,7 +71,6 @@ Streaming,Streaming,ETL & Điều phối,ETL & Orchestration,stream processing|r
 Data Pipeline,Data Pipeline,ETL & Điều phối,ETL & Orchestration,data pipeline|pipeline du lieu|data engineering pipeline
 Star Schema,Star Schema,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,star schema|so do hinh sao
 Snowflake Schema,Snowflake Schema,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,snowflake schema|so do bong tuyet
-Data Modeling,Data Modeling,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,data modeling|mo hinh hoa du lieu|dimensional modeling|\bkimball\b|\binmon\b|dim table|fact table|\bscd\b
 Medallion Architecture,Medallion Architecture,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,medallion|bronze silver gold|kien truc medallion
 Data Vault,Data Vault,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,data vault|datavault
 Data Warehouse,Data Warehouse,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,data warehouse|\bdwh\b|kho du lieu
@@ -91,7 +89,6 @@ Data Science,Data Science,Khoa học dữ liệu,Data Science,data science|khoa 
 Data Governance,Data Governance,Quản trị dữ liệu,Data Governance,data governance|quan tri du lieu|data policy|data ownership
 Data Stewardship,Data Stewardship,Quản trị dữ liệu,Data Governance,data steward|data stewardship|chu quan du lieu|data owner
 Data Quality,Data Quality,Chất lượng dữ liệu,Data Quality,data quality|chat luong du lieu|data quality rule|dq rule
-Data Observability,Data Observability,Chất lượng dữ liệu,Data Quality,data observability|data monitoring|giam sat du lieu|data incident
 Data Lineage,Data Lineage,Quản trị dữ liệu,Data Governance,data lineage|lineage graph|nguon goc du lieu|impact analysis
 Metadata Management,Metadata Management,Quản trị dữ liệu,Data Governance,metadata management|quan ly metadata|business metadata|technical metadata
 Data Catalog,Data Catalog,Quản trị dữ liệu,Data Governance,data catalog|catalog du lieu|data discovery|dataset catalog
@@ -116,7 +113,6 @@ Semantic Layer,Semantic Layer,BI & Trực quan hóa,BI & Visualization,semantic 
 Metrics Layer,Metrics Layer,BI & Trực quan hóa,BI & Visualization,metrics layer|metric store|metric definition|metric governance
 KPI Design,KPI Design,BI & Trực quan hóa,BI & Visualization,kpi design|metric design|thiet ke kpi|business metrics|north star metric
 Dashboard Design,Dashboard Design,BI & Trực quan hóa,BI & Visualization,dashboard design|thiet ke dashboard|dashboarding|report design
-Data Storytelling,Data Storytelling,BI & Trực quan hóa,BI & Visualization,data storytelling|ke chuyen bang du lieu|insight storytelling|storytelling with data
 Exploratory Data Analysis,Exploratory Data Analysis,Phân tích dữ liệu,Data Analytics,exploratory data analysis|\beda\b|phan tich kham pha du lieu
 Cohort Analysis,Cohort Analysis,Phân tích dữ liệu,Data Analytics,cohort analysis|phan tich cohort|retention cohort|cohort retention
 Funnel Analysis,Funnel Analysis,Phân tích dữ liệu,Data Analytics,funnel analysis|phan tich funnel|conversion funnel|sales funnel
@@ -126,14 +122,12 @@ Classification,Classification,Học máy cổ điển,Classical ML,classificatio
 Decision Tree,Decision Tree,Học máy cổ điển,Classical ML,decision tree|cay quyet dinh|classification tree|regression tree
 kNN,kNN,Học máy cổ điển,Classical ML,\bknn\b|k-nearest neighbors|nearest neighbors
 Naive Bayes,Naive Bayes,Học máy cổ điển,Classical ML,naive bayes|bayes classifier
-Anomaly Detection,Anomaly Detection,Học máy cổ điển,Classical ML,anomaly detection|outlier detection|phat hien bat thuong|phat hien ngoai le
 Association Rule Mining,Association Rule Mining,Học máy cổ điển,Classical ML,association rule|association rules|apriori|fp-growth|fp growth
 Market Basket Analysis,Market Basket Analysis,Học máy cổ điển,Classical ML,market basket analysis|basket analysis|phan tich gio hang
 Survival Analysis,Survival Analysis,Thống kê & Toán học,Statistics & Math,survival analysis|cox regression|kaplan meier|time to event
 Uplift Modeling,Uplift Modeling,Thống kê & Toán học,Statistics & Math,uplift modeling|uplift model|incrementality|treatment effect model
 Feature Store,Feature Store,MLOps & DevOps,MLOps & DevOps,feature store|kho dac trung|offline feature|online feature
 Model Registry,Model Registry,MLOps & DevOps,MLOps & DevOps,model registry|dang ky mo hinh|registered model|model versioning
-Model Monitoring,Model Monitoring,MLOps & DevOps,MLOps & DevOps,model monitoring|giam sat mo hinh|model performance monitoring
 Model Serving,Model Serving,MLOps & DevOps,MLOps & DevOps,model serving|serve model|trien khai mo hinh|inference service
 Data Drift,Data Drift,MLOps & DevOps,MLOps & DevOps,data drift|drift du lieu|feature drift|distribution drift
 Concept Drift,Concept Drift,MLOps & DevOps,MLOps & DevOps,concept drift|drift khai niem|target drift|model drift
@@ -240,7 +234,6 @@ Experimental Design,Experimental Design,Thống kê & Toán học,Statistics & M
 Survey Methodology,Survey Methodology,Thống kê & Toán học,Statistics & Math,survey methodology|questionnaire design|sampling method|poll design
 Data Collection,Data Collection,Phân tích dữ liệu,Data Analytics,data collection|data gathering|data acquisition|data sourcing
 Data Integration,Data Integration,Kỹ thuật dữ liệu,Data Engineering,data integration|data consolidation|data consolidation|data unification
-Master Data Management,Master Data Management,Quản trị dữ liệu,Data Governance,mdm|master data management|golden record|single source of truth
 Data Modeling,Data Modeling,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,data modeling|dimensional modeling|entity relationship|er diagram
 ETL Design,ETL Design,ETL & Điều phối,ETL & Orchestration,etl design|etl architecture|etl patterns|data pipeline design
 Data Warehouse Architecture,Data Warehouse Architecture,Kho dữ liệu & Lakehouse,Warehouse & Lakehouse,data warehouse architecture|dwh architecture|enterprise data warehouse|edw
@@ -258,10 +251,8 @@ Power Analysis,Power Analysis,Thống kê & Toán học,Statistics & Math,power 
 Regression Analysis,Regression Analysis,Thống kê & Toán học,Statistics & Math,regression analysis|linear regression|logistic regression|multiple regression
 Classification Algorithms,Classification Algorithms,Học máy cổ điển,Classical ML,classification|decision tree|random forest|svm|naive bayes
 Clustering Algorithms,Clustering Algorithms,Học máy cổ điển,Classical ML,clustering|k-means|dbscan|hierarchical clustering|gaussian mixture
-Dimensionality Reduction,Dimensionality Reduction,Học máy cổ điển,Classical ML,dimensionality reduction|pca|tsne|umap|feature selection
 Ensemble Methods,Ensemble Methods,Học máy cổ điển,Classical ML,ensemble methods|bagging|boosting|stacking|voting classifier
 Feature Selection,Feature Selection,Học máy cổ điển,Classical ML,feature selection|feature importance|variable selection|feature ranking
-Feature Engineering,Feature Engineering,Học máy cổ điển,Classical ML,feature engineering|feature creation|feature transformation|feature extraction
 Hyperparameter Tuning,Hyperparameter Tuning,Học máy cổ điển,Classical ML,hyperparameter tuning|grid search|random search|bayesian optimization
 Cross-validation,Cross-validation,Thống kê & Toán học,Statistics & Math,cross-validation|k-fold|stratified k-fold|leave one out
 Model Interpretation,Model Interpretation,Học máy cổ điển,Classical ML,model interpretation|shap|lime|feature importance|model explainability

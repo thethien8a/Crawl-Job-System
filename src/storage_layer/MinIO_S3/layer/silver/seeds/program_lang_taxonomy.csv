@@ -29,7 +29,6 @@ SPARQL,SPARQL,Ngôn ngữ truy vấn dữ liệu,Data Query Languages,sparql|rdf
 Gremlin,Gremlin,Ngôn ngữ truy vấn dữ liệu,Data Query Languages,gremlin|tinkerpop
 GraphQL,GraphQL,Ngôn ngữ truy vấn dữ liệu,Data Query Languages,graphql|graph query language
 Jinja,Jinja,Ngôn ngữ template dữ liệu,Data Template Languages,jinja|jinja2|dbt jinja
-Pig Latin,Pig Latin,Ngôn ngữ xử lý dữ liệu,Data Processing Languages,pig latin|apache pig
 PromQL,PromQL,Ngôn ngữ truy vấn giám sát,Monitoring Query Languages,promql|prometheus query language
 Dart,Dart,Ngôn ngữ lập trình,Programming Languages,dart|dart lang|flutter dart
 Elixir,Elixir,Ngôn ngữ lập trình,Programming Languages,elixir|elixir lang|phoenix framework
@@ -39,7 +38,6 @@ F#,F#,Ngôn ngữ lập trình,Programming Languages,f#|fsharp|functional fsharp
 Clojure,Clojure,Ngôn ngữ lập trình,Programming Languages,clojure|clj|lisp clojure
 Erlang,Erlang,Ngôn ngữ lập trình,Programming Languages,erlang|erlang otp|concurrent erlang
 Fortran,Fortran,Ngôn ngữ lập trình,Programming Languages,fortran|fortran 90|fortran 95|fortran 2003
-COBOL,COBOL,Ngôn ngữ lập trình,Programming Languages,cobol|common business oriented
 Assembly,Assembly,Ngôn ngữ lập trình,Programming Languages,assembly|asm|x86|arm assembly|machine code
 Racket,Racket,Ngôn ngữ lập trình,Programming Languages,racket|scheme|racket lang
 Nim,Nim,Ngôn ngữ lập trình,Programming Languages,nim|nim lang|nimrod
@@ -47,14 +45,12 @@ Zig,Zig,Ngôn ngữ lập trình,Programming Languages,zig|zig lang|zig programm
 Crystal,Crystal,Ngôn ngữ lập trình,Programming Languages,crystal|crystal lang|ruby-like crystal
 Groovy,Groovy,Ngôn ngữ lập trình,Programming Languages,groovy|groovy lang|jenkins groovy
 Delphi / Object Pascal,Delphi / Object Pascal,Ngôn ngữ lập trình,Programming Languages,delphi|object pascal|pascal delphi
-ABAP,ABAP,Ngôn ngữ lập trình,Programming Languages,abap|sap abap|advanced business application
 Apex,Apex,Ngôn ngữ lập trình,Programming Languages,apex|salesforce apex|force.com apex
 Solidity,Solidity,Ngôn ngữ lập trình,Programming Languages,solidity|smart contract|ethereum solidity|blockchain solidity
 Prolog,Prolog,Ngôn ngữ lập trình,Programming Languages,prolog|logic programming|prolog ai
 Lisp,Lisp,Ngôn ngữ lập trình,Programming Languages,lisp|common lisp|emacs lisp|scheme lisp
 Scheme,Scheme,Ngôn ngữ lập trình,Programming Languages,scheme|scheme lang|r5rs|r6rs|r7rs
 Ada,Ada,Ngôn ngữ lập trình,Programming Languages,ada|ada 95|ada 2005|ada programming
-COBOL,COBOL,Ngôn ngữ lập trình,Programming Languages,cobol|cobol legacy|mainframe cobol
 PL/SQL,PL/SQL,Ngôn ngữ lập trình,Programming Languages,plsql|pl/sql|oracle plsql|procedural sql
 T-SQL,T-SQL,Ngôn ngữ lập trình,Programming Languages,tsql|t-sql|sql server tsql|microsoft tsql
 Transact-SQL,Transact-SQL,Ngôn ngữ lập trình,Programming Languages,transact-sql|tsql|mssql sql

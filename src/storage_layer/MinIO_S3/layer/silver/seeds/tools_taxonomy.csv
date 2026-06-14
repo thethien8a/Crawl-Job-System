@@ -258,7 +258,6 @@ Mode,Mode,Môi trường phân tích,Analytics Environments,mode|mode analytics|
 Count,Count,Môi trường phân tích,Analytics Environments,count|count co|count analytics
 Rill,Rill,Môi trường phân tích,Analytics Environments,rill|rill data|rill developer
 Evidence,Evidence,Môi trường phân tích,Analytics Environments,evidence|evidence stf|sql reporting
-DataGrip,DataGrip,Môi trường phân tích,Analytics Environments,datagrip|data grip|database ide
 Docker Compose,Docker Compose,MLOps & DevOps,MLOps & DevOps,docker-compose|docker compose|compose file
 Podman,Podman,MLOps & DevOps,MLOps & DevOps,podman|pod man|container engine
 Containerd,Containerd,MLOps & DevOps,MLOps & DevOps,containerd|container daemon|container runtime

@@ -89,7 +89,6 @@ PyArrow,PyArrow,Xử lý dữ liệu Python,Python Data Processing,pyarrow|apach
 Polars,Polars,Xử lý dữ liệu Python,Python Data Processing,polars|lazyframe|pl\.dataframe
 Dask,Dask,Xử lý dữ liệu phân tán,Distributed Data Processing,dask|dask dataframe|dask distributed
 Modin,Modin,Xử lý dữ liệu phân tán,Distributed Data Processing,modin|modin pandas
-Vaex,Vaex,Xử lý dữ liệu phân tán,Distributed Data Processing,vaex
 RAPIDS cuDF,RAPIDS cuDF,Xử lý dữ liệu GPU,GPU Data Processing,cudf|rapids cudf|rapids ai
 Ibis,Ibis,Truy vấn & biến đổi dữ liệu,Data Query & Transformation,ibis framework|ibis python|ibis dataframe
 Apache DataFusion,Apache DataFusion,Truy vấn & biến đổi dữ liệu,Data Query & Transformation,datafusion|apache datafusion

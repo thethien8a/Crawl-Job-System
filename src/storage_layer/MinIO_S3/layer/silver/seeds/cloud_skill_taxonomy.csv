@@ -35,7 +35,6 @@ Microsoft Fabric,Microsoft Fabric,Dịch vụ dữ liệu Azure,Azure Data Servi
 Azure Event Hubs,Azure Event Hubs,Dịch vụ dữ liệu Azure,Azure Data Services,event hubs|azure event hub|azure event hubs
 Azure Stream Analytics,Azure Stream Analytics,Dịch vụ dữ liệu Azure,Azure Data Services,azure stream analytics|stream analytics job
 Azure Machine Learning,Azure Machine Learning,Dịch vụ dữ liệu Azure,Azure Data Services,azure machine learning|azure ml|azureml
-Azure Databricks,Azure Databricks,Dịch vụ dữ liệu Azure,Azure Data Services,azure databricks|databricks on azure
 Azure Cosmos DB,Azure Cosmos DB,Dịch vụ dữ liệu Azure,Azure Data Services,cosmos db|azure cosmos|cosmosdb
 Azure SQL Database,Azure SQL Database,Dịch vụ dữ liệu Azure,Azure Data Services,azure sql|azure sql database|sql azure
 Azure Functions,Azure Functions,Dịch vụ tính toán Azure,Azure Compute Services,azure functions|function app|serverless azure|azure function
@@ -117,7 +116,6 @@ Google Cloud Scheduler,Google Cloud Scheduler,Dịch vụ tích hợp GCP,GCP In
 Google Cloud API Gateway,Google Cloud API Gateway,Dịch vụ tích hợp GCP,GCP Integration Services,api gateway|google api gateway|api management gcp
 Google Cloud Build,Google Cloud Build,Dịch vụ DevOps GCP,GCP DevOps Services,cloud build|google cloud build|ci cd gcp
 Google Cloud Deploy,Google Cloud Deploy,Dịch vụ DevOps GCP,GCP DevOps Services,cloud deploy|google cloud deploy|cd gcp
-Google Artifact Registry,Google Artifact Registry,Dịch vụ DevOps GCP,GCP DevOps Services,artifact registry|google artifact registry|container registry gcp
 Google Cloud Source Repositories,Google Cloud Source Repositories,Dịch vụ DevOps GCP,GCP DevOps Services,source repositories|cloud source repos|git gcp
 VMware Cloud,VMware Cloud,Nền tảng đám mây,Cloud Platforms,vmware|vmware cloud|vcloud|vmc|vmware on aws
 DigitalOcean,DigitalOcean,Nền tảng đám mây,Cloud Platforms,digitalocean|digital ocean|do cloud|droplet
