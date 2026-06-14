@@ -3,15 +3,20 @@ import numpy as np
 import re
 import logging
 import argparse
-from pathlib import Path
 from rapidfuzz import process, fuzz
 
 from src.storage_layer.MinIO_S3.layer.silver.utils.reader import get_jobs_silver_by_site
 from src.storage_layer.MinIO_S3.layer.silver.utils.config_loader import read_seeds
+from src.storage_layer.MinIO_S3.layer.silver.utils.google_sheets import (
+    get_or_create_worksheet,
+    open_spreadsheet,
+    replace_worksheet_values,
+    worksheet_title_for_csv,
+)
 
 logger = logging.getLogger(__name__)
 
-OUTPUT_PATH = Path(__file__).parent / "clusters_review.csv"
+OUTPUT_SHEET_CSV_NAME = "clusters_review.csv"
 SOURCE_COLUMN = "clean_company_name"
 # Cột dẫn xuất chỉ dùng để tính similarity. clean_company_name gốc giữ nguyên trong output.
 MATCHING_COLUMN = "matching_key"
@@ -339,10 +344,47 @@ def main() -> None:
 
     review_df = review_df.select("cluster_id", "cluster_size", SOURCE_COLUMN, HAS_IN_MAPPING_COLUMN, MATCHING_COLUMN)
 
-    OUTPUT_PATH.write_text(review_df.write_csv(), encoding="utf-8-sig")
+    worksheet_title = save_review_clusters_to_google_sheets(review_df)
 
-    logger.info("Saved %d rows in %d clusters -> %s", review_df.height, len(review_clusters), OUTPUT_PATH)
+    logger.info(
+        "Saved %d rows in %d clusters -> Google Sheets worksheet '%s'",
+        review_df.height,
+        len(review_clusters),
+        worksheet_title,
+    )
     logger.info("Singleton clusters skipped: %d", df.height - review_df.height)
+
+
+def save_review_clusters_to_google_sheets(review_df: pl.DataFrame) -> str:
+    """
+    Replace the clusters_review worksheet with the latest fuzzy cluster review output.
+    """
+    values = dataframe_to_sheet_values(review_df)
+    worksheet_title = worksheet_title_for_csv(OUTPUT_SHEET_CSV_NAME)
+    worksheet = get_or_create_worksheet(
+        open_spreadsheet(),
+        title=worksheet_title,
+        rows=len(values),
+        cols=max((len(row) for row in values), default=1),
+    )
+    replace_worksheet_values(worksheet, values)
+    return worksheet_title
+
+
+def dataframe_to_sheet_values(df: pl.DataFrame) -> list[list[str]]:
+    """
+    Convert a Polars DataFrame to rectangular values accepted by Google Sheets.
+    """
+    if not df.columns:
+        return []
+
+    return [
+        df.columns,
+        *[
+            ["" if value is None else str(value) for value in row]
+            for row in df.iter_rows()
+        ],
+    ]
 
 
 def _select_review_clusters(df: pl.DataFrame, cluster_sizes: pl.DataFrame) -> list[int]:
