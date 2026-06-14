@@ -73,7 +73,16 @@ ENV_FILE_MOUNT = Mount(
     read_only=True,
 )
 
-COMMON_MOUNTS = [TEMP_DATA_MOUNT, ENV_FILE_MOUNT]
+# Dashboard HTML output written by bronze_dashboard.py and silver_dashboard.py.
+# Without this bind mount the generated .html files are lost inside the
+# auto-removed Docker container.
+DASHBOARD_MOUNT = Mount(
+    source=f"{HOST_REPO_PATH}/src/monitoring_layer/business",
+    target="/app/src/monitoring_layer/business",
+    type="bind",
+)
+
+COMMON_MOUNTS = [TEMP_DATA_MOUNT, ENV_FILE_MOUNT, DASHBOARD_MOUNT]
 
 COMMON_DOCKER_KWARGS: dict[str, Any] = dict(
     image=PIPELINE_IMAGE,

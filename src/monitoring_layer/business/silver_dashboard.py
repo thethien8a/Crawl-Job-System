@@ -27,6 +27,12 @@ from src.monitoring_layer.business.dashboard_common import (
     render_table_section,
 )
 from src.storage_layer.MinIO_S3.config.path import SilverBucketPaths
+from src.storage_layer.MinIO_S3.layer.silver.utils.google_sheets import (
+    GoogleSheetsError,
+    google_sheets_config_is_available,
+    read_worksheet_as_polars,
+    worksheet_title_for_csv,
+)
 from src.storage_layer.MinIO_S3.layer.silver.utils.reader import get_jobs_silver_by_site
 from src.storage_layer.MinIO_S3.utils.minio_connect import get_s3_client
 
@@ -35,6 +41,7 @@ logger = logging.getLogger(__name__)
 DEFAULT_OUTPUT_PATH = Path("src/monitoring_layer/business/silver_dashboard.html")
 BENEFIT_SAMPLE_SIZE = 50
 REQUIREMENT_SAMPLE_SIZE = 50
+CLUSTERS_REVIEW_FILE_NAME = "clusters_review.csv"
 
 
 @dataclass(frozen=True)
@@ -126,7 +133,7 @@ def build_table_sections(frame: pl.DataFrame, max_table_rows: int) -> list[str]:
 
 def render_unmapped_industry_table(frame: pl.DataFrame, max_table_rows: int) -> str:
     table = find_unmapped_industries(frame, max_table_rows)
-    note = "Cập nhật thêm vào src/storage_layer/MinIO_S3/layer/silver/seeds/industry_taxonomy.csv nếu các ngành này cần được map."
+    note = 'Cập nhật thêm vào Google Sheets worksheet "industry_taxonomy" nếu các ngành này cần được map.'
     return render_table_section("Job industry chưa map", table, "Không có job_industry_unmapped khả nghi.", note)
 
 
@@ -148,21 +155,35 @@ def non_empty_value_expr(frame: pl.DataFrame, column: str) -> pl.Expr:
 
 def render_company_review_table(max_table_rows: int) -> str:
     table = read_company_review_table(max_table_rows)
-    note = "Cập nhật thêm vào src/storage_layer/MinIO_S3/layer/silver/seeds/company_mapping.csv nếu các công ty trong cùng cluster là cùng một doanh nghiệp."
+    note = 'Cập nhật thêm vào Google Sheets worksheet "company_mapping" nếu các công ty trong cùng cluster là cùng một doanh nghiệp.'
     return render_table_section("Review các công ty giống nhau", table, "Chưa có file clusters_review.csv hoặc file đang rỗng.", note)
 
 
 def read_company_review_table(max_table_rows: int) -> pl.DataFrame:
+    sheet_table = read_company_review_table_from_google_sheets(max_table_rows)
+    if not sheet_table.is_empty():
+        return sheet_table
+
     path = Path("src/storage_layer/MinIO_S3/layer/silver/utils/clusters_review.csv")
     if not path.exists():
         return pl.DataFrame()
     return pl.read_csv(path, encoding="utf8-lossy").head(max_table_rows)
 
 
+def read_company_review_table_from_google_sheets(max_table_rows: int) -> pl.DataFrame:
+    if not google_sheets_config_is_available():
+        return pl.DataFrame()
+    try:
+        return read_worksheet_as_polars(worksheet_title_for_csv(CLUSTERS_REVIEW_FILE_NAME)).head(max_table_rows)
+    except GoogleSheetsError as exc:
+        logger.warning("Failed to read clusters_review from Google Sheets. Falling back to local CSV: %s", exc)
+        return pl.DataFrame()
+
+
 def render_benefit_review_table(frame: pl.DataFrame) -> str:
     columns = ["source_site", "job_url", "benefits_text_clean", "benefits_categories_vi"]
     table = recent_rows(frame, columns, BENEFIT_SAMPLE_SIZE)
-    note = "Cập nhật thêm vào src/storage_layer/MinIO_S3/layer/silver/seeds/benefit_taxonomy.csv nếu cần bổ sung taxonomy phúc lợi."
+    note = 'Cập nhật thêm vào Google Sheets worksheet "benefit_taxonomy" nếu cần bổ sung taxonomy phúc lợi.'
     return render_table_section("Review benefits gần đây", table, "Không có dữ liệu benefits để review.", note)
 
 
@@ -182,7 +203,13 @@ def render_requirement_review_table(frame: pl.DataFrame) -> str:
         "require_domain_university",
     ]
     table = recent_rows(frame, columns, REQUIREMENT_SAMPLE_SIZE)
-    note = "Cập nhật các taxonomy skill trong src/storage_layer/MinIO_S3/layer/silver/seeds nếu các requirement chưa được phân loại đúng."
+    note = (
+        "Cập nhật các taxonomy skill trong Google Sheets "
+        "(program_lang_taxonomy, framework_taxonomy, tools_taxonomy, "
+        "cloud_skill_taxonomy, knowledge_taxonomy, domain_taxonomy, "
+        "language_taxonomy, domain_university_taxonomy) "
+        "nếu các requirement chưa được phân loại đúng."
+    )
     return render_table_section("Review requirements gần đây", table, "Không có dữ liệu requirements để review.", note)
 
 
