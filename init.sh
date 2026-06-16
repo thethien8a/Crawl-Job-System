@@ -9,6 +9,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "==> Creating temp_data directory for crawler bind-mount..."
 mkdir -p "${SCRIPT_DIR}/src/crawl_layer/temp_data"
 
+echo "==> Creating dashboard reports directory for bind-mount..."
+mkdir -p "${SCRIPT_DIR}/src/monitoring_layer/business/reports"
+
 echo "==> Starting Orchestration layer (Airflow + Postgres)..."
 docker compose --project-directory "${SCRIPT_DIR}" \
   -f src/orchestration_layer/docker-compose.yaml up -d

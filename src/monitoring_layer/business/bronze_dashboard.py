@@ -33,7 +33,7 @@ from src.storage_layer.MinIO_S3.utils.minio_connect import get_s3_client
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_OUTPUT_PATH = Path("src/monitoring_layer/business/bronze_dashboard.html")
+DEFAULT_OUTPUT_PATH = Path("src/monitoring_layer/business/reports/bronze_dashboard.html")
 
 
 @dataclass(frozen=True)

@@ -74,11 +74,13 @@ ENV_FILE_MOUNT = Mount(
 )
 
 # Dashboard HTML output written by bronze_dashboard.py and silver_dashboard.py.
-# Without this bind mount the generated .html files are lost inside the
-# auto-removed Docker container.
+# Scoped to the reports/ subdir (not all of business/) so this bind mount can be
+# backed by a shared EFS volume on a separate host without shadowing the baked-in
+# business/*.py modules inside the container. Without it the generated .html files
+# are lost inside the auto-removed Docker container.
 DASHBOARD_MOUNT = Mount(
-    source=f"{HOST_REPO_PATH}/src/monitoring_layer/business",
-    target="/app/src/monitoring_layer/business",
+    source=f"{HOST_REPO_PATH}/src/monitoring_layer/business/reports",
+    target="/app/src/monitoring_layer/business/reports",
     type="bind",
 )
 

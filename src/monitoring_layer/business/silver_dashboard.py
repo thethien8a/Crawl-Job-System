@@ -38,7 +38,7 @@ from src.storage_layer.MinIO_S3.utils.minio_connect import get_s3_client
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_OUTPUT_PATH = Path("src/monitoring_layer/business/silver_dashboard.html")
+DEFAULT_OUTPUT_PATH = Path("src/monitoring_layer/business/reports/silver_dashboard.html")
 BENEFIT_SAMPLE_SIZE = 50
 REQUIREMENT_SAMPLE_SIZE = 50
 CLUSTERS_REVIEW_FILE_NAME = "clusters_review.csv"
