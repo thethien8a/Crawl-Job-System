@@ -48,6 +48,36 @@ Thư mục chia sẻ là thư mục đầu ra dashboard. Mount EFS chính xác t
 <repo>/src/monitoring_layer/business/reports
 ```
 
+> Lưu ý: lệnh `mount` bên dưới **không tự tạo EFS**. Bạn phải tạo EFS một lần
+> trong AWS trước, lấy được File system ID dạng `fs-...`, rồi mới chạy lệnh mount
+> trên cả EC2-A và EC2-B.
+
+### 2.1. Tạo EFS trên AWS Console
+
+Thực hiện một lần trong AWS Console:
+
+1. Vào **Amazon EFS → Create file system**.
+2. Chọn đúng **VPC** đang chứa cả EC2-A và EC2-B.
+3. Với môi trường sinh viên/demo, giữ mặc định đơn giản:
+   - **File system type**: Regional.
+   - **Throughput mode**: Elastic hoặc Bursting mặc định đều được cho tải nhỏ.
+   - **Storage class**: Standard. Nếu tài khoản còn Free Tier EFS, chỉ lưu dashboard HTML
+     để giữ dung lượng rất nhỏ.
+4. Tạo hoặc kiểm tra **mount target** trong subnet mà hai EC2 có thể truy cập.
+   Cách dễ nhất là đặt EC2-A, EC2-B và EFS mount target trong cùng VPC, cùng AZ/subnet
+   khi làm demo.
+5. Gán Security Group cho EFS và mở inbound:
+
+| From                 | To     | Port     | Mục đích             |
+|----------------------|--------|----------|----------------------|
+| EC2-A Security Group | EFS SG | 2049/tcp | Mount NFS từ EC2-A   |
+| EC2-B Security Group | EFS SG | 2049/tcp | Mount NFS từ EC2-B   |
+
+Sau khi tạo xong, copy **File system ID** của EFS, ví dụ `fs-0123456789abcdef0`,
+rồi thay vào các lệnh mount bên dưới.
+
+### 2.2. Mount EFS lên cả hai EC2
+
 Trên **mỗi** máy chủ:
 
 ```bash
