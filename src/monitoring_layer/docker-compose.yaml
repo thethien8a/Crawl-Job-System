@@ -25,6 +25,7 @@ services:
       - ./src/monitoring_layer/prometheus/prometheus.yml:/etc/prometheus/prometheus.template.yml:ro
       - prometheus-data:/prometheus
     environment:
+      - AIRFLOW_STATSD_EXPORTER_TARGET=${AIRFLOW_STATSD_EXPORTER_TARGET:-statsd-exporter:9102}
       - SUPABASE_PROJECT_REF=${SUPABASE_PROJECT_REF}
       - SUPABASE_METRICS_SECRET_KEY=${SUPABASE_METRICS_SECRET_KEY}
     expose:
@@ -32,7 +33,7 @@ services:
     restart: always
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:11.6
     environment:
       - GF_SERVER_ROOT_URL=${MONITORING_SCHEME:-http}://${MONITORING_DOMAIN:-localhost}/grafana/
       - GF_SERVER_SERVE_FROM_SUB_PATH=true
