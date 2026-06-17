@@ -46,7 +46,11 @@ SITE_CONFIGS: dict[str, dict[str, str]] = {
 MID_NIGHT_SCHEDULE = "0 0 * * *"
 CLEAN_SCHEDULE = "0 */8 * * *"
 LOAD_SUPABASE_SCHEDULE = "0 */6 * * *"
-CRAWL_SCHEDULE = "0 */3 * * *"
+CRAWL_SCHEDULES = {
+    "topcv": "0 */3 * * *",
+    "itviec": "15 */3 * * *",
+    "vietnamworks": "30 */3 * * *",
+}
 CRAWL_KEYWORD = "data"
 CRAWL_MAX_PAGES = 2
 START_DATE = datetime(2026, 1, 1)
@@ -111,7 +115,7 @@ def create_crawl_dag(site: str) -> DAG:
     with DAG(
         dag_id=dag_id,
         description=f"Crawl {site} jobs -> local temp JSONL (DockerOperator)",
-        schedule=CRAWL_SCHEDULE,
+        schedule=CRAWL_SCHEDULES[site],
         start_date=START_DATE,
         catchup=False,
         max_active_runs=1,
