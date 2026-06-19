@@ -10,6 +10,8 @@ The pipeline follows a **Bronze → Silver → Gold** medallion architecture sto
 docker compose --project-directory . -f src/orchestration_layer/docker-compose.yaml up -d
 ```
 ssh -i "C:\Users\Asus\Downloads\AWS\Scheduler.pem" -L 8080:localhost:8080 ubuntu@18.139.163.51
+ssh -i "C:\Users\Asus\Downloads\AWS\Scheduler.pem" ubuntu@18.139.163.51
+ssh -i "C:\Users\Asus\Downloads\AWS\Scheduler.pem" ubuntu@13.215.59.196
 ## Architecture Overview
 
 ```
