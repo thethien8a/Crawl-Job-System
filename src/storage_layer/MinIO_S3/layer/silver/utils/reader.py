@@ -130,6 +130,8 @@ def get_jobs_silver_by_site(site: str, entity_name: str, from_date: str, to_date
             valid_s3_paths,
             storage_options=storage_options,
             hive_partitioning=True,
+            missing_columns="insert",
+            extra_columns="ignore",
         )
         return df_lazy
     except Exception as e:

@@ -10,12 +10,14 @@ from src.storage_layer.MotherDuck.config import (
 )
 from src.storage_layer.MotherDuck.scripts.gold_sql_expressions import (
     JOB_ID_COLUMN,
+    build_unique_url_expression,
     build_select_list,
     qualified,
     read_silver_parquet_sql,
 )
 
 GoldStatement = tuple[str, str]
+GOLD_DEDUP_KEY = "dedup_url"
 
 
 def build_all_gold_sql(silver_columns: set[str]) -> list[GoldStatement]:
@@ -52,25 +54,39 @@ def build_all_gold_sql(silver_columns: set[str]) -> list[GoldStatement]:
 def build_staging_sql(silver_columns: set[str], staging_table: str) -> str:
     source_columns = GOLD_JOBS_COLUMNS + list(LIST_FIELD_TO_CHILD) + GOLD_DATE_COLUMNS
     selected_columns = build_select_list(source_columns, silver_columns)
+    dedup_url_column = build_unique_url_expression(silver_columns, alias=GOLD_DEDUP_KEY)
 
     return f"""
     CREATE OR REPLACE TABLE {staging_table} AS
-    WITH deduped AS (
+    WITH source_rows AS (
         SELECT
-            {selected_columns}
+            {selected_columns},
+            {dedup_url_column},
+            filename
         FROM {read_silver_parquet_sql()}
-        QUALIFY row_number() OVER (
-            PARTITION BY job_url
-            ORDER BY
-                TRY_CAST(year AS INT) DESC,
-                TRY_CAST(month AS INT) DESC,
-                TRY_CAST(day AS INT) DESC,
-                filename DESC
-        ) = 1
+    ),
+    ranked AS (
+        SELECT
+            *,
+            row_number() OVER (
+                PARTITION BY COALESCE({GOLD_DEDUP_KEY}, job_url)
+                ORDER BY
+                    TRY_CAST(year AS INT) DESC,
+                    TRY_CAST(month AS INT) DESC,
+                    TRY_CAST(day AS INT) DESC,
+                    filename DESC
+            ) AS dedup_rank
+        FROM source_rows
+    ),
+    deduped AS (
+        SELECT
+            * EXCLUDE (filename, dedup_rank)
+        FROM ranked
+        WHERE dedup_rank = 1
     )
     SELECT
-        ROW_NUMBER() OVER (ORDER BY job_url) AS {JOB_ID_COLUMN},
-        *
+        ROW_NUMBER() OVER (ORDER BY COALESCE({GOLD_DEDUP_KEY}, job_url)) AS {JOB_ID_COLUMN},
+        * EXCLUDE ({GOLD_DEDUP_KEY})
     FROM deduped
     """
 

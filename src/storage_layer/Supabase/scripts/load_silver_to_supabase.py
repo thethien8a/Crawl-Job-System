@@ -3,8 +3,9 @@
 Per-site flow:
     1. Lazily scan Silver Parquet for the requested date range.
     2. Project only the columns declared on `JobData`.
-    3. Drop duplicate rows by `job_url` so the UPSERT touches each job once per run.
-    4. Stream rows in `BATCH_SIZE` chunks and UPSERT them on `job_url`.
+    3. Drop duplicate rows by the configured conflict key so each logical job
+       is upserted once per run.
+    4. Stream rows in `BATCH_SIZE` chunks and UPSERT them on the conflict key.
 
 Per-site commits give partial progress on failure: a broken site rolls back
 its own batch but does not block the remaining sites.
@@ -20,12 +21,17 @@ from contextlib import closing
 
 from psycopg2.extras import execute_values
 import polars as pl
+from src.storage_layer.MinIO_S3.layer.silver.cleaning.common.clean_job_url import (
+    build_unique_url_expr,
+    clean_url_expr,
+)
 from src.storage_layer.MinIO_S3.layer.silver.utils.reader import get_jobs_silver_by_site
 
 from .config import (
     BATCH_SIZE, 
     CONFLICT_KEY, 
     CREATE_TABLE_SQL,
+    SCHEMA_MIGRATION_SQLS,
     SILVER_ENTITY_NAME, 
     SITES, 
     JOB_DATA_COLUMNS, 
@@ -51,6 +57,7 @@ def _load_site(conn, site: str, from_date: str, to_date: str) -> int:
         "clean_company_name": "company_name",
     }
 
+    available_columns = set(lazy_df.collect_schema().names())
     select_exprs = []
     for col in JOB_DATA_COLUMNS:
         cleaned_src = next(
@@ -58,12 +65,18 @@ def _load_site(conn, site: str, from_date: str, to_date: str) -> int:
         )
         if cleaned_src:
             select_exprs.append(pl.col(cleaned_src).alias(col))
+        elif col == CONFLICT_KEY:
+            select_exprs.append(_unique_url_select_expr(available_columns, site))
         else:
             select_exprs.append(pl.col(col))
 
     df = (
         lazy_df
         .select(select_exprs)
+        .filter(
+            pl.col(CONFLICT_KEY).is_not_null()
+            & (pl.col(CONFLICT_KEY).str.strip_chars() != "")
+        )
         .unique(subset=[CONFLICT_KEY], keep="any")
         .collect()
     )
@@ -83,6 +96,23 @@ def _load_site(conn, site: str, from_date: str, to_date: str) -> int:
     return upserted
 
 
+def _unique_url_select_expr(available_columns: set[str], site: str) -> pl.Expr:
+    cleaned_url = clean_url_expr(pl.col("job_url"))
+    source_site = pl.lit(site.lower().strip())
+    derived_unique_url = build_unique_url_expr(cleaned_url, source_site)
+
+    if CONFLICT_KEY not in available_columns:
+        return derived_unique_url.alias(CONFLICT_KEY)
+
+    existing_unique_url = pl.col(CONFLICT_KEY).str.strip_chars()
+    return (
+        pl.when(existing_unique_url.is_null() | (existing_unique_url == ""))
+        .then(derived_unique_url)
+        .otherwise(existing_unique_url)
+        .alias(CONFLICT_KEY)
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--from_date", required=True, help="Inclusive YYYY-MM-DD")
@@ -95,6 +125,8 @@ def main() -> None:
         # Ensure target table exists (idempotent)
         with conn.cursor() as cur:
             cur.execute(CREATE_TABLE_SQL)
+            for sql in SCHEMA_MIGRATION_SQLS:
+                cur.execute(sql)
         conn.commit()
         
         for site in sites_to_load:

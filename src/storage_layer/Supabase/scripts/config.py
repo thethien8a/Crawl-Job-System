@@ -26,7 +26,7 @@ SILVER_ENTITY_NAME = DEFAULT_ENTITY_NAME
 
 # Target Supabase table and the column used as the UPSERT conflict key
 TARGET_TABLE = "ready_jobs"
-CONFLICT_KEY = "job_url"
+CONFLICT_KEY = "unique_url"
 
 # Rows per bulk upsert; large enough to amortize roundtrip latency without blowing the wire protocol
 BATCH_SIZE = 100
@@ -66,10 +66,34 @@ _JOB_DATA_PG_COLUMNS = [f"{f.name} {_pg_type(f.type)}" for f in fields(JobData)]
 
 CREATE_TABLE_SQL = f"""
 CREATE TABLE IF NOT EXISTS {TARGET_TABLE} (
-    {', '.join(_JOB_DATA_PG_COLUMNS)},
-    UNIQUE ({CONFLICT_KEY})
+    {', '.join(_JOB_DATA_PG_COLUMNS)}
 );
 """
+
+SCHEMA_MIGRATION_SQLS = (
+    f"ALTER TABLE {TARGET_TABLE} ADD COLUMN IF NOT EXISTS {CONFLICT_KEY} TEXT;",
+    f"""
+    UPDATE {TARGET_TABLE}
+    SET {CONFLICT_KEY} = CASE
+        WHEN lower(trim(source_site)) = 'itviec'
+            THEN regexp_replace(regexp_replace(job_url, '[?#].*$', ''), '-[0-9]+/?$', '')
+        ELSE regexp_replace(job_url, '[?#].*$', '')
+    END
+    WHERE {CONFLICT_KEY} IS NULL
+      AND job_url IS NOT NULL;
+    """,
+    f"""
+    DELETE FROM {TARGET_TABLE} stale
+    USING {TARGET_TABLE} kept
+    WHERE stale.ctid < kept.ctid
+      AND stale.{CONFLICT_KEY} IS NOT NULL
+      AND stale.{CONFLICT_KEY} = kept.{CONFLICT_KEY};
+    """,
+    f"""
+    CREATE UNIQUE INDEX IF NOT EXISTS {TARGET_TABLE}_{CONFLICT_KEY}_uidx
+    ON {TARGET_TABLE} ({CONFLICT_KEY});
+    """,
+)
 
 UPSERT_SQL = (
     f"INSERT INTO {TARGET_TABLE} ({', '.join(JOB_DATA_COLUMNS)}) "

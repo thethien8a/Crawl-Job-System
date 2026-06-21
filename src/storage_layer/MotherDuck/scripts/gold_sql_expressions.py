@@ -49,6 +49,9 @@ def build_select_list(column_names: list[str], available_columns: set[str]) -> s
 def _select_expression(column_name: str, available_columns: set[str]) -> str:
     column_type = GOLD_COLUMN_TYPES.get(column_name, "VARCHAR")
 
+    if column_name == "unique_url":
+        return build_unique_url_expression(available_columns)
+
     if column_name == "is_vietnam" and column_name in available_columns:
         return _is_vietnam_expression()
 
@@ -69,6 +72,27 @@ def _is_vietnam_expression() -> str:
                 WHEN {normalized_value} = 'nước ngoài' THEN FALSE
                 ELSE NULL
             END AS is_vietnam"""
+
+
+def build_unique_url_expression(
+    available_columns: set[str],
+    alias: str = "unique_url",
+) -> str:
+    source_site_expression = "lower(trim(CAST(source_site AS VARCHAR)))"
+    cleaned_job_url = "regexp_replace(CAST(job_url AS VARCHAR), '[?#].*$', '')"
+    derived_unique_url = f"""CASE
+                WHEN {source_site_expression} = 'itviec'
+                    THEN regexp_replace({cleaned_job_url}, '-[0-9]+/?$', '')
+                ELSE {cleaned_job_url}
+            END"""
+
+    if "unique_url" not in available_columns:
+        return f"{derived_unique_url} AS {alias}"
+
+    return f"""COALESCE(
+                NULLIF(trim(CAST(unique_url AS VARCHAR)), ''),
+                {derived_unique_url}
+            ) AS {alias}"""
 
 
 def _cast_expression(expression: str, column_type: str, alias: str) -> str:
