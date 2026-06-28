@@ -1,10 +1,22 @@
 from __future__ import annotations
 from typing import Iterable
 
+from .config import HOME_URL
+
 
 def encode_input(search_word: str) -> str:
     parts = [w.lower() for w in (search_word or "").split() if w]
     return "-".join(parts)
+
+
+def absolute_topcv_url(url: str | None) -> str | None:
+    if not url:
+        return None
+    if url.startswith("http"):
+        return url
+    if url.startswith("/"):
+        return HOME_URL.rstrip("/") + url
+    return HOME_URL + url
 
 
 def join_clean(parts: Iterable[str]) -> str | None:

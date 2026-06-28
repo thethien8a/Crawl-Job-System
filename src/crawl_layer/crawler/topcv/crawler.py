@@ -1,11 +1,12 @@
 """TopCV crawler — top-level orchestration.
 
 Wires together:
+  * `TopcvBrowser`    — owns the nodriver session for search-page URL collection.
   * `TopcvHttpClient` — owns the curl_cffi session and nodriver warm-up.
   * `TopcvParser`     — turns HTML into TopCVJobItem instances.
 
-Keeps only the high-level flow here: paginate search results, dedupe URLs,
-fan out detail-page fetches, gather results.
+Keeps only the high-level flow here: paginate rendered search results, dedupe
+URLs, fan out detail-page fetches, gather results.
 """
 
 from __future__ import annotations
@@ -19,9 +20,9 @@ from src.crawl_layer.utils.loader import save_to_temp
 from src.storage_layer.MinIO_S3.config.path import DEFAULT_ENTITY_NAME
 
 from .config import BASE_URL
+from .browser import TopcvBrowser
 from .http_client import TopcvHttpClient
 from .parser import TopcvParser
-from .utils import encode_input
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +34,7 @@ class TopcvCrawler:
     """Async TopCV crawler.
 
     Strategy:
-        * Fetch search-result pages, collect unique job URLs.
+        * Render search-result pages with nodriver, collect unique job URLs.
         * Concurrently fetch each detail page (bounded by a semaphore).
         * Per-host throttling and exponential backoff replace the role of
           Scrapy's RetryMiddleware + AutoThrottle so we stay well clear of 429s.
@@ -47,10 +48,12 @@ class TopcvCrawler:
         request_delay: tuple[float, float] = (4.0, 6.0),
         max_retries: int = 5,
         timeout: float = 30.0,
+        headless: bool = True,
     ) -> None:
         self.keyword = keyword
         self.max_pages = max_pages
 
+        self.browser = TopcvBrowser(headless=headless)
         self.http = TopcvHttpClient(
             concurrency=concurrency,
             request_delay=request_delay,
@@ -70,18 +73,18 @@ class TopcvCrawler:
         leaves pages 1..4 safely on disk.
         """
         items: list[TopCVJobItem] = []
-        slug = encode_input(self.keyword)
-        url: str | None = f"{BASE_URL}-{slug}"
 
-        async with self.http:
+        async with self.browser, self.http:
+            await self.browser.open_search(self.keyword)
+
             for page_num in range(1, self.max_pages + 1):
                 temp_items: list[TopCVJobItem] = []
-                if not url:
-                    break
+                logger.info("Scanning TopCV URLs on page %d/%d", page_num, self.max_pages)
 
-                page_urls, next_url = await self._collect_page_urls(url)
+                page_urls = await self._collect_current_page_urls()
                 if not page_urls:
-                    url = next_url
+                    if not await self.browser.go_to_next_page():
+                        break
                     continue
 
                 page_items = await self._scrape_details_batch(page_urls)
@@ -93,24 +96,23 @@ class TopcvCrawler:
                 temp_items.extend(page_items)
                 self._flush_batch(temp_items, page_num)
 
-                url = next_url
+                if page_num >= self.max_pages:
+                    break
+                if not await self.browser.go_to_next_page():
+                    break
 
         return items
 
     # -- search pagination (single page) -----------------------------------
-    async def _collect_page_urls(self, url: str) -> tuple[list[str], str | None]:
-        """Fetch one search page and return its new (deduped) job URLs + next page URL."""
-        html = await self.http.fetch(url, referer=None)
-        if not html:
-            return [], None
-
-        page_urls, next_url = self.parser.parse_search_page(html)
+    async def _collect_current_page_urls(self) -> list[str]:
+        """Return new job URLs from the currently rendered search page."""
+        page_urls = await self.browser.get_job_urls_on_page()
         new_urls: list[str] = []
-        for u in page_urls:
-            if u and u not in self._seen_urls:
-                self._seen_urls.add(u)
-                new_urls.append(u)
-        return new_urls, next_url
+        for url in page_urls:
+            if url and url not in self._seen_urls:
+                self._seen_urls.add(url)
+                new_urls.append(url)
+        return new_urls
 
     # -- batch detail fetch -------------------------------------------------
     async def _scrape_details_batch(self, urls: list[str]) -> list[TopCVJobItem]:

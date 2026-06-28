@@ -1,0 +1,913 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JobSearchWeb - Job Lookup BA & System Design Diagrams</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+      --ink: #172033;
+      --muted: #667085;
+      --line: #cfd7e6;
+      --blue: #2563eb;
+      --blue-soft: #dbeafe;
+      --green: #16a34a;
+      --green-soft: #dcfce7;
+      --orange: #ea580c;
+      --orange-soft: #ffedd5;
+      --purple: #7c3aed;
+      --purple-soft: #ede9fe;
+      --red: #dc2626;
+      --red-soft: #fee2e2;
+      --gray-soft: #eef2f7;
+      --shadow: 0 14px 32px rgba(23, 32, 51, 0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 32px;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 34rem),
+        radial-gradient(circle at top right, rgba(22, 163, 74, 0.10), transparent 34rem),
+        var(--bg);
+    }
+
+    .page {
+      max-width: 1320px;
+      margin: 0 auto;
+    }
+
+    header,
+    .diagram {
+      border: 1px solid rgba(207, 215, 230, 0.8);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: var(--shadow);
+    }
+
+    header {
+      padding: 28px;
+      margin-bottom: 28px;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    h1 {
+      margin-bottom: 12px;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      max-width: 980px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.65;
+    }
+
+    .diagram {
+      margin: 28px 0;
+      padding: 26px;
+      overflow: hidden;
+    }
+
+    .diagram-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 22px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .diagram h2 {
+      font-size: 24px;
+      letter-spacing: -0.025em;
+    }
+
+    .note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .tag {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-width: 98px;
+      padding: 7px 12px;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 850;
+      white-space: nowrap;
+      border: 1px solid rgba(37, 99, 235, 0.18);
+      border-radius: 999px;
+      background: var(--blue-soft);
+    }
+
+    .canvas {
+      position: relative;
+      overflow: auto;
+      padding: 6px;
+    }
+
+    .box {
+      padding: 14px 16px;
+      border: 1.6px solid var(--line);
+      border-radius: 15px;
+      background: var(--panel);
+      box-shadow: 0 8px 20px rgba(23, 32, 51, 0.06);
+    }
+
+    .box h3 {
+      margin-bottom: 7px;
+      font-size: 15px;
+      line-height: 1.25;
+    }
+
+    .box p,
+    .box li {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.42;
+    }
+
+    .box ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+    }
+
+    .blue { border-color: rgba(37, 99, 235, 0.36); background: linear-gradient(180deg, var(--blue-soft), #fff); }
+    .green { border-color: rgba(22, 163, 74, 0.36); background: linear-gradient(180deg, var(--green-soft), #fff); }
+    .orange { border-color: rgba(234, 88, 12, 0.36); background: linear-gradient(180deg, var(--orange-soft), #fff); }
+    .purple { border-color: rgba(124, 58, 237, 0.36); background: linear-gradient(180deg, var(--purple-soft), #fff); }
+    .red { border-color: rgba(220, 38, 38, 0.32); background: linear-gradient(180deg, var(--red-soft), #fff); }
+    .gray { background: linear-gradient(180deg, var(--gray-soft), #fff); }
+
+    code {
+      padding: 2px 6px;
+      color: #344054;
+      font-size: 0.92em;
+      font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+      border-radius: 6px;
+      background: #eef2f7;
+    }
+
+    svg.connector {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    .arrow {
+      fill: none;
+      stroke: #667085;
+      stroke-width: 2;
+      marker-end: url(#arrow);
+    }
+
+    .arrow-blue { stroke: var(--blue); }
+    .arrow-green { stroke: var(--green); }
+    .arrow-orange { stroke: var(--orange); }
+    .arrow-purple { stroke: var(--purple); }
+    .dash { stroke-dasharray: 7 6; }
+
+    .actor {
+      display: grid;
+      width: 112px;
+      gap: 6px;
+      place-items: center;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 850;
+      text-align: center;
+    }
+
+    .actor svg { width: 54px; height: 72px; }
+
+    .usecase-canvas {
+      min-width: 1120px;
+      height: 690px;
+    }
+
+    .system-boundary {
+      position: absolute;
+      left: 178px;
+      top: 22px;
+      width: 735px;
+      height: 625px;
+      border: 2px dashed #9aa7bd;
+      border-radius: 28px;
+      background: rgba(246, 248, 251, 0.52);
+    }
+
+    .boundary-title {
+      position: absolute;
+      top: -14px;
+      left: 24px;
+      padding: 3px 12px;
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 900;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+    }
+
+    .uc-actor-user { position: absolute; left: 24px; top: 286px; }
+    .uc-actor-db { position: absolute; right: 18px; top: 196px; }
+    .uc-actor-source { position: absolute; right: 18px; top: 446px; }
+
+    .usecase {
+      position: absolute;
+      display: grid;
+      width: 208px;
+      min-height: 58px;
+      padding: 9px 15px;
+      place-items: center;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.24;
+      border: 1.8px solid rgba(37, 99, 235, 0.35);
+      border-radius: 999px;
+      background: #fff;
+      box-shadow: 0 8px 16px rgba(23, 32, 51, 0.06);
+    }
+
+    .uc1 { left: 235px; top: 92px; }
+    .uc2 { left: 510px; top: 92px; }
+    .uc3 { left: 235px; top: 192px; }
+    .uc4 { left: 510px; top: 192px; }
+    .uc5 { left: 235px; top: 296px; }
+    .uc6 { left: 510px; top: 296px; }
+    .uc7 { left: 235px; top: 404px; }
+    .uc8 { left: 510px; top: 404px; }
+    .uc9 { left: 235px; top: 512px; }
+    .uc10 { left: 510px; top: 512px; }
+
+    .relation-label {
+      position: absolute;
+      z-index: 2;
+      padding: 2px 7px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 850;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+    }
+
+    .rl1 { left: 438px; top: 216px; }
+    .rl2 { left: 438px; top: 321px; }
+    .rl3 { left: 438px; top: 430px; }
+    .rl4 { left: 438px; top: 538px; }
+
+    .activity {
+      min-width: 1180px;
+    }
+
+    .swimlanes {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr 1.1fr 1fr;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+    }
+
+    .lane {
+      position: relative;
+      min-height: 850px;
+      padding: 16px 14px;
+      border-right: 1px solid var(--line);
+    }
+
+    .lane:last-child { border-right: none; }
+
+    .lane-title {
+      margin: -16px -14px 16px;
+      padding: 12px;
+      font-weight: 900;
+      text-align: center;
+      border-bottom: 1px solid var(--line);
+      background: var(--gray-soft);
+    }
+
+    .activity-node {
+      display: grid;
+      width: 92%;
+      min-height: 48px;
+      margin: 0 auto 28px;
+      padding: 9px 12px;
+      place-items: center;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 750;
+      line-height: 1.35;
+      border: 1.6px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+    }
+
+    .start-end {
+      width: 26px;
+      height: 26px;
+      min-height: 26px;
+      padding: 0;
+      border-color: var(--ink);
+      border-radius: 50%;
+      background: var(--ink);
+    }
+
+    .end-node {
+      border: 7px solid var(--ink);
+      background: #fff;
+    }
+
+    .decision {
+      width: 96px;
+      height: 96px;
+      min-height: 96px;
+      margin-bottom: 42px;
+      border-radius: 12px;
+      transform: rotate(45deg);
+    }
+
+    .decision span {
+      display: block;
+      font-size: 12px;
+      line-height: 1.2;
+      transform: rotate(-45deg);
+    }
+
+    .activity-line {
+      position: relative;
+      width: 2px;
+      height: 26px;
+      margin: -22px auto 8px;
+      background: #98a2b3;
+    }
+
+    .activity-line::after {
+      content: "";
+      position: absolute;
+      left: -4px;
+      bottom: -2px;
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 8px solid #98a2b3;
+    }
+
+    .activity-caption {
+      margin: -26px 0 12px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .sequence {
+      position: relative;
+      min-width: 1240px;
+      height: 870px;
+    }
+
+    .lifeline {
+      position: absolute;
+      top: 10px;
+      width: 132px;
+      height: 840px;
+      text-align: center;
+    }
+
+    .life-head {
+      display: grid;
+      min-height: 54px;
+      padding: 9px 8px;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1.25;
+      border: 1.6px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+    }
+
+    .life-dash {
+      width: 2px;
+      height: 760px;
+      margin: 0 auto;
+      border-left: 2px dashed #98a2b3;
+    }
+
+    .ll1 { left: 16px; }
+    .ll2 { left: 176px; }
+    .ll3 { left: 336px; }
+    .ll4 { left: 496px; }
+    .ll5 { left: 656px; }
+    .ll6 { left: 816px; }
+    .ll7 { left: 976px; }
+
+    .seq-msg {
+      position: absolute;
+      height: 30px;
+      padding-top: 4px;
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 760;
+      border-top: 2px solid #667085;
+    }
+
+    .seq-msg::after {
+      content: "";
+      position: absolute;
+      right: -1px;
+      top: -6px;
+      width: 0;
+      height: 0;
+      border-left: 9px solid #667085;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+    }
+
+    .seq-return {
+      color: var(--muted);
+      font-weight: 700;
+      border-top-style: dashed;
+    }
+
+    .m1 { left: 82px; top: 92px; width: 160px; }
+    .m2 { left: 242px; top: 154px; width: 160px; }
+    .m3 { left: 402px; top: 216px; width: 160px; }
+    .m4 { left: 562px; top: 278px; width: 320px; }
+    .m5 { left: 722px; top: 340px; width: 160px; }
+    .m6 { left: 882px; top: 402px; width: 160px; }
+    .m7 { left: 562px; top: 464px; width: 480px; }
+    .m8 { left: 402px; top: 526px; width: 320px; }
+    .m9 { left: 242px; top: 588px; width: 320px; }
+    .m10 { left: 82px; top: 650px; width: 320px; }
+    .m11 { left: 82px; top: 728px; width: 800px; }
+
+    .component-grid {
+      min-width: 1120px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 18px;
+    }
+
+    .system-block {
+      min-height: 470px;
+      padding: 18px;
+      border: 2px dashed #98a2b3;
+      border-radius: 24px;
+      background: rgba(246, 248, 251, 0.52);
+    }
+
+    .system-block h3 {
+      margin-bottom: 14px;
+      font-size: 18px;
+    }
+
+    .comp-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .dfd {
+      position: relative;
+      min-width: 1180px;
+      height: 650px;
+    }
+
+    .dfd .box {
+      position: absolute;
+      width: 210px;
+      min-height: 86px;
+    }
+
+    .d1 { left: 28px; top: 72px; }
+    .d2 { left: 304px; top: 72px; }
+    .d3 { left: 580px; top: 72px; }
+    .d4 { left: 856px; top: 72px; }
+    .d5 { left: 28px; top: 410px; }
+    .d6 { left: 304px; top: 410px; }
+    .d7 { left: 580px; top: 410px; }
+    .d8 { left: 856px; top: 410px; }
+
+    .store {
+      position: absolute;
+      left: 455px;
+      top: 242px;
+      display: grid;
+      width: 300px;
+      min-height: 116px;
+      padding: 18px;
+      place-items: center;
+      text-align: center;
+      border: 2px solid rgba(22, 163, 74, 0.42);
+      border-radius: 20px;
+      background: linear-gradient(180deg, var(--green-soft), #fff);
+      box-shadow: var(--shadow);
+    }
+
+    .contract-grid,
+    .rule-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .contract-grid {
+      grid-template-columns: 1.1fr 1.2fr 1.1fr;
+    }
+
+    .rule-grid {
+      grid-template-columns: repeat(3, 1fr);
+      margin-top: 16px;
+    }
+
+    .rule {
+      display: flex;
+      min-height: 96px;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .rule strong {
+      display: grid;
+      flex: 0 0 auto;
+      width: 44px;
+      height: 44px;
+      place-items: center;
+      color: #fff;
+      font-size: 12px;
+      border-radius: 14px;
+      background: var(--blue);
+    }
+
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .dot {
+      flex: 0 0 auto;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+    }
+
+    .dot.blue { background: var(--blue); }
+    .dot.green { background: var(--green); }
+    .dot.orange { background: var(--orange); }
+    .dot.purple { background: var(--purple); }
+    .dot.gray { background: #667085; }
+
+    @media (max-width: 900px) {
+      body { padding: 16px; }
+      .diagram { padding: 18px; }
+      .diagram-head { flex-direction: column; }
+      .contract-grid,
+      .rule-grid,
+      .legend { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      body { padding: 0; background: #fff; }
+      header,
+      .diagram { break-inside: avoid; box-shadow: none; }
+      .canvas { overflow: visible; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+          <path d="M0,0 L0,6 L9,3 z" fill="#667085"></path>
+        </marker>
+      </defs>
+    </svg>
+
+    <header>
+      <h1>JobSearchWeb: Mô hình tra cứu việc làm</h1>
+      <p class="subtitle">Bộ sơ đồ riêng cho chức năng tra cứu việc làm trong JobSearchWeb: tìm kiếm theo từ khóa, lọc theo địa điểm/nguồn, phân trang, hiển thị thống kê và mở tin tuyển dụng gốc. Phần CV recommendation được tách thành tài liệu riêng để không trộn nghiệp vụ tìm kiếm truyền thống với nghiệp vụ gợi ý thông minh.</p>
+    </header>
+
+    <section class="diagram">
+      <div class="diagram-head">
+        <div>
+          <h2>1. Use Case Diagram - Tra cứu việc làm</h2>
+          <p class="note">Actor chính là ứng viên/người tìm việc. Hệ thống đọc dữ liệu đã sẵn sàng từ public.ready_jobs và điều hướng người dùng sang tin tuyển dụng gốc khi cần ứng tuyển.</p>
+        </div>
+        <span class="tag">BA / UML</span>
+      </div>
+      <div class="canvas usecase-canvas">
+        <svg class="connector" viewBox="0 0 1120 690" preserveAspectRatio="none">
+          <line class="arrow" x1="122" y1="338" x2="235" y2="121"></line>
+          <line class="arrow" x1="122" y1="348" x2="235" y2="221"></line>
+          <line class="arrow" x1="122" y1="360" x2="235" y2="325"></line>
+          <line class="arrow" x1="122" y1="374" x2="235" y2="433"></line>
+          <line class="arrow" x1="122" y1="386" x2="235" y2="541"></line>
+          <line class="arrow arrow-purple dash" x1="440" y1="221" x2="510" y2="221"></line>
+          <line class="arrow arrow-purple dash" x1="440" y1="325" x2="510" y2="325"></line>
+          <line class="arrow arrow-purple dash" x1="440" y1="433" x2="510" y2="433"></line>
+          <line class="arrow arrow-purple dash" x1="440" y1="541" x2="510" y2="541"></line>
+          <line class="arrow arrow-green" x1="718" y1="221" x2="996" y2="252"></line>
+          <line class="arrow arrow-green" x1="718" y1="325" x2="996" y2="252"></line>
+          <line class="arrow arrow-green" x1="718" y1="433" x2="996" y2="252"></line>
+          <line class="arrow arrow-orange" x1="718" y1="541" x2="996" y2="502"></line>
+        </svg>
+
+        <div class="actor uc-actor-user">
+          <svg viewBox="0 0 70 92" aria-hidden="true"><circle cx="35" cy="14" r="12" fill="none" stroke="#172033" stroke-width="4"/><path d="M35 28v34M12 42h46M35 62 16 88M35 62l19 26" fill="none" stroke="#172033" stroke-width="4" stroke-linecap="round"/></svg>
+          Ứng viên
+        </div>
+        <div class="actor uc-actor-db">
+          <svg viewBox="0 0 70 92" aria-hidden="true"><circle cx="35" cy="14" r="12" fill="none" stroke="#16a34a" stroke-width="4"/><path d="M35 28v34M12 42h46M35 62 16 88M35 62l19 26" fill="none" stroke="#16a34a" stroke-width="4" stroke-linecap="round"/></svg>
+          PostgreSQL<br>ready_jobs
+        </div>
+        <div class="actor uc-actor-source">
+          <svg viewBox="0 0 70 92" aria-hidden="true"><circle cx="35" cy="14" r="12" fill="none" stroke="#ea580c" stroke-width="4"/><path d="M35 28v34M12 42h46M35 62 16 88M35 62l19 26" fill="none" stroke="#ea580c" stroke-width="4" stroke-linecap="round"/></svg>
+          Website tuyển dụng gốc
+        </div>
+
+        <div class="system-boundary"><div class="boundary-title">JobSearchWeb - Job Lookup</div></div>
+        <div class="usecase uc1">UC01<br>Xem danh sách việc làm</div>
+        <div class="usecase uc2">UC02<br>Tải thống kê tổng quan</div>
+        <div class="usecase uc3">UC03<br>Tìm kiếm theo từ khóa</div>
+        <div class="usecase uc4">UC04<br>Mở bộ lọc</div>
+        <div class="usecase uc5">UC05<br>Lọc địa điểm + nguồn</div>
+        <div class="usecase uc6">UC06<br>Lấy dropdown locations/source</div>
+        <div class="usecase uc7">UC07<br>Xem job card</div>
+        <div class="usecase uc8">UC08<br>Phân trang kết quả</div>
+        <div class="usecase uc9">UC09<br>Mở tin tuyển dụng gốc</div>
+        <div class="usecase uc10">UC10<br>Tra cứu chi tiết qua job_url</div>
+        <div class="relation-label rl1">include</div>
+        <div class="relation-label rl2">include</div>
+        <div class="relation-label rl3">include</div>
+        <div class="relation-label rl4">extend</div>
+      </div>
+    </section>
+
+    <section class="diagram">
+      <div class="diagram-head">
+        <div>
+          <h2>2. Activity Diagram - Luồng tra cứu việc làm</h2>
+          <p class="note">Luồng chính từ lúc người dùng mở trang chủ, nhập tiêu chí, nhận kết quả phân trang và mở tin gốc.</p>
+        </div>
+        <span class="tag">Activity</span>
+      </div>
+      <div class="canvas activity">
+        <div class="swimlanes">
+          <div class="lane">
+            <div class="lane-title">Ứng viên</div>
+            <div class="activity-node start-end"></div>
+            <div class="activity-line"></div>
+            <div class="activity-node blue">Mở trang chủ JobSearchWeb</div>
+            <div class="activity-line"></div>
+            <div class="activity-node blue">Nhập keyword hoặc mở bộ lọc</div>
+            <div class="activity-line"></div>
+            <div class="activity-node blue">Chọn location/source_site nếu cần</div>
+            <div style="height: 374px"></div>
+            <div class="activity-node green">Xem job cards, phân trang hoặc mở tin gốc</div>
+            <div class="activity-line"></div>
+            <div class="activity-node start-end end-node"></div>
+          </div>
+
+          <div class="lane">
+            <div class="lane-title">React UI</div>
+            <div style="height: 84px"></div>
+            <div class="activity-node purple">TanStack Query tải locations, source-sites, stats</div>
+            <div class="activity-line"></div>
+            <div class="activity-node purple">SearchBar trim input và gửi filters</div>
+            <div class="activity-line"></div>
+            <div class="activity-node purple">HomePage set filters, reset page = 1</div>
+            <div class="activity-line"></div>
+            <div class="activity-node purple">Axios gọi GET /jobs với page/page_size</div>
+            <div style="height: 216px"></div>
+            <div class="activity-node purple">Render loading, error, empty, grid và pagination</div>
+          </div>
+
+          <div class="lane">
+            <div class="lane-title">FastAPI Jobs Router</div>
+            <div style="height: 238px"></div>
+            <div class="activity-node orange">Validate query params: keyword, location, source_site, page</div>
+            <div class="activity-line"></div>
+            <div class="activity-node decision"><span>Có keyword?</span></div>
+            <div class="activity-caption">Có: mở rộng synonym + build relevance search</div>
+            <div class="activity-node orange">Áp dụng filter location và source_site</div>
+            <div class="activity-line"></div>
+            <div class="activity-node orange">Đếm total, order relevance/deadline/title, offset-limit</div>
+          </div>
+
+          <div class="lane">
+            <div class="lane-title">PostgreSQL</div>
+            <div style="height: 86px"></div>
+            <div class="activity-node green">Trả dropdown data và thống kê tổng quan</div>
+            <div style="height: 300px"></div>
+            <div class="activity-node green">Query public.ready_jobs bằng full-text, similarity, LIKE, exact filter</div>
+            <div class="activity-line"></div>
+            <div class="activity-node green">Trả danh sách job + total count</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="diagram">
+      <div class="diagram-head">
+        <div>
+          <h2>3. Sequence Diagram - Search request</h2>
+          <p class="note">Thứ tự gọi giữa SearchBar, HomePage, Axios client, Jobs Router, SQLAlchemy và PostgreSQL.</p>
+        </div>
+        <span class="tag">Sequence</span>
+      </div>
+      <div class="canvas sequence">
+        <div class="lifeline ll1"><div class="life-head blue">Ứng viên</div><div class="life-dash"></div></div>
+        <div class="lifeline ll2"><div class="life-head purple">SearchBar</div><div class="life-dash"></div></div>
+        <div class="lifeline ll3"><div class="life-head purple">HomePage + TanStack Query</div><div class="life-dash"></div></div>
+        <div class="lifeline ll4"><div class="life-head blue">Axios api/jobs.js</div><div class="life-dash"></div></div>
+        <div class="lifeline ll5"><div class="life-head orange">FastAPI Jobs Router</div><div class="life-dash"></div></div>
+        <div class="lifeline ll6"><div class="life-head orange">SQLAlchemy</div><div class="life-dash"></div></div>
+        <div class="lifeline ll7"><div class="life-head green">PostgreSQL ready_jobs</div><div class="life-dash"></div></div>
+
+        <div class="seq-msg m1">keyword + filters</div>
+        <div class="seq-msg m2">onSearch(filters)</div>
+        <div class="seq-msg m3">searchJobs(params)</div>
+        <div class="seq-msg m4">GET /jobs?keyword&location&source_site&page</div>
+        <div class="seq-msg m5">build query conditions</div>
+        <div class="seq-msg m6">SELECT count + paged rows</div>
+        <div class="seq-msg seq-return m7">rows, total, page metadata</div>
+        <div class="seq-msg seq-return m8">PaginatedResponse</div>
+        <div class="seq-msg seq-return m9">jobsData</div>
+        <div class="seq-msg seq-return m10">render job grid + pagination</div>
+        <div class="seq-msg m11">page change triggers same request with page = N</div>
+      </div>
+    </section>
+
+    <section class="diagram">
+      <div class="diagram-head">
+        <div>
+          <h2>4. Component Diagram - JobSearchWeb tra cứu</h2>
+          <p class="note">Các component được nhóm theo frontend, backend và data store để BA/dev thấy ranh giới trách nhiệm.</p>
+        </div>
+        <span class="tag">Component</span>
+      </div>
+      <div class="canvas component-grid">
+        <div class="system-block">
+          <h3>Frontend React</h3>
+          <div class="comp-list">
+            <div class="box purple"><h3>App / Layout</h3><p>Route trang chủ, khung giao diện chung.</p></div>
+            <div class="box purple"><h3>HomePage</h3><p>Giữ filters, page, gọi TanStack Query.</p></div>
+            <div class="box purple"><h3>SearchBar</h3><p>Nhập keyword, location, source_site.</p></div>
+            <div class="box purple"><h3>JobCard + Pagination</h3><p>Hiển thị kết quả, deadline, source, link gốc.</p></div>
+          </div>
+        </div>
+
+        <div class="system-block">
+          <h3>Backend FastAPI</h3>
+          <div class="comp-list">
+            <div class="box orange"><h3>Jobs Router</h3><p>GET jobs, locations, source-sites, stats, detail.</p></div>
+            <div class="box orange"><h3>Search Builder</h3><p>Synonym expansion, full-text, unaccent, similarity.</p></div>
+            <div class="box orange"><h3>Pydantic Schemas</h3><p>JobSummary, JobDetail, PaginatedResponse.</p></div>
+            <div class="box orange"><h3>Cache Utilities</h3><p>Cache dropdown và stats để giảm truy vấn lặp.</p></div>
+          </div>
+        </div>
+
+        <div class="system-block">
+          <h3>Data & External</h3>
+          <div class="comp-list">
+            <div class="box green"><h3>SQLAlchemy Model</h3><p>SilverJob ánh xạ public.ready_jobs.</p></div>
+            <div class="box green"><h3>PostgreSQL ready_jobs</h3><p>job_url, title, company, location, deadline, source_site.</p></div>
+            <div class="box blue"><h3>Lakehouse-Lite Loader</h3><p>Nạp dữ liệu sạch từ Silver vào Supabase/Postgres.</p></div>
+            <div class="box orange"><h3>Original Job Sites</h3><p>Người dùng mở job_url để xem tin đầy đủ.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="diagram">
+      <div class="diagram-head">
+        <div>
+          <h2>5. Data Flow Diagram - Luồng dữ liệu tra cứu</h2>
+          <p class="note">Dữ liệu việc làm được chuẩn hóa từ Lakehouse-Lite, phục vụ tra cứu trong JobSearchWeb qua bảng public.ready_jobs.</p>
+        </div>
+        <span class="tag">DFD</span>
+      </div>
+      <div class="canvas dfd">
+        <svg class="connector" viewBox="0 0 1180 650" preserveAspectRatio="none">
+          <line class="arrow arrow-blue" x1="238" y1="116" x2="304" y2="116"></line>
+          <line class="arrow arrow-blue" x1="514" y1="116" x2="580" y2="116"></line>
+          <line class="arrow arrow-green" x1="790" y1="116" x2="856" y2="116"></line>
+          <line class="arrow arrow-green" x1="948" y1="158" x2="708" y2="254"></line>
+          <line class="arrow arrow-purple" x1="238" y1="454" x2="304" y2="454"></line>
+          <line class="arrow arrow-purple" x1="514" y1="454" x2="580" y2="454"></line>
+          <line class="arrow arrow-green" x1="690" y1="410" x2="690" y2="358"></line>
+          <line class="arrow arrow-green" x1="755" y1="302" x2="856" y2="454"></line>
+        </svg>
+        <div class="box blue d1"><h3>Silver/Supabase Loader</h3><p>Lakehouse-Lite upsert dữ liệu job sạch.</p></div>
+        <div class="box blue d2"><h3>public.ready_jobs</h3><p>Bảng phục vụ website, khóa chính job_url.</p></div>
+        <div class="box green d3"><h3>Dropdown + Stats</h3><p>locations, source-sites, total_jobs, companies.</p></div>
+        <div class="box green d4"><h3>Cache response</h3><p>Giảm tải cho dữ liệu ít thay đổi.</p></div>
+        <div class="store"><h3>PostgreSQL Query Layer</h3><p>Full-text search, unaccent, trigram similarity, filters, pagination.</p></div>
+        <div class="box purple d5"><h3>User Search Input</h3><p>keyword, location, source_site, page.</p></div>
+        <div class="box purple d6"><h3>FastAPI /jobs</h3><p>Build query, count total, sort relevance.</p></div>
+        <div class="box green d7"><h3>PaginatedResponse</h3><p>items, total, page, page_size, total_pages.</p></div>
+        <div class="box orange d8"><h3>React Result UI</h3><p>Job cards, loading, error, empty, pagination.</p></div>
+      </div>
+    </section>
+
+    <section class="diagram">
+      <div class="diagram-head">
+        <div>
+          <h2>6. API Contract, Data Contract và Business Rules</h2>
+          <p class="note">Phần đặc tả để BA, frontend và backend thống nhất hành vi chức năng tra cứu.</p>
+        </div>
+        <span class="tag">Spec</span>
+      </div>
+      <div class="contract-grid">
+        <div class="box blue">
+          <h3>API Contract</h3>
+          <ul>
+            <li><code>GET /jobs</code>: keyword, location, source_site, page, page_size.</li>
+            <li><code>GET /jobs/locations</code>: danh sách location.</li>
+            <li><code>GET /jobs/source-sites</code>: danh sách nguồn việc làm.</li>
+            <li><code>GET /jobs/stats</code>: tổng số job, công ty, phân bố location.</li>
+            <li><code>GET /jobs/{job_url:path}</code>: đọc chi tiết theo URL khi cần.</li>
+          </ul>
+        </div>
+        <div class="box green">
+          <h3>Response Contract</h3>
+          <ul>
+            <li><code>items</code>: danh sách JobSummary.</li>
+            <li><code>total</code>: tổng số bản ghi khớp.</li>
+            <li><code>page</code>: trang hiện tại.</li>
+            <li><code>page_size</code>: số item mỗi trang.</li>
+            <li><code>total_pages</code>: tổng số trang.</li>
+            <li>JobSummary gồm job_url, job_title, company_name, location, deadline, source_site, special keywords.</li>
+          </ul>
+        </div>
+        <div class="box orange">
+          <h3>Search Contract</h3>
+          <ul>
+            <li>Keyword tối đa 100 ký tự.</li>
+            <li>Location tối đa 100 ký tự.</li>
+            <li>Source site tối đa 50 ký tự.</li>
+            <li>Page bắt đầu từ 1.</li>
+            <li>Page size từ 1 đến 100.</li>
+            <li>Thứ tự ưu tiên: relevance, deadline giảm dần, title tăng dần.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="rule-grid">
+        <div class="box rule"><strong>BR01</strong><p>Người dùng không cần đăng nhập để tra cứu việc làm.</p></div>
+        <div class="box rule"><strong>BR02</strong><p>Tìm kiếm keyword áp dụng cho title, company, location và title special keywords.</p></div>
+        <div class="box rule"><strong>BR03</strong><p>Keyword được mở rộng bằng nhóm synonym song ngữ như intern, fresher, senior, remote.</p></div>
+        <div class="box rule"><strong>BR04</strong><p>Location dùng so khớp không dấu; source_site dùng so khớp chính xác.</p></div>
+        <div class="box rule"><strong>BR05</strong><p>Khi người dùng tìm kiếm mới, page được reset về 1.</p></div>
+        <div class="box rule"><strong>BR06</strong><p>Nếu không có kết quả, UI hiển thị empty state thay vì lỗi hệ thống.</p></div>
+        <div class="box rule"><strong>BR07</strong><p>Dropdown location/source và stats được cache vì thay đổi ít hơn kết quả tìm kiếm.</p></div>
+        <div class="box rule"><strong>BR08</strong><p>Mỗi job card cần có title, company, location, source, deadline nếu có và link tin gốc.</p></div>
+        <div class="box rule"><strong>BR09</strong><p>job_url là khóa định danh và là đường dẫn để người dùng mở tin tuyển dụng gốc.</p></div>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item"><span class="dot blue"></span>Upstream/data loading</div>
+        <div class="legend-item"><span class="dot green"></span>Database/cache/response</div>
+        <div class="legend-item"><span class="dot orange"></span>Backend/search rules</div>
+        <div class="legend-item"><span class="dot purple"></span>Frontend/user interaction</div>
+        <div class="legend-item"><span class="dot gray"></span>Contract/business rules</div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

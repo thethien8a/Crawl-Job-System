@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 4 - Diagrams</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    background: #f0f2f5;
+    color: #2d3436;
+    padding: 24px;
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+  .figure {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    padding: 32px;
+    margin-bottom: 32px;
+  }
+  .figure-caption {
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: #2d3436;
+    margin-bottom: 20px;
+  }
+  /* DAG factory tree */
+  .factory-tree { display: flex; gap: 40px; justify-content: center; }
+  .factory-col { flex: 1; max-width: 480px; }
+  .factory-col h4 {
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 12px;
+    padding: 8px;
+    border-radius: 6px;
+    color: #fff;
+  }
+  .factory-col .src h4 { background: #6c5ce7; }
+  .factory-col .dst h4 { background: #00b894; }
+  .tree { list-style: none; }
+  .tree li {
+    padding: 6px 12px;
+    margin: 4px 0;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: 'Consolas', 'Courier New', monospace;
+  }
+  .tree .func { background: #ddd6fe; border-left: 3px solid #6c5ce7; }
+  .tree .dag  { background: #d4f5e9; border-left: 3px solid #00b894; }
+  .tree .dag-multi { background: #d4f5e9; border-left: 3px solid #00b894; font-style: italic; }
+  .arrow-row {
+    text-align: center;
+    font-size: 28px;
+    color: #636e72;
+    align-self: center;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ============================================================ -->
+<!-- Diagram 1: Airflow DAG Pipeline Flow                        -->
+<!-- ============================================================ -->
+<div class="figure">
+  <div class="figure-caption">
+    Hình 1 — Luồng DAG Airflow: từ crawl đến gold và dashboard
+  </div>
+  <svg viewBox="0 0 960 860" style="width:100%;max-width:940px;display:block;margin:0 auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif">
+    <defs>
+      <marker id="arr1" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L9,3 Z" fill="#636e72"/>
+      </marker>
+      <marker id="arrDash1" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L9,3 Z" fill="#b2bec3"/>
+      </marker>
+      <filter id="shadow1" x="-10%" y="-10%" width="120%" height="120%">
+        <feDropShadow dx="1" dy="2" stdDeviation="2" flood-opacity="0.12"/>
+      </filter>
+    </defs>
+
+    <!-- Title for each layer band -->
+    <text x="20" y="28" font-size="12" fill="#636e72" font-weight="600">CRAWL (scheduled, staggered)</text>
+    <text x="20" y="190" font-size="12" fill="#636e72" font-weight="600">VALIDATE + BRONZE (triggered by crawl)</text>
+    <text x="20" y="330" font-size="12" fill="#636e72" font-weight="600">SILVER (every 8h)</text>
+    <text x="20" y="470" font-size="12" fill="#636e72" font-weight="600">SUPABASE + GOLD (every 6h)</text>
+    <text x="20" y="610" font-size="12" fill="#636e72" font-weight="600">DASHBOARDS (daily midnight)</text>
+    <text x="680" y="28" font-size="12" fill="#636e72" font-weight="600">MANUAL TRIGGER</text>
+
+    <!-- ===== Crawl Row ===== -->
+    <!-- crawl_topcv -->
+    <rect x="30" y="40" width="160" height="60" rx="8" fill="#0984e3" filter="url(#shadow1)"/>
+    <text x="110" y="64" text-anchor="middle" font-size="14" fill="#fff" font-weight="700">crawl_topcv</text>
+    <text x="110" y="82" text-anchor="middle" font-size="11" fill="#dfe6e9">0 */3 * * *</text>
+
+    <!-- crawl_itviec -->
+    <rect x="220" y="40" width="160" height="60" rx="8" fill="#0984e3" filter="url(#shadow1)"/>
+    <text x="300" y="64" text-anchor="middle" font-size="14" fill="#fff" font-weight="700">crawl_itviec</text>
+    <text x="300" y="82" text-anchor="middle" font-size="11" fill="#dfe6e9">15 */3 * * *</text>
+
+    <!-- crawl_vietnamworks -->
+    <rect x="410" y="40" width="170" height="60" rx="8" fill="#0984e3" filter="url(#shadow1)"/>
+    <text x="495" y="64" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">crawl_vietnamworks</text>
+    <text x="495" y="82" text-anchor="middle" font-size="11" fill="#dfe6e9">30 */3 * * *</text>
+
+    <!-- Trigger arrows (crawl -> validate_bronze) -->
+    <path d="M110,100 L110,130 L110,155" stroke="#636e72" stroke-width="2" fill="none" marker-end="url(#arr1)"/>
+    <path d="M300,100 L300,130 L300,155" stroke="#636e72" stroke-width="2" fill="none" marker-end="url(#arr1)"/>
+    <path d="M495,100 L495,130 L495,155" stroke="#636e72" stroke-width="2" fill="none" marker-end="url(#arr1)"/>
+    <text x="530" y="120" font-size="10" fill="#636e72" font-style="italic">TriggerDagRunOperator</text>
+
+    <!-- ===== Validate + Bronze Row ===== -->
+    <!-- validate_bronze_topcv (inner tasks: validate -> bronze) -->
+    <rect x="30" y="160" width="160" height="90" rx="8" fill="#fdcb6e" filter="url(#shadow1)"/>
+    <text x="110" y="180" text-anchor="middle" font-size="13" fill="#2d3436" font-weight="700">validate_bronze_topcv</text>
+    <line x1="50" y1="190" x2="170" y2="190" stroke="#e17055" stroke-width="1" stroke-dasharray="3,2"/>
+    <rect x="45" y="200" width="55" height="28" rx="4" fill="#fff" stroke="#e17055" stroke-width="1.5"/>
+    <text x="72" y="218" text-anchor="middle" font-size="11" fill="#2d3436">validate</text>
+    <rect x="120" y="200" width="55" height="28" rx="4" fill="#fff" stroke="#e17055" stroke-width="1.5"/>
+    <text x="147" y="218" text-anchor="middle" font-size="11" fill="#2d3436">bronze</text>
+    <path d="M100,214 L118,214" stroke="#e17055" stroke-width="1.5" marker-end="url(#arr1)"/>
+    <text x="110" y="244" text-anchor="middle" font-size="10" fill="#636e72" font-style="italic">schedule=None</text>
+
+    <!-- validate_bronze_itviec -->
+    <rect x="220" y="160" width="160" height="90" rx="8" fill="#fdcb6e" filter="url(#shadow1)"/>
+    <text x="300" y="180" text-anchor="middle" font-size="13" fill="#2d3436" font-weight="700">validate_bronze_itviec</text>
+    <line x1="240" y1="190" x2="360" y2="190" stroke="#e17055" stroke-width="1" stroke-dasharray="3,2"/>
+    <rect x="235" y="200" width="55" height="28" rx="4" fill="#fff" stroke="#e17055" stroke-width="1.5"/>
+    <text x="262" y="218" text-anchor="middle" font-size="11" fill="#2d3436">validate</text>
+    <rect x="310" y="200" width="55" height="28" rx="4" fill="#fff" stroke="#e17055" stroke-width="1.5"/>
+    <text x="337" y="218" text-anchor="middle" font-size="11" fill="#2d3436">bronze</text>
+    <path d="M290,214 L308,214" stroke="#e17055" stroke-width="1.5" marker-end="url(#arr1)"/>
+    <text x="300" y="244" text-anchor="middle" font-size="10" fill="#636e72" font-style="italic">schedule=None</text>
+
+    <!-- validate_bronze_vietnamworks -->
+    <rect x="410" y="160" width="170" height="90" rx="8" fill="#fdcb6e" filter="url(#shadow1)"/>
+    <text x="495" y="180" text-anchor="middle" font-size="12" fill="#2d3436" font-weight="700">validate_bronze_vnworks</text>
+    <line x1="430" y1="190" x2="560" y2="190" stroke="#e17055" stroke-width="1" stroke-dasharray="3,2"/>
+    <rect x="425" y="200" width="55" height="28" rx="4" fill="#fff" stroke="#e17055" stroke-width="1.5"/>
+    <text x="452" y="218" text-anchor="middle" font-size="11" fill="#2d3436">validate</text>
+    <rect x="500" y="200" width="55" height="28" rx="4" fill="#fff" stroke="#e17055" stroke-width="1.5"/>
+    <text x="527" y="218" text-anchor="middle" font-size="11" fill="#2d3436">bronze</text>
+    <path d="M480,214 L498,214" stroke="#e17055" stroke-width="1.5" marker-end="url(#arr1)"/>
+    <text x="495" y="244" text-anchor="middle" font-size="10" fill="#636e72" font-style="italic">schedule=None</text>
+
+    <!-- Dashed arrows: bronze -> silver (schedule-based, not trigger) -->
+    <path d="M110,250 L110,280 L110,305" stroke="#b2bec3" stroke-width="2" stroke-dasharray="6,4" fill="none" marker-end="url(#arrDash1)"/>
+    <path d="M300,250 L300,280 L300,305" stroke="#b2bec3" stroke-width="2" stroke-dasharray="6,4" fill="none" marker-end="url(#arrDash1)"/>
+    <path d="M495,250 L495,280 L495,305" stroke="#b2bec3" stroke-width="2" stroke-dasharray="6,4" fill="none" marker-end="url(#arrDash1)"/>
+    <text x="530" y="278" font-size="10" fill="#b2bec3" font-style="italic">independent schedule</text>
+
+    <!-- ===== Silver Row ===== -->
+    <rect x="30" y="310" width="160" height="55" rx="8" fill="#00b894" filter="url(#shadow1)"/>
+    <text x="110" y="334" text-anchor="middle" font-size="14" fill="#fff" font-weight="700">silver_topcv</text>
+    <text x="110" y="352" text-anchor="middle" font-size="11" fill="#dfe6e9">0 */8 * * *</text>
+
+    <rect x="220" y="310" width="160" height="55" rx="8" fill="#00b894" filter="url(#shadow1)"/>
+    <text x="300" y="334" text-anchor="middle" font-size="14" fill="#fff" font-weight="700">silver_itviec</text>
+    <text x="300" y="352" text-anchor="middle" font-size="11" fill="#dfe6e9">0 */8 * * *</text>
+
+    <rect x="410" y="310" width="170" height="55" rx="8" fill="#00b894" filter="url(#shadow1)"/>
+    <text x="495" y="334" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">silver_vietnamworks</text>
+    <text x="495" y="352" text-anchor="middle" font-size="11" fill="#dfe6e9">0 */8 * * *</text>
+
+    <!-- Converge arrows: 3 silvers -> bus -> supabase + gold -->
+    <path d="M110,365 L110,395" stroke="#b2bec3" stroke-width="2" stroke-dasharray="6,4" fill="none"/>
+    <path d="M300,365 L300,395" stroke="#b2bec3" stroke-width="2" stroke-dasharray="6,4" fill="none"/>
+    <path d="M495,365 L495,395" stroke="#b2bec3" stroke-width="2" stroke-dasharray="6,4" fill="none"/>
+    <line x1="110" y1="395" x2="495" y2="395" stroke="#b2bec3" stroke-width="2" stroke-dasharray="6,4"/>
+    <path d="M265,395 L265,420" stroke="#b2bec3" stroke-width="2" stroke-dasharray="6,4" fill="none" marker-end="url(#arrDash1)"/>
+    <path d="M450,395 L450,420" stroke="#b2bec3" stroke-width="2" stroke-dasharray="6,4" fill="none" marker-end="url(#arrDash1)"/>
+    <text x="300" y="412" text-anchor="middle" font-size="10" fill="#b2bec3" font-style="italic">all 3 silvers feed both</text>
+
+    <!-- ===== Supabase + Gold Row ===== -->
+    <rect x="185" y="425" width="160" height="60" rx="8" fill="#6c5ce7" filter="url(#shadow1)"/>
+    <text x="265" y="449" text-anchor="middle" font-size="14" fill="#fff" font-weight="700">supabase_load_all</text>
+    <text x="265" y="467" text-anchor="middle" font-size="11" fill="#dfe6e9">0 */6 * * *</text>
+
+    <rect x="370" y="425" width="160" height="60" rx="8" fill="#00cec9" filter="url(#shadow1)"/>
+    <text x="450" y="449" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">load_silver_to_gold</text>
+    <text x="450" y="467" text-anchor="middle" font-size="11" fill="#dfe6e9">0 */6 * * *</text>
+
+    <!-- Dashed arrows to dashboards -->
+    <path d="M265,485 L265,520 L155,520 L155,555" stroke="#b2bec3" stroke-width="2" stroke-dasharray="6,4" fill="none" marker-end="url(#arrDash1)"/>
+    <path d="M450,485 L450,520 L440,520 L440,555" stroke="#b2bec3" stroke-width="2" stroke-dasharray="6,4" fill="none" marker-end="url(#arrDash1)"/>
+
+    <!-- ===== Dashboard Row ===== -->
+    <rect x="60" y="560" width="180" height="55" rx="8" fill="#e84393" filter="url(#shadow1)"/>
+    <text x="150" y="584" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">generate_bronze_dashboard</text>
+    <text x="150" y="602" text-anchor="middle" font-size="11" fill="#dfe6e9">0 0 * * *</text>
+
+    <rect x="350" y="560" width="180" height="55" rx="8" fill="#e84393" filter="url(#shadow1)"/>
+    <text x="440" y="584" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">generate_silver_dashboard</text>
+    <text x="440" y="602" text-anchor="middle" font-size="11" fill="#dfe6e9">0 0 * * *</text>
+
+    <!-- ===== Manual Trigger Sidebar ===== -->
+    <rect x="680" y="40" width="200" height="70" rx="8" fill="#b2bec3" filter="url(#shadow1)"/>
+    <text x="780" y="65" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">load_taxonomy_to_gold</text>
+    <text x="780" y="85" text-anchor="middle" font-size="11" fill="#dfe6e9">manual trigger</text>
+
+    <rect x="680" y="160" width="200" height="70" rx="8" fill="#b2bec3" filter="url(#shadow1)"/>
+    <text x="780" y="185" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">cluster_company_name</text>
+    <text x="780" y="205" text-anchor="middle" font-size="11" fill="#dfe6e9">manual trigger</text>
+    <text x="780" y="222" text-anchor="middle" font-size="10" fill="#dfe6e9">from_date / to_date params</text>
+
+    <!-- Separator line for manual section -->
+    <line x1="660" y1="20" x2="660" y2="260" stroke="#dfe6e9" stroke-width="2" stroke-dasharray="4,4"/>
+
+    <!-- Legend -->
+    <rect x="20" y="660" width="920" height="180" rx="8" fill="#f5f6fa" stroke="#dfe6e9" stroke-width="1"/>
+    <text x="40" y="685" font-size="13" font-weight="700" fill="#2d3436">Chú thích</text>
+
+    <rect x="40" y="700" width="16" height="16" rx="3" fill="#0984e3"/>
+    <text x="64" y="713" font-size="12" fill="#2d3436">Crawl DAG (lap moi 3 gio, lech nhau 15 phut)</text>
+
+    <rect x="40" y="725" width="16" height="16" rx="3" fill="#fdcb6e"/>
+    <text x="64" y="738" font-size="12" fill="#2d3436">Validate + Bronze DAG (bi trigger boi crawl, khong co lich dinh)</text>
+
+    <rect x="40" y="750" width="16" height="16" rx="3" fill="#00b894"/>
+    <text x="64" y="763" font-size="12" fill="#2d3436">Silver DAG (moi 8 gio)</text>
+
+    <rect x="380" y="700" width="16" height="16" rx="3" fill="#6c5ce7"/>
+    <text x="404" y="713" font-size="12" fill="#2d3436">Supabase DAG (moi 6 gio)</text>
+
+    <rect x="380" y="725" width="16" height="16" rx="3" fill="#00cec9"/>
+    <text x="404" y="738" font-size="12" fill="#2d3436">Gold DAG (moi 6 gio, song song Supabase)</text>
+
+    <rect x="380" y="750" width="16" height="16" rx="3" fill="#e84393"/>
+    <text x="404" y="763" font-size="12" fill="#2d3436">Dashboard DAG (hang ngay nua dem)</text>
+
+    <rect x="380" y="775" width="16" height="16" rx="3" fill="#b2bec3"/>
+    <text x="404" y="788" font-size="12" fill="#2d3436">Manual trigger (khong lap tu dong)</text>
+
+    <line x1="640" y1="705" x2="680" y2="705" stroke="#636e72" stroke-width="2" marker-end="url(#arr1)"/>
+    <text x="690" y="710" font-size="12" fill="#2d3436">TriggerDagRunOperator (crawl goi validate)</text>
+
+    <line x1="640" y1="735" x2="680" y2="735" stroke="#b2bec3" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#arrDash1)"/>
+    <text x="690" y="740" font-size="12" fill="#2d3436">Doc lap lich (khong trigger truc tiep)</text>
+
+    <text x="40" y="815" font-size="11" fill="#636e72" font-style="italic">Tat ca DAG deu chay business logic trong container lakehouse-crawler thong qua DockerOperator</text>
+  </svg>
+</div>
+
+<!-- ============================================================ -->
+<!-- Diagram 2: Docker Architecture                              -->
+<!-- ============================================================ -->
+<div class="figure">
+  <div class="figure-caption">
+    Hình 2 — Kiến trúc Docker: Airflow stack và lakehouse-crawler containers
+  </div>
+  <svg viewBox="0 0 920 620" style="width:100%;max-width:900px;display:block;margin:0 auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif">
+    <defs>
+      <marker id="arr2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L9,3 Z" fill="#636e72"/>
+      </marker>
+      <filter id="shadow2" x="-10%" y="-10%" width="120%" height="120%">
+        <feDropShadow dx="1" dy="2" stdDeviation="2" flood-opacity="0.12"/>
+      </filter>
+    </defs>
+
+    <!-- Docker Host boundary -->
+    <rect x="10" y="10" width="900" height="600" rx="12" fill="#dfe6e9" stroke="#b2bec3" stroke-width="2" stroke-dasharray="8,4"/>
+    <text x="460" y="32" text-anchor="middle" font-size="14" font-weight="700" fill="#636e72">Docker Host</text>
+
+    <!-- Docker Socket -->
+    <rect x="370" y="510" width="180" height="50" rx="8" fill="#2d3436" filter="url(#shadow2)"/>
+    <text x="460" y="535" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">Docker Socket</text>
+    <text x="460" y="551" text-anchor="middle" font-size="11" fill="#dfe6e9">/var/run/docker.sock</text>
+
+    <!-- ===== Airflow Stack (left) ===== -->
+    <rect x="30" y="50" width="380" height="440" rx="10" fill="#a5d8ff" stroke="#74c0fc" stroke-width="1.5" opacity="0.3"/>
+    <text x="220" y="72" text-anchor="middle" font-size="13" font-weight="700" fill="#1971c2">Airflow Stack (docker-compose.yaml)</text>
+
+    <!-- postgres -->
+    <rect x="50" y="85" width="150" height="55" rx="8" fill="#fab005" filter="url(#shadow2)"/>
+    <text x="125" y="108" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">postgres:16</text>
+    <text x="125" y="126" text-anchor="middle" font-size="10" fill="#fff">metadata DB</text>
+
+    <!-- statsd-exporter -->
+    <rect x="220" y="85" width="170" height="55" rx="8" fill="#e8590c" filter="url(#shadow2)"/>
+    <text x="305" y="108" text-anchor="middle" font-size="12" fill="#fff" font-weight="700">statsd-exporter</text>
+    <text x="305" y="126" text-anchor="middle" font-size="10" fill="#fff">-> Prometheus :9102</text>
+
+    <!-- airflow-init -->
+    <rect x="50" y="160" width="150" height="55" rx="8" fill="#868e96" filter="url(#shadow2)"/>
+    <text x="125" y="183" text-anchor="middle" font-size="12" fill="#fff" font-weight="700">airflow-init</text>
+    <text x="125" y="201" text-anchor="middle" font-size="10" fill="#fff">DB migrate + admin</text>
+
+    <!-- airflow-scheduler -->
+    <rect x="220" y="160" width="170" height="55" rx="8" fill="#1971c2" filter="url(#shadow2)"/>
+    <text x="305" y="183" text-anchor="middle" font-size="12" fill="#fff" font-weight="700">airflow-scheduler</text>
+    <text x="305" y="201" text-anchor="middle" font-size="10" fill="#fff">LocalExecutor</text>
+
+    <!-- airflow-apiserver -->
+    <rect x="135" y="235" width="170" height="55" rx="8" fill="#228be6" filter="url(#shadow2)"/>
+    <text x="220" y="258" text-anchor="middle" font-size="12" fill="#fff" font-weight="700">airflow-apiserver</text>
+    <text x="220" y="276" text-anchor="middle" font-size="10" fill="#fff">Web UI :8080</text>
+
+    <!-- Airflow -> Docker Socket (routed right of volumes box) -->
+    <path d="M305,290 L400,290 L400,510" stroke="#636e72" stroke-width="2" fill="none" marker-end="url(#arr2)"/>
+    <text x="408" y="420" font-size="10" fill="#636e72" font-style="italic">DockerOperator</text>
+    <text x="408" y="435" font-size="10" fill="#636e72" font-style="italic">spawns containers</text>
+
+    <!-- Airflow internal arrows -->
+    <path d="M125,140 L125,160" stroke="#636e72" stroke-width="1.5" fill="none" marker-end="url(#arr2)"/>
+    <path d="M305,140 L305,160" stroke="#636e72" stroke-width="1.5" fill="none" marker-end="url(#arr2)"/>
+    <path d="M220,215 L220,235" stroke="#636e72" stroke-width="1.5" fill="none" marker-end="url(#arr2)"/>
+
+    <!-- dags volume note -->
+    <rect x="50" y="310" width="340" height="75" rx="6" fill="#fff" stroke="#b2bec3" stroke-width="1"/>
+    <text x="220" y="330" text-anchor="middle" font-size="11" font-weight="600" fill="#2d3436">Volumes (bind mount)</text>
+    <text x="60" y="348" font-size="10" fill="#636e72">dags/ -> /opt/airflow/dags</text>
+    <text x="60" y="363" font-size="10" fill="#636e72">logs/ -> /opt/airflow/logs</text>
+    <text x="60" y="378" font-size="10" fill="#636e72">config/ -> /opt/airflow/config</text>
+
+    <!-- ===== lakehouse-crawler Containers (right) ===== -->
+    <rect x="440" y="50" width="450" height="440" rx="10" fill="#b2f5bb" stroke="#40c057" stroke-width="1.5" opacity="0.3"/>
+    <text x="665" y="72" text-anchor="middle" font-size="13" font-weight="700" fill="#2f9e44">lakehouse-crawler containers (spawned per task)</text>
+
+    <!-- Container 1 -->
+    <rect x="460" y="90" width="200" height="95" rx="8" fill="#2f9e44" filter="url(#shadow2)"/>
+    <text x="560" y="113" text-anchor="middle" font-size="12" fill="#fff" font-weight="700">lakehouse-crawler</text>
+    <text x="560" y="130" text-anchor="middle" font-size="10" fill="#dfe6e9">python:3.11-slim + Chrome</text>
+    <line x1="480" y1="138" x2="640" y2="138" stroke="#40c057" stroke-width="1"/>
+    <text x="560" y="154" text-anchor="middle" font-size="10" fill="#fff">PYTHONPATH=/app</text>
+    <text x="560" y="170" text-anchor="middle" font-size="10" fill="#fff">shm_size=2GB (Chrome)</text>
+
+    <!-- Container 2 -->
+    <rect x="680" y="90" width="190" height="95" rx="8" fill="#2f9e44" filter="url(#shadow2)"/>
+    <text x="775" y="113" text-anchor="middle" font-size="12" fill="#fff" font-weight="700">lakehouse-crawler</text>
+    <text x="775" y="130" text-anchor="middle" font-size="10" fill="#dfe6e9">auto_remove=success</text>
+    <line x1="695" y1="138" x2="855" y2="138" stroke="#40c057" stroke-width="1"/>
+    <text x="775" y="154" text-anchor="middle" font-size="10" fill="#fff">ephemeral</text>
+    <text x="775" y="170" text-anchor="middle" font-size="10" fill="#fff">xvfb-run for nodriver</text>
+
+    <!-- Mounts box -->
+    <rect x="460" y="210" width="410" height="110" rx="8" fill="#fff" stroke="#b2bec3" stroke-width="1.5" filter="url(#shadow2)"/>
+    <text x="665" y="232" text-anchor="middle" font-size="12" font-weight="700" fill="#2d3436">Bind Mounts (COMMON_MOUNTS)</text>
+
+    <rect x="475" y="245" width="125" height="30" rx="4" fill="#dfe6e9"/>
+    <text x="537" y="264" text-anchor="middle" font-size="10" fill="#2d3436">temp_data/</text>
+
+    <rect x="615" y="245" width="105" height="30" rx="4" fill="#dfe6e9"/>
+    <text x="667" y="264" text-anchor="middle" font-size="10" fill="#2d3436">.env (ro)</text>
+
+    <rect x="735" y="245" width="120" height="30" rx="4" fill="#dfe6e9"/>
+    <text x="795" y="264" text-anchor="middle" font-size="10" fill="#2d3436">reports/</text>
+
+    <text x="475" y="295" font-size="10" fill="#636e72">temp_data: crawl JSONL output (append-only)</text>
+    <text x="475" y="310" font-size="10" fill="#636e72">.env: AWS keys, ITVIEC creds, Supabase, MotherDuck</text>
+
+    <!-- Network note -->
+    <rect x="460" y="335" width="410" height="55" rx="8" fill="#fff" stroke="#b2bec3" stroke-width="1"/>
+    <text x="665" y="357" text-anchor="middle" font-size="12" font-weight="600" fill="#2d3436">Docker Bridge Network</text>
+    <text x="665" y="375" text-anchor="middle" font-size="10" fill="#636e72">Outbound: AWS S3, Supabase, MotherDuck (no network_mode override)</text>
+
+    <!-- Arrows from containers to docker socket -->
+    <path d="M560,185 L560,480 L460,480 L460,510" stroke="#636e72" stroke-width="2" fill="none" marker-end="url(#arr2)"/>
+    <path d="M775,185 L775,480 L460,480" stroke="#636e72" stroke-width="2" fill="none"/>
+    <text x="590" y="475" font-size="10" fill="#636e72" font-style="italic">docker.sock mount</text>
+
+    <!-- Legend -->
+    <text x="30" y="590" font-size="11" fill="#636e72" font-style="italic">Airflow scheduler goi DockerOperator -> tao container lakehouse-crawler tam thoi -> chay python -m ... -> tu xoa khi xong</text>
+  </svg>
+</div>
+
+<!-- ============================================================ -->
+<!-- Diagram 3: DAG Factory Pattern                              -->
+<!-- ============================================================ -->
+<div class="figure">
+  <div class="figure-caption">
+    Hình 3 — Mẫu DAG Factory: 9 hàm tạo ra 16 DAG file
+  </div>
+  <div class="factory-tree">
+    <div class="factory-col src">
+      <h4>_dag_factory.py (9 factory functions)</h4>
+      <ul class="tree">
+        <li class="func">create_crawl_dag(site)</li>
+        <li class="func">create_validate_bronze_dag(site)</li>
+        <li class="func">create_silver_dag(site)</li>
+        <li class="func">create_supabase_dag()</li>
+        <li class="func">create_load_silver_to_gold_dag()</li>
+        <li class="func">create_load_taxonomy_to_gold_dag()</li>
+        <li class="func">create_cluster_company_name_dag()</li>
+        <li class="func">create_bronze_dashboard_dag()</li>
+        <li class="func">create_silver_dashboard_dag()</li>
+      </ul>
+    </div>
+    <div class="arrow-row">&rarr;</div>
+    <div class="factory-col dst">
+      <h4>16 DAG files (one-liner each)</h4>
+      <ul class="tree">
+        <li class="dag">crawl_topcv.py</li>
+        <li class="dag">crawl_itviec.py</li>
+        <li class="dag">crawl_vietnamworks.py</li>
+        <li class="dag">validate_bronze_topcv.py</li>
+        <li class="dag">validate_bronze_itviec.py</li>
+        <li class="dag">validate_bronze_vietnamworks.py</li>
+        <li class="dag">silver_topcv.py</li>
+        <li class="dag">silver_itviec.py</li>
+        <li class="dag">silver_vietnamworks.py</li>
+        <li class="dag">supabase_load_all.py</li>
+        <li class="dag">load_silver_to_gold.py</li>
+        <li class="dag">load_taxonomy_to_gold.py</li>
+        <li class="dag">cluster_company_name.py</li>
+        <li class="dag">generate_bronze_dashboard.py</li>
+        <li class="dag">generate_silver_dashboard.py</li>
+      </ul>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:20px;">
+    <div style="display:inline-block;background:#f5f6fa;border-radius:8px;padding:16px 24px;font-family:'Consolas','Courier New',monospace;font-size:13px;text-align:left;">
+      <span style="color:#6c5ce7;font-weight:700;"># crawl_topcv.py</span><br/>
+      <span style="color:blue;">from</span> _dag_factory <span style="color:blue;">import</span> create_crawl_dag<br/>
+      dag = create_crawl_dag(<span style="color:teal;">"topcv"</span>)
+    </div>
+  </div>
+  <p style="text-align:center;margin-top:16px;font-size:12px;color:#636e72;font-style:italic;">
+    Moi DAG file chi mot dong: import factory function va goi voi ten site. Tat ca logic (schedule, Docker kwargs, mounts) nam trong _dag_factory.py
+  </p>
+</div>
+
+</div>
+</body>
+</html>

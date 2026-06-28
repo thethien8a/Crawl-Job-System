@@ -1,0 +1,656 @@
+% =====================================================================
+% Module 1: Thu thap du lieu (Crawl Layer)
+% ---------------------------------------------------------------------
+% Cach su dung:
+%   1. Dat file .tex nay cung thu muc voi bao cao chinh, hoac \input{} no.
+%   2. Mo file "module1_diagrams.html" bang trinh duyet, chup man hinh tung
+%      bieu do (Hinh 1.1 -> 1.5) va luoi thanh anh (PNG/PDF) dat cung thu muc
+%      voi ten: module1_hinh1_1.png ... module1_hinh1_5.png
+%   3. Go bo khoi "lstlisting setup" ben duoi neu bao cao da co package
+%      "listings" va dinh ngha kieu Python.
+% =====================================================================
+
+% ---- Vietnamese encoding (xoa neu da co trong preamble) -------------
+\usepackage[utf8]{inputenc}
+\usepackage[T5]{fontenc}
+% ---- lstlisting setup (xoa neu da co trong preamble) ----------------
+\usepackage{listings}
+\usepackage{xcolor}
+\lstdefinestyle{pystyle}{
+    language=Python,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue}\bfseries,
+    stringstyle=\color{teal},
+    commentstyle=\color{gray}\itshape,
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{lightgray},
+    backgroundcolor=\color{white},
+    tabsize=4,
+    columns=fullflexible,
+    keepspaces=true,
+}
+\lstset{style=pystyle}
+% ---------------------------------------------------------------------
+
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{hyperref}
+
+
+\section{Module 1: Thu thập dữ liệu (Crawl Layer)}
+\label{sec:crawl-layer}
+
+Crawl Layer là stage đầu tiên của pipeline Lakehouse-Lite, chịu trách nhiệm thu
+thập dữ liệu thô từ các website tuyển dụng và ghi ra file JSONL tạm cục bộ.
+Nguyên tắc cốt lõi: \textbf{crawl layer chỉ ghi ra temp file, không bao giờ
+talking tới S3/Supabase trực tiếp}. Việc upload lên Bronze là trách nhiệm của
+storage layer ở các stage phía sau.
+
+
+\subsection{Tổng quan kiến trúc}
+\label{subsec:crawl-overview}
+
+Crawl layer nhận trigger từ CLI hoặc Airflow DAG, chạy luồng orchestration
+\texttt{crawl()} để phân trang, dedup URL, cào chi tiết và lưu từng trang ra
+temp file ngay lập tức (streaming per-page save). Sơ đồ luồng tổng thể được
+trình bày ở Hình~\ref{fig:crawl-pipeline}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{module1_hinh1_1.png}
+    \caption{Luồng tổng thể của Crawl Layer: từ trigger đến lưu trữ Gold.
+    Crawl layer chỉ ghi temp JSONL, các stage sau đọc temp.}
+    \label{fig:crawl-pipeline}
+\end{figure}
+
+Pipeline chi tiết chạy theo thứ tự:
+\begin{enumerate}
+    \item \textbf{Crawl} -- ghi nối tiếp (append-only) ra
+          \texttt{src/crawl\_layer/temp\_data/<source>\_jobs\_YYYYMMDD.jsonl}.
+          Chạy lại cùng ngày sẽ cộng dồn dữ liệu.
+    \item \textbf{Validate (tùy chọn)} -- kiểm tra dữ liệu temp trước khi upload.
+    \item \textbf{Bronze} -- gzip temp JSONL, upload lên S3, rồi \textbf{xóa}
+          temp của source đó (destructive).
+    \item \textbf{Silver} -- làm sạch và xuất parquet theo partition ngày.
+    \item \textbf{Supabase / MotherDuck (Gold)} -- tải silver lên serving layer.
+\end{enumerate}
+
+
+\subsection{Cấu trúc module crawler}
+\label{subsec:crawl-structure}
+
+Mỗi site là một package con trong \texttt{src/crawl\_layer/crawler/}. Cấu trúc
+chuẩn được trình bày ở Hình~\ref{fig:crawl-package}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.82\textwidth]{module1_hinh1_2.png}
+    \caption{Cấu trúc package chuẩn của một module crawler.
+    \texttt{http\_client.py} và \texttt{browser.py} là hai lựa chọn thay thế
+    tùy theo stack kỹ thuật.}
+    \label{fig:crawl-package}
+\end{figure}
+
+Một package crawler gồm các thành phần sau:
+
+\begin{itemize}
+    \item \texttt{\_\_init\_\_.py} -- rỗng, chỉ đánh dấu package.
+    \item \texttt{\_\_main\_\_.py} -- điểm vào CLI: \texttt{argparse} +
+          \texttt{asyncio.run} (kèm patch Windows cho nodriver).
+    \item \texttt{config.py} -- hằng số tĩnh: URL, selector, timeout, tên source.
+    \item \texttt{crawler.py} -- class \texttt{<Site>Crawler}: orchestration flow.
+    \item \texttt{parser.py} -- class \texttt{<Site>Parser}: chuyển HTML thành
+          \texttt{JobItem}.
+    \item \texttt{http\_client.py} (stack aiohttp) hoặc \texttt{browser.py}
+          (stack nodriver) -- tầng vận chuyển.
+    \item \texttt{utils.py} -- helper nhỏ (encode keyword, sanitize text).
+\end{itemize}
+
+\textbf{Lưu ý:} không bao giờ có \texttt{\_\_init\_\_.py} ở cấp \texttt{src/} --
+toàn bộ import dùng absolute \texttt{src.*}, phải \texttt{cd} về repo root trước
+khi chạy \texttt{python -m}.
+
+
+\subsection{Mô hình dữ liệu (Data Model)}
+\label{subsec:crawl-datamodel}
+
+Toàn bộ crawler chia sẻ dataclass gốc \texttt{JobItem} chứa các trường chung,
+mỗi site kế thừa và chỉ thêm các trường đặc thù.
+
+\begin{lstlisting}[caption={Dataclass gốc JobItem và các subclass per-site (src/crawl\_layer/data\_model/data\_class.py)},label={lst:jobitem}]
+@dataclass
+class JobItem:
+    job_title: Optional[str] = None
+    company_name: Optional[str] = None
+    location: str | None = None
+    job_industry: str | None = None
+    job_description: str | None = None
+    source_site: str | None = None
+    job_url: str | None = None
+    search_keyword: str | None = None
+    scraped_at: str | None = None
+    salary: Optional[str] = None
+    benefits: str | None = None
+    requirements: str | None = None
+
+@dataclass
+class TopCVJobItem(JobItem):
+    company_size: Optional[str] = None
+    job_type: str | None = None
+    experience_level: str | None = None
+    education_level: str | None = None
+    job_position: str | None = None
+    job_deadline: str | None = None
+
+@dataclass
+class ITViecJobItem(JobItem):
+    company_size: Optional[str] = None
+\end{lstlisting}
+
+Quy tắc: chỉ thêm trường mà site \textbf{thực sự có}; mọi trường mặc định
+\texttt{None} để parser có thể bỏ qua trường thiếu; tên trường phải khớp với
+schema Silver ở hạ lưu.
+
+
+\subsection{Cấu hình tĩnh (config.py)}
+\label{subsec:crawl-config}
+
+Mọi hằng số (URL, CSS/XPath selector, timeout, cookie, profile trình duyệt)
+phải tập trung trong \texttt{config.py} để parser, http/browser và orchestrator
+không bao giờ lệch nhau.
+
+\begin{lstlisting}[caption={Ví dụ config.py cho stack nodriver (src/crawl\_layer/crawler/itviec/config.py)},label={lst:itviec-config}]
+from src.storage_layer.MinIO_S3.config.path import DEFAULT_ENTITY_NAME
+
+SOURCE_NAME = "itviec"
+ENTITY_NAME = DEFAULT_ENTITY_NAME            # = "jobs"
+BASE_URL = "https://itviec.com"
+LOGIN_URL = "https://itviec.com/sign_in"
+USERNAME_ENV = "ITVIEC_USERNAME"             # ten env var trong .env
+PASSWORD_ENV = "ITVIEC_PASSWORD"
+
+# Selectors - copy y trang that, class name co the bi hash chong bot
+JOB_CARD_SELECTOR = "h3[data-url*='/it-jobs/']"
+PREVIEW_PANEL_SELECTOR = "div[class*='preview-job-wrapper']"
+NEXT_PAGE_SELECTOR = "a[rel='next']"
+
+# Timing
+LOGIN_TIMEOUT = 20.0
+PAGINATION_DELAY_RANGE = (2.0, 4.0)
+
+# Browser stealth args
+BROWSER_ARGS = ("--no-sandbox",
+                "--disable-blink-features=AutomationControlled", ...)
+\end{lstlisting}
+
+\texttt{SOURCE\_NAME} phải khớp chính xác với tiền tố file temp
+(\texttt{<source>\_jobs\_*.jsonl}) và với \texttt{bronze\_source} trong cấu hình
+Airflow. Không hardcode secret -- chỉ trỏ tới tên env var.
+
+
+\subsection{Luồng orchestration (crawler.py)}
+\label{subsec:crawl-flow}
+
+\texttt{crawler.py} chỉ chứa luồng high-level, không chứa chi tiết fetch/parse.
+Sơ đồ luồng \texttt{crawl()} được trình bày ở Hình~\ref{fig:crawl-flow}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{module1_hinh1_4.png}
+    \caption{Luồng orchestration của \texttt{Crawler.crawl()}: streaming
+    per-page save để không mất dữ liệu khi crash giữa chừng.}
+    \label{fig:crawl-flow}
+\end{figure}
+
+\begin{lstlisting}[caption={Pattern chung của class Crawler (rút gọn từ TopcvCrawler / ItviecCrawler)},label={lst:crawler-pattern}]
+class <Site>Crawler:
+    def __init__(self, keyword, max_pages, ...):
+        self.keyword = keyword
+        self.max_pages = max_pages
+        self.<transport> = <Site>HttpClient(...) or <Site>Browser(...)
+        self.parser = <Site>Parser()
+        self._seen_urls: set[str] = set()      # dedup URL giua cac trang
+
+    async def crawl(self) -> list[<Site>JobItem]:
+        items: list[<Site>JobItem] = []
+        async with self.<transport>:           # mo/dong session hoac browser
+            for page_num in range(1, self.max_pages + 1):
+                temp_items: list[<Site>JobItem] = []
+                page_items = await self._scrape_current_page()
+                items.extend(page_items)
+                temp_items.extend(page_items)
+                self._flush_batch(temp_items, page_num)  # ghi temp NGAY
+                # ... next page ...
+        return items
+
+    def _flush_batch(self, page_items, page_num) -> None:
+        if not page_items:
+            return
+        save_to_temp([asdict(i) for i in page_items], SOURCE_NAME, ENTITY_NAME)
+\end{lstlisting}
+
+Hai điểm bắt buộc trong luồng này:
+\begin{enumerate}
+    \item \textbf{Dedup URL} bằng \texttt{self.\_seen\_urls} để không cào trùng
+          khi các trang overlap.
+    \item \textbf{Streaming per-page save} qua \texttt{\_flush\_batch()}: ghi ra
+          temp sau mỗi trang, nên nếu crash ở trang 5 thì trang 1--4 vẫn an toàn
+          trên đĩa và bộ nhớ luôn bị chặn (bounded).
+\end{enumerate}
+
+
+\subsection{Hai stack kỹ thuật: aiohttp và nodriver}
+\label{subsec:crawl-stacks}
+
+Dự án dùng hai stack khác nhau tùy độ ``khó'' của site. So sánh chi tiết được
+trình bày ở Hình~\ref{fig:crawl-stacks} và Bảng~\ref{tab:stack-compare}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{module1_hinh1_3.png}
+    \caption{So sánh hai stack kỹ thuật: aiohttp (nhanh, không browser) và
+    nodriver (chống bot, cần login).}
+    \label{fig:crawl-stacks}
+\end{figure}
+
+\begin{table}[h!]
+\centering
+\caption{So sánh hai stack kỹ thuật thu thập dữ liệu}
+\label{tab:stack-compare}
+\begin{tabular}{p{0.28\textwidth} p{0.33\textwidth} p{0.33\textwidth}}
+\toprule
+\textbf{Tiêu chí} & \textbf{aiohttp (TopCV)} & \textbf{nodriver (ITviec / VietnamWorks)} \\
+\midrule
+File transport    & \texttt{http\_client.py} & \texttt{browser.py} \\
+Cần login?        & Không & Có (Cloudflare + cookie) \\
+Concurrency       & Cao -- \texttt{asyncio.gather} + semaphore & Thấp -- 1 session tuần tự \\
+Thư viện          & \texttt{curl\_cffi} giả lập JA3 & \texttt{nodriver} headless Chrome \\
+Số pha cào        & 2 pha (URL search → detail song song) & 1 pha (click card → snapshot panel) \\
+Chống 403 CF      & Cơ chế Prober (Hình~\ref{fig:prober}) & Clearance gắn UA+IP+cookie \\
+Linux/Docker cần  & Không & \texttt{xvfb-run} \\
+Windows patch     & Không & Có (ProactorEventLoop) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Stack aiohttp -- HttpClient}
+\label{subsec:aiohttp}
+
+\texttt{TopcvHttpClient} sở hữu session \texttt{curl\_cffi}, semaphore giới hạn
+concurrency và logic retry/backoff. Phương thức cốt lõi \texttt{fetch()} xử lý:
+\texttt{BLOCK\_STATUS} (403) bằng cơ chế ``prober'' -- request đầu tiên phát hiện
+block sẽ giăng \texttt{asyncio.Event} chặn toàn bộ request khác, ngủ 62 giây để
+Cloudflare clearance tái lập, rồi mở rào khi thành công;
+\texttt{RETRY\_STATUS} (429/5xx) bằng exponential backoff. Cơ chế prober được
+trực quan ở Hình~\ref{fig:prober}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.85\textwidth]{module1_hinh1_5.png}
+    \caption{Cơ chế Prober trong \texttt{TopcvHttpClient.fetch()}: chỉ 1 request
+    ``thám báo'' chạm Cloudflare, các request khác đứng chờ để tránh 429/ban IP.}
+    \label{fig:prober}
+\end{figure}
+
+\begin{lstlisting}[caption={Logic fetch() rút gọn (src/crawl\_layer/crawler/topcv/http\_client.py)},label={lst:fetch}]
+async def fetch(self, url, referer=None) -> str | None:
+    async with self._semaphore:
+        await asyncio.sleep(random.uniform(*self.request_delay))
+        for attempt in range(1, self.max_retries + 1):
+            if not is_prober:
+                await self._is_clear.wait()        # cho neu dang GLOBAL PAUSE
+            resp = await self.session.get(url, headers=headers)
+            status = resp.status_code
+            if status in BLOCK_STATUS:             # 403 -> Cloudflare
+                # request dau tien lam prober, giang Event chan cac req khac
+                ...
+                await asyncio.sleep(62.0)          # cho CF clearance
+            elif status in RETRY_STATUS:           # 429/5xx
+                sleep_for = min(120.0, 2.0 * (2 ** (attempt - 1)))
+                await asyncio.sleep(sleep_for + random.uniform(0, 1))
+            elif 200 <= status < 300:
+                if is_prober: self._is_clear.set() # mo rao cho cac req khac
+                return resp.text
+\end{lstlisting}
+
+\subsubsection{Stack nodriver -- Browser}
+\label{subsec:nodriver}
+
+\texttt{ItviecBrowser} quản lý headless Chrome qua \texttt{nodriver}, có các
+method: \texttt{login()} (điền form, chờ marker, raise \texttt{ItviecLoginError}
+khi fail), \texttt{open\_search()}, \texttt{iter\_job\_panels()} (async generator
+yielding \texttt{(job\_url, panel\_html)}), và \texttt{go\_to\_next\_page()}.
+Lý do ITviec dùng 1 session tuần tự: Cloudflare gắn clearance với
+(UA + IP + cookie đăng nhập), nên concurrency sẽ tự đánh bại mục đích.
+
+
+\subsection{Parser và utils}
+\label{subsec:crawl-parser}
+
+\texttt{parser.py} thuần túy: nhận HTML (cùng URL + keyword), trả về
+\texttt{<Site>JobItem}. Không có I/O, không có state, rất dễ test độc lập.
+Mọi selector phải đặt trong \texttt{config.py}, không hardcode trong parser.
+Parser trả \texttt{None} cho trường thiếu thay vì raise, để batch không vỡ vì
+một tin lỗi. Khi site đổi markup, chỉ sửa config + parser, không đụng crawler
+flow.
+
+\texttt{utils.py} chứa các helper thuần function, không side-effect, ví dụ
+\texttt{encode\_input()} chuyển \texttt{"data analyst"} thành
+\texttt{"data-analyst"} cho URL slug.
+
+
+\subsection{Điểm vào CLI và patch Windows}
+\label{subsec:crawl-main}
+
+\texttt{\_\_main\_\_.py} là điểm vào duy nhất khi chạy
+\texttt{python -m src.crawl\_layer.crawler.<site>}.
+
+\begin{lstlisting}[caption={Entry point CLI (src/crawl\_layer/crawler/itviec/\_\_main\_\_.py)},label={lst:main}]
+async def _run(keyword, max_pages, headless) -> None:
+    logging.basicConfig(level=logging.INFO, format="...")
+    crawler = ItviecCrawler(keyword=keyword, max_pages=max_pages, headless=headless)
+    items = await crawler.crawl()
+    logging.info("Exported %d items to itviec_jobs.jsonl", len(items))
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="ITviec async crawler")
+    parser.add_argument("--keyword", default="data")
+    parser.add_argument("--max-pages", type=int, default=2)
+    parser.add_argument("--headless", action="store_true")
+    args = parser.parse_args()
+    asyncio.run(_run(args.keyword, args.max_pages, headless=args.headless))
+
+if __name__ == "__main__":
+    main()
+\end{lstlisting}
+
+\textbf{Windows ProactorEventLoop patch (bắt buộc với nodriver).} Các crawler
+nodriver có một khối patch ở đầu \texttt{\_\_main\_\_.py} để im lặng lỗi
+\texttt{\_\_del\_\_} của \texttt{ProactorEventLoop} trên Windows (Chrome
+subprocess đóng socket gây exception ồn khi thoát). Khối này không được xóa.
+
+\begin{lstlisting}[caption={Patch Windows cho nodriver (đặt ở đầu \_\_main\_\_.py)},label={lst:winpatch}]
+import sys
+if sys.platform == "win32":
+    from asyncio.proactor_events import _ProactorBasePipeTransport
+    from asyncio.base_subprocess import BaseSubprocessTransport
+    def silence_del(cls):
+        orig_del = getattr(cls, "__del__", None)
+        if not orig_del:
+            return
+        def new_del(self):
+            try:
+                orig_del(self)
+            except Exception:
+                pass
+        cls.__del__ = new_del
+    silence_del(_ProactorBasePipeTransport)
+    silence_del(BaseSubprocessTransport)
+\end{lstlisting}
+
+
+\subsection{Lưu dữ liệu tạm (save\_to\_temp)}
+\label{subsec:crawl-save}
+
+Hàm duy nhất mọi crawler dùng để lưu là \texttt{save\_to\_temp()}.
+
+\begin{lstlisting}[caption={save\_to\_temp() -- ghi append-only ra temp JSONL (src/crawl\_layer/utils/loader.py)},label={lst:save}]
+def save_to_temp(data, source_name, entity_name="jobs"):
+    TEMP_DIR.mkdir(parents=True, exist_ok=True)
+    today_str = datetime.now().strftime("%Y%m%d")
+    file_name = f"{source_name}_{entity_name}_{today_str}.jsonl"
+    file_path = TEMP_DIR / file_name
+    if isinstance(data, dict):
+        data = [data]
+    with open(str(file_path), 'a', encoding='utf-8') as f:   # mode APPEND
+        for item in data:
+            f.write(json.dumps(item, ensure_ascii=False) + '\n')
+    return file_path
+\end{lstlisting}
+
+Đặc điểm: \textbf{append-only} (chạy lại cùng ngày cộng dồn, không ghi đè); tên
+file theo ngày \texttt{<source>\_jobs\_YYYYMMDD.jsonl}; đường dẫn gốc
+\texttt{TEMP\_DIR = src/crawl\_layer/temp\_data}. Việc dọn temp chỉ do Bronze
+upload thực hiện.
+
+
+\subsection{Kết quả dữ liệu xuất ra temp folder}
+\label{subsec:crawl-temp-output}
+
+Các dữ liệu xuất ra sẽ có dạng: \textbf{mỗi dòng trong file temp là một đối
+tượng JSON thuần} (định dạng JSON Lines -- JSONL), tương ứng với đúng một tin
+tuyển dụng. Vì crawler dùng \texttt{asdict()} trên dataclass
+\texttt{<Site>JobItem}, mọi trường đều xuất hiện; trường nào site không cung cấp
+thì mang giá trị \texttt{null}. File được lưu tại
+\texttt{src/crawl\_layer/temp\_data/<source>\_jobs\_YYYYMMDD.jsonl}; ví dụ thực
+tế trong dự án là \texttt{itviec\_jobs\_20260621.jsonl}.
+
+Một dòng (đã pretty-print và rút gọn các trường text dài cho dễ đọc) có dạng
+như sau:
+
+\lstdefinestyle{jsonstyle}{
+    language=,
+    basicstyle=\ttfamily\footnotesize,
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{lightgray},
+    stringstyle=\color{teal},
+    keywordstyle=\color{blue}\bfseries,
+    morekeywords={null,true,false},
+    columns=fullflexible,
+    keepspaces=true,
+}
+
+\begin{lstlisting}[style=jsonstyle,caption={Mẫu một bản ghi JSONL xuất ra temp folder (đã rút gọn trường text dài)},label={lst:temp-sample}]
+{
+  "job_title": "Data Engineer - VIC",
+  "company_name": "Viettel Group",
+  "location": "Tang 5, Tru so chinh cua Tap doan Viettel, ..., Ha Noi",
+  "job_industry": "Telecommunication",
+  "job_description": "Xay dung va phat trien cac he thong du lieu lon (Big Data) ... [da rut gon]",
+  "source_site": "itviec",
+  "job_url": "https://itviec.com/it-jobs/data-engineer-vic-viettel-group-5243?...",
+  "search_keyword": "data",
+  "scraped_at": "2026-06-21T09:45:10.308085",
+  "salary": "1,000 - 2,000 USD",
+  "benefits": "Thu nhap canh tranh theo thi truong ... [da rut gon]",
+  "requirements": null,
+  "company_size": null
+}
+\end{lstlisting}
+
+\textbf{Lưu ý:} trong file thật, các trường text dài (\texttt{job\_description},
+\texttt{benefits}, \texttt{requirements}) giữ nguyên toàn bộ nội dung tiếng
+Việt có dấu và không bị rút gọn; phần \texttt{... [da rut gon]} ở Listing~\ref{lst:temp-sample}
+chỉ là cách trình bày cho vừa khung báo cáo. Toàn bộ file là \textbf{một dòng
+JSON mỗi tin} (không có pretty-print), nối tiếp nhau, ghi nối tiếp (append-only)
+cho đến khi Bronze upload dọn dẹp.
+
+Các trường trong bản ghi được mô tả ở Bảng~\ref{tab:temp-fields}.
+
+\begin{table}[h!]
+\centering
+\caption{Mô tả các trường trong bản ghi JSONL xuất ra temp folder}
+\label{tab:temp-fields}
+\begin{tabular}{p{0.22\textwidth} p{0.14\textwidth} p{0.56\textwidth}}
+\toprule
+\textbf{Trường} & \textbf{Kiểu} & \textbf{Mô tả} \\
+\midrule
+\texttt{job\_title}        & str & Tên vị trí công việc \\
+\texttt{company\_name}     & str & Tên công ty tuyển dụng \\
+\texttt{location}          & str & Địa điểm làm việc \\
+\texttt{job\_industry}     & str & Lĩnh vực / ngành nghề \\
+\texttt{job\_description}  & str & Mô tả công việc (text dài) \\
+\texttt{source\_site}      & str & Tên nguồn: \texttt{itviec} / \texttt{topcv} / \texttt{vietnamworks} \\
+\texttt{job\_url}          & str & URL trang chi tiết -- khóa dedup URL và upsert ở hạ lưu \\
+\texttt{search\_keyword}   & str & Từ khóa tìm kiếm dùng khi cào \\
+\texttt{scraped\_at}       & str & Thời điểm cào, định dạng ISO 8601 \\
+\texttt{salary}            & str & Mức lương (text thô, chưa chuẩn hóa) \\
+\texttt{benefits}          & str & Quyền lợi được hưởng (text dài, có thể \texttt{null}) \\
+\texttt{requirements}      & str & Yêu cầu ứng viên (text dài, có thể \texttt{null}) \\
+\texttt{company\_size}     & str & Quy mô công ty (trường per-site, có thể \texttt{null}) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Các trường chung (\texttt{job\_title} \ldots \texttt{requirements}) đến từ
+dataclass gốc \texttt{JobItem}; các trường bổ sung như
+\texttt{company\_size} (ITviec) hay \texttt{job\_type},
+\texttt{experience\_level}, \texttt{education\_level}, \texttt{job\_position},
+\texttt{job\_deadline} (TopCV) đến từ subclass per-site. Nhờ dùng
+\texttt{asdict()}, chỉ cần thêm trường vào subclass là dữ liệu tự động xuất ra
+temp mà không phải sửa code ghi file.
+
+
+\subsection{Tích hợp Bronze layer (pipeline hạ lưu)}
+\label{subsec:crawl-bronze}
+
+Crawl layer không tự upload S3. Sau khi crawl xong, Bronze layer đọc temp:
+
+\begin{lstlisting}[caption={Bronze upload (src/storage\_layer/MinIO\_S3/layer/bronze/main.py)},label={lst:bronze}]
+# python -m src.storage_layer.MinIO_S3.layer.bronze.main --source topcv
+from src.crawl_layer.utils.loader import load_to_bronze
+load_to_bronze(bronze_bucket_name, source_filter=args.source)
+\end{lstlisting}
+
+Quy trình Bronze: (1) gzip các file \texttt{<source>\_jobs\_*.jsonl}; (2) upload
+\texttt{.gz} lên S3 theo key \texttt{source/<source>/...}; (3) \textbf{xóa} cả
+\texttt{.gz} lẫn \texttt{.jsonl} của source đó cục bộ (destructive). Hệ quả:
+\texttt{SOURCE\_NAME} phải khớp \texttt{--source} của bronze và
+\texttt{bronze\_source} trong Airflow; mismatch khiến dữ liệu nằm lại temp không
+được upload.
+
+
+\subsection{Tích hợp Airflow DAG}
+\label{subsec:crawl-airflow}
+
+Airflow không import module crawler -- nó chỉ điều phối qua \texttt{DockerOperator}.
+Mỗi site có một DAG siêu mỏng gọi factory:
+
+\begin{lstlisting}[caption={DAG mỏng per-site (src/orchestration\_layer/dags/crawl\_topcv.py)},label={lst:dag-thin}]
+from _dag_factory import create_crawl_dag
+dag = create_crawl_dag("topcv")
+\end{lstlisting}
+
+Factory giữ hai bảng cấu hình phải cập nhật khi thêm source:
+\texttt{SITE\_CONFIGS} (map tên site sang \texttt{crawl\_module},
+\texttt{validate\_module}, \texttt{bronze\_source}, \texttt{silver\_module},
+\texttt{supabase\_site}) và \texttt{CRAWL\_SCHEDULES} (cron mỗi site, offset để
+không cào song song: topcv \texttt{0 */3}, itviec \texttt{15 */3}, vietnamworks
+\texttt{30 */3}).
+
+\begin{lstlisting}[caption={Cấu hình site và lệnh crawl trong DAG factory},label={lst:dag-factory}]
+SITE_CONFIGS = {
+    "topcv":       {"crawl_module": "topcv", "bronze_source": "topcv", ...},
+    "itviec":      {"crawl_module": "itviec", "bronze_source": "itviec", ...},
+    "vietnamworks":{"crawl_module": "vietnamworks", "bronze_source": "vietnamworks", ...},
+}
+CRAWL_SCHEDULES = {"topcv": "0 */3 * * *", "itviec": "15 */3 * * *", ...}
+
+# Lenh crawl chay trong container (DockerOperator):
+# xvfb-run ... python -m src.crawl_layer.crawler.<crawl_module>
+#   --keyword {{ params.keyword }} --max-pages {{ params.max_pages }}
+\end{lstlisting}
+
+\texttt{xvfb-run} chỉ cần cho nodriver; với aiohttp nó vô hại. DAG params override
+được qua Airflow UI ``Trigger DAG w/ config'': \texttt{\{"keyword": "...",
+"max\_pages": N\}}.
+
+
+\subsection{Quy trình thêm crawler mới}
+\label{subsec:crawl-addnew}
+
+Giả sử thêm site \texttt{careerbuzz} dùng nodriver:
+
+\begin{enumerate}
+    \item \textbf{Data model.} Thêm subclass \texttt{CareerBuzzJobItem(JobItem)}
+          trong \texttt{data\_class.py}, chỉ thêm trường đặc thù, mặc định
+          \texttt{None}.
+    \item \textbf{Tạo package.} Tạo thư mục
+          \texttt{src/crawl\_layer/crawler/careerbuzz/} với \texttt{\_\_init\_\_.py}
+          (rỗng), \texttt{config.py}, \texttt{browser.py} (hoặc
+          \texttt{http\_client.py}), \texttt{parser.py}, \texttt{crawler.py},
+          \texttt{utils.py}, \texttt{\_\_main\_\_.py}.
+    \item \textbf{config.py.} Đặt \texttt{SOURCE\_NAME = "careerbuzz"},
+          \texttt{ENTITY\_NAME = DEFAULT\_ENTITY\_NAME}, URL, selector, timeout,
+          env var credential, \texttt{BROWSER\_ARGS}.
+    \item \textbf{parser.py.} Viết \texttt{CareerBuzzParser}, test độc lập với
+          HTML sample trước.
+    \item \textbf{browser.py / http\_client.py.} Sao chép từ site tương đồng
+          stack, đổi selector/timing; đảm bảo \texttt{\_\_aenter\_\_}/
+          \texttt{\_\_aexit\_\_} và async generator \texttt{iter\_job\_panels()}
+          (nodriver) hoặc \texttt{fetch()} (aiohttp).
+    \item \textbf{crawler.py.} Viết \texttt{CareerBuzzCrawler} theo pattern
+          \texttt{crawl()} → per-page scrape → \texttt{\_flush\_batch()}.
+    \item \textbf{\_\_main\_\_.py.} Sao chép từ \texttt{itviec/\_\_main\_\_.py}
+          \textbf{bao gồm khối Windows patch} nếu dùng nodriver.
+    \item \textbf{Verify cục bộ.} Chạy \texttt{python -m
+          src.crawl\_layer.crawler.careerbuzz --keyword data --max-pages 1
+          --headless}; kiểm tra temp file có dữ liệu.
+    \item \textbf{Tích hợp Airflow.} Thêm \texttt{SITE\_CONFIGS["careerbuzz"]} và
+          \texttt{CRAWL\_SCHEDULES["careerbuzz"]}; tạo file DAG
+          \texttt{crawl\_careerbuzz.py} gọi \texttt{create\_crawl\_dag("careerbuzz")}.
+    \item \textbf{Tích hợp Bronze.} Đảm bảo \texttt{bronze\_source = "careerbuzz"}
+          khớp \texttt{SOURCE\_NAME}; thêm module validate nếu cần.
+\end{enumerate}
+
+
+\subsection{Các lưu ý quan trọng (gotchas)}
+\label{subsec:crawl-gotchas}
+
+\begin{enumerate}
+    \item Không có \texttt{\_\_init\_\_.py} ở \texttt{src/} -- toàn bộ import
+          absolute \texttt{src.*}; luôn \texttt{cd} repo root trước
+          \texttt{python -m}.
+    \item Temp file \textbf{append-only} -- chạy lại cùng ngày cộng dồn; dọn temp
+          chỉ do Bronze upload (destructive). Dùng \texttt{--source} để cô lập
+          1 site.
+    \item \texttt{MinIO\_S3} là tên legacy -- thực ra nói chuyện AWS S3 qua
+          \texttt{boto3} (\texttt{get\_s3\_client()}).
+    \item Windows ProactorEventLoop patch ở \texttt{\_\_main\_\_.py} của mọi
+          crawler nodriver -- \textbf{không xóa}.
+    \item nodriver cần \texttt{xvfb-run} trên Linux/Docker (DAG factory đã wrap
+          sẵn).
+    \item \texttt{SOURCE\_NAME} phải nhất quán: \texttt{config.py} ↔ tên file
+          temp ↔ \texttt{bronze\_source} trong Airflow ↔ \texttt{--source} của
+          bronze.
+    \item Selector ``xấu'' có thể cố tình -- nhiều site hash class name chống bot;
+          copy y nguyên, test trang thật trước khi ``dọn dẹp''.
+    \item Streaming per-page save qua \texttt{\_flush\_batch} là bắt buộc -- không
+          gom hết rồi mới ghi.
+    \item Dedup URL (\texttt{self.\_seen\_urls}) giữa các trang để tránh cào trùng.
+    \item Airflow chỉ orchestrate -- không bao giờ import module crawler/storage;
+          mọi logic chạy trong container \texttt{lakehouse-crawler} qua
+          \texttt{DockerOperator}.
+\end{enumerate}
+
+
+\subsection{Kiểm thử}
+\label{subsec:crawl-verify}
+
+Dự án không có pytest/ruff/CI. Verify bằng cờ tiết kiệm:
+
+\begin{lstlisting}[caption={Lệnh kiểm thử nhanh (chạy từ repo root)},label={lst:verify}]
+# Crawler - gioi han 1 trang de nhanh
+python -m src.crawl_layer.crawler.topcv --keyword data --max-pages 1
+python -m src.crawl_layer.crawler.itviec --keyword data --max-pages 1 --headless
+python -m src.crawl_layer.crawler.vietnamworks --keyword data --max-pages 1 --headless
+
+# Kiem tra temp file
+ls src/crawl_layer/temp_data/
+
+# Silver - dry-run khong ghi
+python -m src.storage_layer.MinIO_S3.layer.silver.cleaning.clean_topcv.main_process \
+  --from_date 2026-06-21 --to_date 2026-06-21 --no_save
+
+# Bronze - upload 1 source de thu
+python -m src.storage_layer.MinIO_S3.layer.bronze.main --source topcv
+\end{lstlisting}
+
+Kiểm tra nhanh schema: mở file \texttt{*\_jobs\_*.jsonl}, mỗi dòng là một JSON
+object; các key phải khớp trường trong \texttt{<Site>JobItem} (do dùng
+\texttt{asdict()}).
