@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+from datetime import date
+
 
 @dataclass
 class JobData:
@@ -10,3 +12,4 @@ class JobData:
     job_deadline: str
     job_title_special_keywords: list[str]
     source_site: str
+    scraped_at: date

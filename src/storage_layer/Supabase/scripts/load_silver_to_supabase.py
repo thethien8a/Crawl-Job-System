@@ -52,6 +52,7 @@ _FRESHNESS_COLUMNS = (
     "month",
     "day",
 )
+_SCRAPED_AT_COLUMN = "scraped_at"
 _DEDUP_SORT_PREFIX = "__dedup_sort_"
 
 
@@ -89,6 +90,8 @@ def _job_data_select_exprs(available_columns: set[str], site: str) -> list[pl.Ex
         )
         if cleaned_src:
             select_exprs.append(pl.col(cleaned_src).alias(col))
+        elif col == _SCRAPED_AT_COLUMN:
+            select_exprs.append(_scraped_at_select_expr(available_columns))
         elif col == CONFLICT_KEY:
             select_exprs.append(_unique_url_select_expr(available_columns, site))
         else:
@@ -140,6 +143,17 @@ def _dedup_sort_column_aliases(available_columns: set[str]) -> list[tuple[str, s
         for column in _FRESHNESS_COLUMNS
         if column in available_columns
     ]
+
+
+def _scraped_at_select_expr(available_columns: set[str]) -> pl.Expr:
+    if not all(column in available_columns for column in _FRESHNESS_COLUMNS):
+        return pl.lit(None, dtype=pl.Date).alias(_SCRAPED_AT_COLUMN)
+
+    return pl.date(
+        pl.col("year").cast(pl.Int32),
+        pl.col("month").cast(pl.Int32),
+        pl.col("day").cast(pl.Int32),
+    ).alias(_SCRAPED_AT_COLUMN)
 
 
 def _unique_url_select_expr(available_columns: set[str], site: str) -> pl.Expr:

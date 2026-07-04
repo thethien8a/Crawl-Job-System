@@ -1,7 +1,9 @@
 import os
-from dotenv import load_dotenv
 from dataclasses import fields
+from datetime import date
 from typing import get_origin, get_args
+
+from dotenv import load_dotenv
 from src.storage_layer.MinIO_S3.config.path import DEFAULT_ENTITY_NAME
 from src.storage_layer.Supabase.schema.data_class import JobData
 
@@ -38,6 +40,7 @@ _TYPE_MAP = {
     int: "INTEGER",
     float: "DOUBLE PRECISION",
     bool: "BOOLEAN",
+    date: "DATE",
 }
 
 
@@ -72,6 +75,8 @@ CREATE TABLE IF NOT EXISTS {TARGET_TABLE} (
 
 SCHEMA_MIGRATION_SQLS = (
     f"ALTER TABLE {TARGET_TABLE} ADD COLUMN IF NOT EXISTS {CONFLICT_KEY} TEXT;",
+    f"ALTER TABLE {TARGET_TABLE} ADD COLUMN IF NOT EXISTS scraped_at DATE;",
+    f"ALTER TABLE {TARGET_TABLE} ALTER COLUMN scraped_at TYPE DATE USING scraped_at::date;",
     f"""
     WITH backfilled AS (
         SELECT
