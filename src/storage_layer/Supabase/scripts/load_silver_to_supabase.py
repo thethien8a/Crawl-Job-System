@@ -48,10 +48,6 @@ _CLEANED_TO_TARGET = {
 }
 
 _FRESHNESS_COLUMNS = (
-    "scraped_at",
-    "crawled_at",
-    "created_at",
-    "updated_at",
     "year",
     "month",
     "day",
