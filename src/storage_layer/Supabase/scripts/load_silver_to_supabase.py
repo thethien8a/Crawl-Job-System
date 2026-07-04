@@ -41,6 +41,24 @@ from .connection_config import get_connection
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+_CLEANED_TO_TARGET = {
+    "clean_job_title": "job_title",
+    "clean_location": "location",
+    "clean_company_name": "company_name",
+}
+
+_FRESHNESS_COLUMNS = (
+    "scraped_at",
+    "crawled_at",
+    "created_at",
+    "updated_at",
+    "year",
+    "month",
+    "day",
+)
+_DEDUP_SORT_PREFIX = "__dedup_sort_"
+
+
 def _load_site(conn, site: str, from_date: str, to_date: str) -> int:
     """Upsert one site's Silver slice into Supabase. Returns rows upserted."""
     lazy_df = get_jobs_silver_by_site(site, SILVER_ENTITY_NAME, from_date, to_date)
@@ -48,38 +66,9 @@ def _load_site(conn, site: str, from_date: str, to_date: str) -> int:
         logger.info("No Silver data for %s in %s..%s", site, from_date, to_date)
         return 0
 
-    # Silver layer produces both raw and cleaned columns (e.g. job_title + clean_job_title).
-    # Map cleaned column names to the target Supabase column names so the frontend
-    # receives cleaned values while the DB schema stays unchanged.
-    _CLEANED_TO_TARGET = {
-        "clean_job_title": "job_title",
-        "clean_location": "location",
-        "clean_company_name": "company_name",
-    }
-
     available_columns = set(lazy_df.collect_schema().names())
-    select_exprs = []
-    for col in JOB_DATA_COLUMNS:
-        cleaned_src = next(
-            (c for c, t in _CLEANED_TO_TARGET.items() if t == col), None
-        )
-        if cleaned_src:
-            select_exprs.append(pl.col(cleaned_src).alias(col))
-        elif col == CONFLICT_KEY:
-            select_exprs.append(_unique_url_select_expr(available_columns, site))
-        else:
-            select_exprs.append(pl.col(col))
-
-    df = (
-        lazy_df
-        .select(select_exprs)
-        .filter(
-            pl.col(CONFLICT_KEY).is_not_null()
-            & (pl.col(CONFLICT_KEY).str.strip_chars() != "")
-        )
-        .unique(subset=[CONFLICT_KEY], keep="any")
-        .collect()
-    )
+    select_exprs = _job_data_select_exprs(available_columns, site)
+    df = _deduplicate_latest_jobs(lazy_df, select_exprs, available_columns)
 
     if df.is_empty():
         logger.info("Silver returned 0 rows for %s after dedup", site)
@@ -94,6 +83,67 @@ def _load_site(conn, site: str, from_date: str, to_date: str) -> int:
     conn.commit()
     logger.info("Successfully upserted %d rows for %s", upserted, site)
     return upserted
+
+
+def _job_data_select_exprs(available_columns: set[str], site: str) -> list[pl.Expr]:
+    select_exprs = []
+    for col in JOB_DATA_COLUMNS:
+        cleaned_src = next(
+            (c for c, t in _CLEANED_TO_TARGET.items() if t == col), None
+        )
+        if cleaned_src:
+            select_exprs.append(pl.col(cleaned_src).alias(col))
+        elif col == CONFLICT_KEY:
+            select_exprs.append(_unique_url_select_expr(available_columns, site))
+        else:
+            select_exprs.append(pl.col(col))
+    return select_exprs
+
+
+def _deduplicate_latest_jobs(
+    lazy_df: pl.LazyFrame,
+    select_exprs: list[pl.Expr],
+    available_columns: set[str],
+) -> pl.DataFrame:
+    sort_column_aliases = _dedup_sort_column_aliases(available_columns)
+    projected_exprs = [
+        *select_exprs,
+        *(
+            pl.col(column).alias(alias)
+            for column, alias in sort_column_aliases
+        ),
+    ]
+
+    filtered = (
+        lazy_df
+        .select(projected_exprs)
+        .filter(
+            pl.col(CONFLICT_KEY).is_not_null()
+            & (pl.col(CONFLICT_KEY).str.strip_chars() != "")
+        )
+    )
+
+    if sort_column_aliases:
+        filtered = filtered.sort(
+            [alias for _, alias in sort_column_aliases],
+            descending=True,
+            nulls_last=True,
+        )
+
+    return (
+        filtered
+        .unique(subset=[CONFLICT_KEY], keep="first", maintain_order=True)
+        .select(JOB_DATA_COLUMNS)
+        .collect()
+    )
+
+
+def _dedup_sort_column_aliases(available_columns: set[str]) -> list[tuple[str, str]]:
+    return [
+        (column, f"{_DEDUP_SORT_PREFIX}{column}")
+        for column in _FRESHNESS_COLUMNS
+        if column in available_columns
+    ]
 
 
 def _unique_url_select_expr(available_columns: set[str], site: str) -> pl.Expr:

@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Luồng xử lý khi user submit CV PDF</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: rgba(255, 255, 255, 0.08);
+      --panel-strong: rgba(255, 255, 255, 0.13);
+      --line: rgba(255, 255, 255, 0.22);
+      --text: #eef4ff;
+      --muted: #a9b7d0;
+      --blue: #72d2ff;
+      --green: #8ff0b2;
+      --yellow: #ffd36e;
+      --pink: #ff8ab3;
+      --violet: #bca3ff;
+      --danger: #ff6f79;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.38);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: "Segoe UI", "Noto Sans", sans-serif;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(114, 210, 255, 0.22), transparent 34%),
+        radial-gradient(circle at 84% 12%, rgba(188, 163, 255, 0.20), transparent 30%),
+        radial-gradient(circle at 48% 92%, rgba(143, 240, 178, 0.14), transparent 36%),
+        var(--bg);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, black, transparent 88%);
+    }
+
+    .page {
+      position: relative;
+      width: min(1440px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 48px 0 64px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 28px;
+      align-items: end;
+      margin-bottom: 34px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--green);
+      background: rgba(143, 240, 178, 0.08);
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 18px 0 14px;
+      font-size: clamp(38px, 5vw, 74px);
+      line-height: 0.94;
+      letter-spacing: -0.06em;
+    }
+
+    .lead {
+      max-width: 780px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    .formula-card {
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background: linear-gradient(150deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .formula-card strong {
+      display: block;
+      margin-bottom: 12px;
+      color: var(--yellow);
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    code {
+      color: #f6fbff;
+      font-family: "Cascadia Code", Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    .overview {
+      position: relative;
+      margin: 28px 0 22px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 34px;
+      background: linear-gradient(150deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .overview::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      background: radial-gradient(circle at 22% 18%, rgba(114, 210, 255, 0.18), transparent 32%),
+        radial-gradient(circle at 80% 76%, rgba(255, 211, 110, 0.13), transparent 30%);
+      pointer-events: none;
+    }
+
+    .overview-title {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .overview svg {
+      position: relative;
+      display: block;
+      width: 100%;
+      height: auto;
+      min-height: 560px;
+    }
+
+    .svg-label {
+      font-family: "Segoe UI", "Noto Sans", sans-serif;
+      fill: var(--text);
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .svg-small {
+      font-family: "Segoe UI", "Noto Sans", sans-serif;
+      fill: var(--muted);
+      font-size: 12px;
+    }
+
+    .svg-code {
+      font-family: "Cascadia Code", Consolas, monospace;
+      fill: #dfeaff;
+      font-size: 11px;
+    }
+
+    .map {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr 1fr;
+      gap: 18px;
+      align-items: stretch;
+      margin-top: 28px;
+    }
+
+    .lane {
+      min-height: 100%;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+    }
+
+    .lane-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .badge {
+      padding: 5px 9px;
+      border-radius: 999px;
+      color: var(--bg);
+      background: var(--blue);
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .step {
+      position: relative;
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 12px;
+      min-height: 92px;
+      margin-bottom: 14px;
+      padding: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 22px;
+      background: var(--panel);
+    }
+
+    .step::after {
+      content: "";
+      position: absolute;
+      left: 36px;
+      bottom: -16px;
+      width: 2px;
+      height: 16px;
+      background: linear-gradient(var(--line), transparent);
+    }
+
+    .step:last-child::after {
+      display: none;
+    }
+
+    .number {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 15px;
+      color: var(--bg);
+      background: var(--green);
+      font-weight: 900;
+    }
+
+    .step h2 {
+      margin: 0 0 6px;
+      font-size: 17px;
+      letter-spacing: -0.02em;
+    }
+
+    .step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .server .number {
+      background: var(--yellow);
+    }
+
+    .qdrant .number {
+      background: var(--violet);
+    }
+
+    .danger-note .number {
+      background: var(--danger);
+    }
+
+    .connector {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 90px;
+      color: var(--blue);
+      font-family: "Cascadia Code", Consolas, monospace;
+      font-size: 13px;
+    }
+
+    .decision {
+      margin: 14px 0;
+      padding: 18px;
+      border: 1px dashed rgba(255, 211, 110, 0.55);
+      border-radius: 22px;
+      background: rgba(255, 211, 110, 0.08);
+    }
+
+    .decision h2 {
+      margin: 0 0 8px;
+      color: var(--yellow);
+      font-size: 16px;
+    }
+
+    .decision p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .panel {
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: var(--panel);
+      backdrop-filter: blur(14px);
+    }
+
+    .panel h2 {
+      margin: 0 0 14px;
+      font-size: 24px;
+      letter-spacing: -0.04em;
+    }
+
+    .panel ul {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .timeline-row {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 18px;
+      align-items: start;
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .time {
+      color: var(--green);
+      font-weight: 800;
+    }
+
+    .timeline-row p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .pill {
+      padding: 8px 11px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.05);
+      font-size: 13px;
+    }
+
+    @media (max-width: 1100px) {
+      header,
+      .map,
+      .section-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .overview {
+        overflow-x: auto;
+      }
+
+      .overview svg {
+        min-width: 1040px;
+      }
+
+      .connector {
+        min-height: 24px;
+        justify-content: flex-start;
+      }
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+        color: #111827;
+      }
+
+      body::before {
+        display: none;
+      }
+
+      .lane,
+      .panel,
+      .formula-card {
+        box-shadow: none;
+        background: #ffffff;
+        color: #111827;
+        border-color: #d1d5db;
+      }
+
+      .lead,
+      .step p,
+      .panel ul,
+      .timeline-row p,
+      .lane-title {
+        color: #374151;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <section>
+        <span class="eyebrow">CV Recommendation Flow · MVP-first</span>
+        <h1>User submit CV PDF thì backend làm gì?</h1>
+        <p class="lead">
+          File này mô tả luồng request thật phía sau nút submit: browser gửi CV, backend parse toàn bộ nội dung CV,
+          extract skill kể cả trong project cá nhân, gọi Gemini embedding, search Qdrant, fallback nếu filter quá hẹp,
+          rồi re-rank bằng semantic + skill + experience + location.
+        </p>
+        <div class="legend">
+          <span class="pill">Không lưu CV gốc trong MVP</span>
+          <span class="pill">Location/exp do user nhập</span>
+          <span class="pill">Skill extract trên toàn bộ CV</span>
+          <span class="pill">Qdrant chỉ là serving index</span>
+        </div>
+      </section>
+
+      <aside class="formula-card">
+        <strong>Công thức rank cuối</strong>
+        <code>final = 0.50 * cosine
+      + 0.30 * skill_overlap
+      + 0.12 * experience_match
+      + 0.08 * location_match</code>
+      </aside>
+    </header>
+
+    <section class="overview" aria-label="Flowchart tổng quan khi submit CV">
+      <div class="overview-title">
+        <span>Sơ đồ tổng quan dễ nhìn</span>
+        <span class="badge">Submit CV → Top 10 jobs</span>
+      </div>
+
+      <svg viewBox="0 0 1280 620" role="img" aria-labelledby="flowTitle flowDesc">
+        <title id="flowTitle">Luồng xử lý CV recommendation</title>
+        <desc id="flowDesc">Sơ đồ từ frontend upload CV, backend parse và embed, Qdrant search, backend rerank, frontend hiển thị kết quả.</desc>
+
+        <defs>
+          <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#000000" flood-opacity="0.30" />
+          </filter>
+          <linearGradient id="clientGrad" x1="0" x2="1">
+            <stop offset="0" stop-color="#8ff0b2" stop-opacity="0.95" />
+            <stop offset="1" stop-color="#72d2ff" stop-opacity="0.95" />
+          </linearGradient>
+          <linearGradient id="serverGrad" x1="0" x2="1">
+            <stop offset="0" stop-color="#ffd36e" stop-opacity="0.95" />
+            <stop offset="1" stop-color="#ff8ab3" stop-opacity="0.95" />
+          </linearGradient>
+          <linearGradient id="qdrantGrad" x1="0" x2="1">
+            <stop offset="0" stop-color="#bca3ff" stop-opacity="0.95" />
+            <stop offset="1" stop-color="#72d2ff" stop-opacity="0.95" />
+          </linearGradient>
+          <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+            <path d="M2,2 L10,6 L2,10 Z" fill="#dfeaff" />
+          </marker>
+          <marker id="arrowBlue" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+            <path d="M2,2 L10,6 L2,10 Z" fill="#72d2ff" />
+          </marker>
+        </defs>
+
+        <rect x="24" y="26" width="1232" height="568" rx="30" fill="rgba(255,255,255,0.045)" stroke="rgba(255,255,255,0.14)" />
+
+        <rect x="60" y="58" width="340" height="500" rx="26" fill="rgba(143,240,178,0.06)" stroke="rgba(143,240,178,0.22)" />
+        <rect x="470" y="58" width="340" height="500" rx="26" fill="rgba(255,211,110,0.06)" stroke="rgba(255,211,110,0.24)" />
+        <rect x="880" y="58" width="340" height="500" rx="26" fill="rgba(188,163,255,0.06)" stroke="rgba(188,163,255,0.24)" />
+
+        <text x="88" y="94" class="svg-label">1. Frontend</text>
+        <text x="498" y="94" class="svg-label">2. FastAPI Backend</text>
+        <text x="908" y="94" class="svg-label">3. Qdrant Search Index</text>
+
+        <g filter="url(#softShadow)">
+          <rect x="92" y="132" width="276" height="82" rx="18" fill="url(#clientGrad)" />
+          <text x="116" y="164" fill="#0b1020" font-size="18" font-weight="900" font-family="Segoe UI, sans-serif">User submit form</text>
+          <text x="116" y="190" fill="#172033" font-size="12" font-family="Segoe UI, sans-serif">CV PDF/DOCX + location + years_exp</text>
+
+          <rect x="502" y="118" width="276" height="72" rx="18" fill="rgba(255,255,255,0.11)" stroke="rgba(255,255,255,0.2)" />
+          <text x="526" y="150" class="svg-label">Validate file</text>
+          <text x="526" y="174" class="svg-small">type, size, pages, parseable text</text>
+
+          <rect x="502" y="220" width="276" height="78" rx="18" fill="rgba(255,255,255,0.11)" stroke="rgba(255,255,255,0.2)" />
+          <text x="526" y="252" class="svg-label">Parse + clean full CV</text>
+          <text x="526" y="276" class="svg-small">không lưu CV gốc trong MVP</text>
+
+          <rect x="502" y="328" width="276" height="88" rx="18" fill="url(#serverGrad)" />
+          <text x="526" y="360" fill="#0b1020" font-size="18" font-weight="900" font-family="Segoe UI, sans-serif">Extract skills toàn CV</text>
+          <text x="526" y="386" fill="#172033" font-size="12" font-family="Segoe UI, sans-serif">bắt skill trong project/work experience</text>
+
+          <rect x="502" y="446" width="276" height="78" rx="18" fill="rgba(255,255,255,0.11)" stroke="rgba(255,255,255,0.2)" />
+          <text x="526" y="478" class="svg-label">Embed CV query</text>
+          <text x="526" y="502" class="svg-code">Gemini · RETRIEVAL_QUERY · 768d</text>
+
+          <rect x="912" y="118" width="276" height="84" rx="18" fill="url(#qdrantGrad)" />
+          <text x="936" y="150" fill="#0b1020" font-size="18" font-weight="900" font-family="Segoe UI, sans-serif">jobs_v1 có sẵn</text>
+          <text x="936" y="176" fill="#172033" font-size="12" font-family="Segoe UI, sans-serif">Silver → job text → embedding document</text>
+
+          <rect x="912" y="252" width="276" height="92" rx="18" fill="rgba(255,255,255,0.11)" stroke="rgba(255,255,255,0.2)" />
+          <text x="936" y="284" class="svg-label">Strict vector search</text>
+          <text x="936" y="308" class="svg-small">deadline + location + min_exp</text>
+          <text x="936" y="328" class="svg-small">nếu ít kết quả → fallback rộng hơn</text>
+
+          <rect x="912" y="386" width="276" height="76" rx="18" fill="rgba(255,255,255,0.11)" stroke="rgba(255,255,255,0.2)" />
+          <text x="936" y="418" class="svg-label">Candidate jobs</text>
+          <text x="936" y="442" class="svg-small">top 50–100 + payload + cosine</text>
+
+          <rect x="502" y="548" width="686" height="50" rx="18" fill="rgba(255,255,255,0.10)" stroke="rgba(255,255,255,0.20)" />
+          <text x="526" y="579" class="svg-label">Re-rank → final score → matched skills → Top 10 response</text>
+
+          <rect x="92" y="432" width="276" height="92" rx="18" fill="rgba(255,255,255,0.11)" stroke="rgba(255,255,255,0.2)" />
+          <text x="116" y="464" class="svg-label">Render results</text>
+          <text x="116" y="488" class="svg-small">% phù hợp, skill trùng, company, salary</text>
+        </g>
+
+        <path d="M368 173 C430 173 430 154 502 154" fill="none" stroke="#dfeaff" stroke-width="3" marker-end="url(#arrow)" />
+        <path d="M640 190 L640 220" fill="none" stroke="#dfeaff" stroke-width="3" marker-end="url(#arrow)" />
+        <path d="M640 298 L640 328" fill="none" stroke="#dfeaff" stroke-width="3" marker-end="url(#arrow)" />
+        <path d="M640 416 L640 446" fill="none" stroke="#dfeaff" stroke-width="3" marker-end="url(#arrow)" />
+        <path d="M778 485 C840 485 850 298 912 298" fill="none" stroke="#72d2ff" stroke-width="3" stroke-dasharray="8 7" marker-end="url(#arrowBlue)" />
+        <path d="M1050 344 L1050 386" fill="none" stroke="#dfeaff" stroke-width="3" marker-end="url(#arrow)" />
+        <path d="M1050 462 C1050 530 950 548 845 548" fill="none" stroke="#dfeaff" stroke-width="3" marker-end="url(#arrow)" />
+        <path d="M502 574 C430 574 410 478 368 478" fill="none" stroke="#8ff0b2" stroke-width="3" marker-end="url(#arrowBlue)" />
+
+        <text x="792" y="468" class="svg-code">cv_vector</text>
+        <text x="1058" y="374" class="svg-code">payload</text>
+        <text x="392" y="528" class="svg-code">JSON response</text>
+      </svg>
+    </section>
+
+    <section class="map" aria-label="Sơ đồ luồng submit CV">
+      <div class="lane">
+        <div class="lane-title">Browser / React UI <span class="badge">Client</span></div>
+
+        <article class="step">
+          <div class="number">1</div>
+          <div>
+            <h2>User chọn CV PDF/DOCX</h2>
+            <p>Frontend kiểm tra nhanh đuôi file, dung lượng <= 5MB và hiển thị form chọn location + số năm kinh nghiệm.</p>
+          </div>
+        </article>
+
+        <article class="step">
+          <div class="number">2</div>
+          <div>
+            <h2>Submit form</h2>
+            <p>React gửi <code>multipart/form-data</code> tới <code>POST /api/v1/recommend</code>: file CV, locations, years_experience.</p>
+          </div>
+        </article>
+
+        <article class="step">
+          <div class="number">12</div>
+          <div>
+            <h2>Nhận Top 10</h2>
+            <p>UI render badge % phù hợp, matched skills, location, salary, company và link job_url để user mở JD.</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="lane server">
+        <div class="lane-title">FastAPI Backend <span class="badge">Serving</span></div>
+
+        <article class="step">
+          <div class="number">3</div>
+          <div>
+            <h2>Validate request</h2>
+            <p>Backend kiểm tra định dạng PDF/DOCX, size, số trang. Nếu CV scan/ảnh không extract được text thì trả lỗi rõ ràng.</p>
+          </div>
+        </article>
+
+        <article class="step">
+          <div class="number">4</div>
+          <div>
+            <h2>Parse CV thành text</h2>
+            <p>Dùng pdfplumber/python-docx để lấy text thô. MVP xử lý trong memory, không upload CV gốc lên S3.</p>
+          </div>
+        </article>
+
+        <article class="step">
+          <div class="number">5</div>
+          <div>
+            <h2>Clean text</h2>
+            <p>Chuẩn hóa whitespace/ký tự lỗi để text ổn định hơn trước khi extract skill và embed.</p>
+          </div>
+        </article>
+
+        <article class="step">
+          <div class="number">6</div>
+          <div>
+            <h2>Extract skills toàn CV</h2>
+            <p>Chạy taxonomy trên toàn bộ CV text, không chỉ mục Skills. Vì vậy skill trong project/work experience vẫn được bắt.</p>
+          </div>
+        </article>
+
+        <article class="step">
+          <div class="number">7</div>
+          <div>
+            <h2>Embed CV query</h2>
+            <p>Gọi Gemini <code>gemini-embedding-001</code> với task type <code>RETRIEVAL_QUERY</code>, output 768 chiều và L2-normalize.</p>
+          </div>
+        </article>
+
+        <div class="decision">
+          <h2>Quyết định quan trọng</h2>
+          <p>Location/experience không parse từ CV. User tự chọn trên UI vì nơi muốn làm và số năm ứng tuyển có thể khác thông tin trong CV.</p>
+        </div>
+
+        <article class="step">
+          <div class="number">10</div>
+          <div>
+            <h2>Re-rank hybrid</h2>
+            <p>Backend tính lại score từ Qdrant cosine, skill_overlap, experience_match và location_match. Sau đó sort giảm dần.</p>
+          </div>
+        </article>
+
+        <article class="step">
+          <div class="number">11</div>
+          <div>
+            <h2>Dựng explanation</h2>
+            <p>Trả matched_skills theo từng nhóm. Nếu matched skills rỗng, dùng explanation fallback: phù hợp theo nội dung CV/JD.</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="lane qdrant">
+        <div class="lane-title">Qdrant + Index có sẵn <span class="badge">Search</span></div>
+
+        <article class="step">
+          <div class="number">0</div>
+          <div>
+            <h2>Job đã được index trước</h2>
+            <p>Lakehouse-Lite đọc Silver parquet, build job text, embed bằng <code>RETRIEVAL_DOCUMENT</code>, upsert vào collection <code>jobs_v1</code>.</p>
+          </div>
+        </article>
+
+        <article class="step">
+          <div class="number">8</div>
+          <div>
+            <h2>Strict query</h2>
+            <p>Search vector với filter: job chưa hết hạn, location user chọn, min_exp_level <= years_experience hoặc null.</p>
+          </div>
+        </article>
+
+        <article class="step danger-note">
+          <div class="number">?</div>
+          <div>
+            <h2>Nếu strict quá ít kết quả</h2>
+            <p>Backend query fallback rộng hơn: giữ deadline filter nhưng bỏ/nới location-exp. Sau đó re-rank để job phù hợp vẫn lên đầu.</p>
+          </div>
+        </article>
+
+        <article class="step">
+          <div class="number">9</div>
+          <div>
+            <h2>Trả candidate jobs</h2>
+            <p>Qdrant trả top 50-100 job gồm vector score và payload: job_url, title, company, location, exp, salary, require_* skills.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-grid">
+      <article class="panel">
+        <h2>Luồng request theo thời gian</h2>
+        <div class="timeline">
+          <div class="timeline-row">
+            <div class="time">T-0</div>
+            <p>Trước khi user submit, Qdrant đã có job vectors từ Silver parquet. Đây là lý do request realtime không cần đọc S3/Supabase.</p>
+          </div>
+          <div class="timeline-row">
+            <div class="time">0-2s</div>
+            <p>Validate file, parse PDF/DOCX, clean text. Nếu không có text vì CV scan/ảnh, trả lỗi sớm.</p>
+          </div>
+          <div class="timeline-row">
+            <div class="time">2-5s</div>
+            <p>Extract skills toàn CV và gọi Gemini để tạo embedding query.</p>
+          </div>
+          <div class="timeline-row">
+            <div class="time">5-8s</div>
+            <p>Search Qdrant strict. Nếu ít kết quả thì fallback query rộng hơn.</p>
+          </div>
+          <div class="timeline-row">
+            <div class="time">8-10s</div>
+            <p>Re-rank, dựng explanation, trả Top 10 cho frontend.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <h2>Input/output của từng lớp</h2>
+        <ul>
+          <li><strong>Frontend gửi:</strong> CV file, locations optional, years_experience optional.</li>
+          <li><strong>Parser tạo:</strong> full_cv_text đã clean.</li>
+          <li><strong>Taxonomy tạo:</strong> CV skills theo nhóm require_programming_languages, frameworks, tools, cloud, knowledge...</li>
+          <li><strong>Gemini tạo:</strong> cv_vector 768 chiều dùng để query.</li>
+          <li><strong>Qdrant trả:</strong> candidate jobs + cosine score + payload.</li>
+          <li><strong>Re-ranker trả:</strong> Top 10 đã sort + score cuối + matched_skills để giải thích.</li>
+        </ul>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

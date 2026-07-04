@@ -73,6 +73,54 @@ CREATE TABLE IF NOT EXISTS {TARGET_TABLE} (
 SCHEMA_MIGRATION_SQLS = (
     f"ALTER TABLE {TARGET_TABLE} ADD COLUMN IF NOT EXISTS {CONFLICT_KEY} TEXT;",
     f"""
+    WITH backfilled AS (
+        SELECT
+            ctid,
+            CASE
+                WHEN lower(trim(source_site)) = 'itviec'
+                    THEN regexp_replace(regexp_replace(job_url, '[?#].*$', ''), '-[0-9]+/?$', '')
+                ELSE regexp_replace(job_url, '[?#].*$', '')
+            END AS backfilled_unique_url
+        FROM {TARGET_TABLE}
+        WHERE {CONFLICT_KEY} IS NULL
+          AND job_url IS NOT NULL
+    ),
+    duplicate_null_rows AS (
+        SELECT ctid
+        FROM (
+            SELECT
+                ctid,
+                row_number() OVER (
+                    PARTITION BY backfilled_unique_url
+                    ORDER BY ctid DESC
+                ) AS duplicate_rank
+            FROM backfilled
+            WHERE backfilled_unique_url IS NOT NULL
+              AND btrim(backfilled_unique_url) <> ''
+        ) ranked
+        WHERE duplicate_rank > 1
+    ),
+    rows_conflicting_with_existing_key AS (
+        SELECT backfilled.ctid
+        FROM backfilled
+        WHERE backfilled.backfilled_unique_url IS NOT NULL
+          AND btrim(backfilled.backfilled_unique_url) <> ''
+          AND EXISTS (
+              SELECT 1
+              FROM {TARGET_TABLE} existing
+              WHERE existing.{CONFLICT_KEY} = backfilled.backfilled_unique_url
+          )
+    ),
+    rows_to_delete AS (
+        SELECT ctid FROM duplicate_null_rows
+        UNION
+        SELECT ctid FROM rows_conflicting_with_existing_key
+    )
+    DELETE FROM {TARGET_TABLE} target
+    USING rows_to_delete
+    WHERE target.ctid = rows_to_delete.ctid;
+    """,
+    f"""
     UPDATE {TARGET_TABLE}
     SET {CONFLICT_KEY} = CASE
         WHEN lower(trim(source_site)) = 'itviec'
