@@ -17,6 +17,11 @@ DUCKDB_TYPE_BY_PYTHON_TYPE = {
 }
 LOSSY_CAST_TYPES = {"BIGINT", "DOUBLE", "BOOLEAN"}
 JOB_ID_COLUMN = "job_id"
+ITVIEC_SOURCE_SITE = "itviec"
+VIETNAMWORKS_SOURCE_SITE = "vietnamworks"
+URL_DECORATION_PATTERN = "[?#].*$"
+ITVIEC_NUMERIC_SUFFIX_PATTERN = "-[0-9]+/?$"
+VIETNAMWORKS_JOB_ID_SUFFIX_PATTERN = "--[0-9]+-jv/?$"
 LEGACY_COLUMN_FALLBACKS = {
     "clean_company_name": ("company_name_canonical", "company_name"),
     "clean_job_title": ("job_title",),
@@ -49,6 +54,9 @@ def build_select_list(column_names: list[str], available_columns: set[str]) -> s
 def _select_expression(column_name: str, available_columns: set[str]) -> str:
     column_type = GOLD_COLUMN_TYPES.get(column_name, "VARCHAR")
 
+    if column_name == "job_url":
+        return build_unique_url_expression(available_columns, alias="job_url")
+
     if column_name == "unique_url":
         return build_unique_url_expression(available_columns)
 
@@ -79,10 +87,14 @@ def build_unique_url_expression(
     alias: str = "unique_url",
 ) -> str:
     source_site_expression = "lower(trim(CAST(source_site AS VARCHAR)))"
-    cleaned_job_url = "regexp_replace(CAST(job_url AS VARCHAR), '[?#].*$', '')"
+    cleaned_job_url = (
+        f"regexp_replace(CAST(job_url AS VARCHAR), '{URL_DECORATION_PATTERN}', '')"
+    )
     derived_unique_url = f"""CASE
-                WHEN {source_site_expression} = 'itviec'
-                    THEN regexp_replace({cleaned_job_url}, '-[0-9]+/?$', '')
+                WHEN {source_site_expression} = '{ITVIEC_SOURCE_SITE}'
+                    THEN regexp_replace({cleaned_job_url}, '{ITVIEC_NUMERIC_SUFFIX_PATTERN}', '')
+                WHEN {source_site_expression} = '{VIETNAMWORKS_SOURCE_SITE}'
+                    THEN regexp_replace({cleaned_job_url}, '{VIETNAMWORKS_JOB_ID_SUFFIX_PATTERN}', '')
                 ELSE {cleaned_job_url}
             END"""
 
