@@ -1,15 +1,30 @@
-from pathlib import Path
-from src.storage_layer.MinIO_S3.layer.silver.utils.config_loader import load_config_yaml
+import os
 
-## Local Path
-CONFIG_PATH = Path(__file__).parent
-YAML_PATH = CONFIG_PATH / "bucket.yml"
+from dotenv import load_dotenv
 
-# Single source of truth for the entity name used across the medallion
-# pipeline (Bronze S3 key, Silver S3 key, Gold table name, Supabase table).
+load_dotenv()
+
 DEFAULT_ENTITY_NAME = "jobs"
+BRONZE_BUCKET_ENV = "S3_BRONZE_BUCKET"
+SILVER_BUCKET_ENV = "S3_SILVER_BUCKET"
 
-## Bucket Paths
+
+def get_bronze_bucket_name() -> str:
+    return _get_bucket_name(BRONZE_BUCKET_ENV)
+
+
+def get_silver_bucket_name() -> str:
+    return _get_bucket_name(SILVER_BUCKET_ENV)
+
+
+def _get_bucket_name(env_name: str) -> str:
+    bucket_name = os.getenv(env_name, "").strip()
+    if bucket_name:
+        return bucket_name
+
+    raise ValueError(f"Set {env_name} in .env.")
+
+
 class BronzeBucketPaths:
     def __init__(self, source_name: str, entity_name: str = DEFAULT_ENTITY_NAME, year: str = "*", month: str = "*", day: str = "*"):
         self.source_name = source_name
@@ -17,11 +32,10 @@ class BronzeBucketPaths:
         self.year = year
         self.month = month
         self.day = day
-        self.config = load_config_yaml(YAML_PATH)
         self.bronze_bucket_name = self._get_bronze_bucket_name()
         
     def _get_bronze_bucket_name(self):
-        return self.config["bucket_name"]["bronze_layer"]
+        return get_bronze_bucket_name()
 
     def get_prefix(self) -> str:
         """
@@ -50,11 +64,10 @@ class SilverBucketPaths:
         self.year = year
         self.month = month
         self.day = day
-        self.config = load_config_yaml(YAML_PATH)
         self.silver_bucket_name = self._get_silver_bucket_name()
 
     def _get_silver_bucket_name(self):
-        return self.config["bucket_name"]["silver_layer"]
+        return get_silver_bucket_name()
 
     def get_prefix(self) -> str:
         """

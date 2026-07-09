@@ -7,8 +7,7 @@ Usage:
 
 import argparse
 
-from src.storage_layer.MinIO_S3.config.path import YAML_PATH
-from src.storage_layer.MinIO_S3.layer.silver.utils.config_loader import load_config_yaml
+from src.storage_layer.MinIO_S3.config.path import get_bronze_bucket_name
 from src.crawl_layer.utils.loader import load_to_bronze
 
 if __name__ == "__main__":
@@ -21,6 +20,5 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    config = load_config_yaml(YAML_PATH)
-    bronze_bucket_name = config["bucket_name"]["bronze_layer"]
+    bronze_bucket_name = get_bronze_bucket_name()
     load_to_bronze(bronze_bucket_name, source_filter=args.source)

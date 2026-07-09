@@ -83,9 +83,8 @@ Lakehouse-Lite/
 │   ├── storage_layer/
 │   │   ├── MinIO_S3/             # AWS S3 object storage (legacy folder name kept)
 │   │   │   ├── config/
-│   │   │   │   ├── bucket.yml    # Bucket names (thethien-lakehouse-lite-bronze/silver)
 │   │   │   │   ├── key.py        # AWS credentials from .env
-│   │   │   │   └── path.py       # BronzeBucketPaths, SilverBucketPaths, DEFAULT_ENTITY_NAME
+│   │   │   │   └── path.py       # Bucket env resolution and S3 path helpers
 │   │   │   ├── utils/
 │   │   │   │   └── minio_connect.py  # get_s3_client()
 │   │   │   └── layer/
@@ -274,6 +273,7 @@ cp .env.example .env
 Required variables:
 - `ITVIEC_USERNAME` / `ITVIEC_PASSWORD` — for ITviec crawler login
 - `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` / `AWS_REGION` — for AWS S3
+- `S3_BRONZE_BUCKET` / `S3_SILVER_BUCKET` — globally unique S3 bucket names for Bronze and Silver
 - `SUPABASE_HOST` / `SUPABASE_PORT` / `SUPABASE_DATABASE` / `SUPABASE_USER` / `SUPABASE_PASSWORD` — for Supabase serving layer
 - `MOTHERDUCK_TOKEN` — for MotherDuck Gold layer
 - `GOOGLE_SHEETS_CREDENTIALS_FILE` / `GOOGLE_SHEETS_SPREADSHEET_ID` — optional Google Sheets source for Silver seeds and `clusters_review.csv`
@@ -286,7 +286,7 @@ For Airflow orchestration, also configure:
 
 ### 3. Provision S3 Buckets
 
-Create the two buckets referenced in [`src/storage_layer/MinIO_S3/config/bucket.yml`](src/storage_layer/MinIO_S3/config/bucket.yml) (`thethien-lakehouse-lite-bronze` and `thethien-lakehouse-lite-silver`). Rename them in the YAML if those names are already taken globally on S3.
+Create the two buckets named by `S3_BRONZE_BUCKET` and `S3_SILVER_BUCKET` in your `.env`. S3 bucket names are globally unique, so choose names specific to your AWS account/project.
 
 The IAM user needs `s3:ListBucket`, `s3:GetObject`, `s3:PutObject`, `s3:DeleteObject` on both buckets.
 
@@ -484,7 +484,7 @@ Visit `http://<host>:8081/` for a landing page linking to both dashboards (or `/
 - Code uses absolute `src.*` imports; `src/` has no package `__init__.py`. All commands must run from the repo root.
 - There is no pytest/lint/format/typecheck config. Files under `src/**/test/` are ad-hoc scripts, not formal test suites.
 - The [`requirements.txt`](requirements.txt) is the only pinned dependency source.
-- Bucket names are **hardcoded** in [`bucket.yml`](src/storage_layer/MinIO_S3/config/bucket.yml). Fork or rename them — they are globally unique on S3.
+- Bucket names come from `S3_BRONZE_BUCKET` and `S3_SILVER_BUCKET` in `.env`. They must be globally unique on S3.
 - The `MinIO_S3` folder name is **legacy** — it talks to real AWS S3 via `boto3`, not MinIO.
 - The Dockerfile uses `python:3.11-slim` (not 3.13). `IS_DOCKER=1` is set so modules can branch on container vs. local execution.
 - `CHROME_BIN=/usr/bin/google-chrome` is set explicitly in the Dockerfile because nodriver's `find_chrome_executable` is unreliable inside DockerOperator-spawned containers. On `amd64` the image installs Google Chrome; on other CPU architectures it installs distro Chromium and symlinks it to the same path.

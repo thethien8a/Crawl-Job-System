@@ -1,19 +1,15 @@
 import os
 from dataclasses import fields
-from pathlib import Path
 
 from dotenv import load_dotenv
 
-from src.storage_layer.MinIO_S3.config.path import DEFAULT_ENTITY_NAME
-from src.storage_layer.MinIO_S3.layer.silver.utils.config_loader import load_config_yaml
+from src.storage_layer.MinIO_S3.config.path import DEFAULT_ENTITY_NAME, get_silver_bucket_name
 from src.storage_layer.MotherDuck.schema.data_class import GoldJobItem
 
 load_dotenv()
 
-S3_CONFIG_PATH = Path(__file__).parents[1] / "MinIO_S3" / "config" / "bucket.yml"
-
 MOTHERDUCK_TOKEN = os.getenv("MOTHERDUCK_TOKEN")
-SILVER_BUCKET = load_config_yaml(S3_CONFIG_PATH)["bucket_name"]["silver_layer"]
+SILVER_BUCKET = get_silver_bucket_name()
 
 # MotherDuck target for the Gold layer. Override the database via .env if needed.
 MOTHERDUCK_DATABASE = os.getenv("MOTHERDUCK_DATABASE", "lakehouse-lite")
