@@ -723,9 +723,9 @@ Gold Layer Tables:
 |-------------|----------|
 | **Phiên bản** | 6.0.3 |
 | **Vai trò** | Phân tích file cấu hình YAML |
-| **Sử dụng trong** | `src/storage_layer/MinIO_S3/config/bucket.yml`, cấu hình Airflow |
+| **Sử dụng trong** | Các file YAML cấu hình phụ trợ và cấu hình Airflow |
 
-**Mục đích:** PyYAML đọc file cấu hình bucket (`bucket.yml`) định nghĩa tên bucket S3 Bronze và Silver, và phân tích các file cấu hình dựa trên YAML khác trong hệ thống.
+**Mục đích:** PyYAML phân tích các file cấu hình dựa trên YAML trong hệ thống; bucket S3 Bronze và Silver hiện được cấu hình qua `S3_BRONZE_BUCKET` và `S3_SILVER_BUCKET` trong `.env`.
 
 **Lý do lựa chọn:**
 - **Cấu hình dễ đọc:** YAML dễ đọc hơn JSON cho file cấu hình, giảm lỗi khi chỉnh sửa tên bucket hoặc cài đặt Airflow.

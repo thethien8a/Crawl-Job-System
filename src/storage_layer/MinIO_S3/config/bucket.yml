@@ -1,3 +1,0 @@
-bucket_name:
-  bronze_layer: thethien-lakehouse-lite-bronze
-  silver_layer: thethien-lakehouse-lite-silver

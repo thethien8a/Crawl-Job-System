@@ -96,7 +96,7 @@ def build_dim_date_sql(dim_date_table: str) -> str:
     CREATE OR REPLACE TABLE {dim_date_table} AS
     WITH calendar AS (
         SELECT CAST(d AS DATE) AS full_date
-        FROM generate_series(DATE '2023-01-01', DATE '2026-05-01', INTERVAL 1 DAY) AS g(d)
+        FROM generate_series(DATE '2023-01-01', current_date + INTERVAL 1 YEAR, INTERVAL 1 DAY) AS g(d)
     )
     SELECT
         CAST(strftime(full_date, '%Y%m%d') AS INTEGER) AS date_key,

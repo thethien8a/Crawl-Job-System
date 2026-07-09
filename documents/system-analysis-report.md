@@ -476,7 +476,7 @@ Power BI đọc dữ liệu Gold hoặc dữ liệu phân tích đã được ch
 |----------|------|
 | Import tuyệt đối từ src | Repository không có __init__.py ở src, phải chạy command từ repo root |
 | Cần Chrome/headless browser | ITviec và VietnamWorks cần nodriver/Chrome, container cần shm_size đủ lớn |
-| Bucket S3 hardcoded trong config | Tên bucket trong bucket.yml cần đổi nếu dùng chung AWS account |
+| Bucket S3 cấu hình qua `.env` | `S3_BRONZE_BUCKET` và `S3_SILVER_BUCKET` phải là tên bucket unique trong AWS account |
 | .env không commit | Credential bắt buộc phải cấu hình ngoài Git |
 | Không có test/lint formal | Verification chủ yếu bằng dry-run, max-pages nhỏ và dashboard/log |
 | Phụ thuộc dịch vụ AI/vector | Recommendation cần Gemini API và Qdrant Cloud hoạt động ổn định |

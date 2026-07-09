@@ -16,7 +16,7 @@ This file provides guidance to agents when working with code in this repository.
 ## Critical gotchas
 
 - `src/` has **no `__init__.py`** — all imports use absolute `src.*`; always `cd` to repo root before `python -m`. Dockerfile sets `PYTHONPATH=/app` to mirror this.
-- Bucket names are **hardcoded** in `src/storage_layer/MinIO_S3/config/bucket.yml` — globally unique on S3; rename if sharing an AWS account.
+- Bucket names come from `S3_BRONZE_BUCKET` and `S3_SILVER_BUCKET` in `.env` — they must be globally unique on S3.
 - `MinIO_S3` folder name is **legacy** — talks to real AWS S3 via `boto3`, not MinIO. The `get_s3_client()` in `minio_connect.py` is the single S3 client factory.
 - Silver schema is derived from `SilverJobItem` dataclass in `data_model/data_class.py` — add/remove fields there, not in hand-edited schema strings. `silver_schema_to_polars()` auto-generates the Polars schema.
 - Bronze S3 key uses `source/` prefix; Silver uses `source_site=` — both implemented via `BronzeBucketPaths`/`SilverBucketPaths` in `config/path.py`.

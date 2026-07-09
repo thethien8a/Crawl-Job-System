@@ -17,7 +17,7 @@ def upload_silver_parquet(
     """Upload a Polars DataFrame as Parquet to MinIO Silver bucket.
 
     Path structure: {entity_name}/source_site={source_site}/year=YYYY/month=MM/day=DD/clean_/clean_bronze_{timestamp}.parquet
-    Bucket name is resolved from bucket.yml via SilverBucketPaths.
+    Bucket name is resolved from .env via SilverBucketPaths.
     """
     # Parse date for directory structure
     dt = datetime.strptime(date_str, "%Y-%m-%d")

@@ -193,7 +193,7 @@ Thiết kế rule:
 
 ### 5.2. Bronze upload
 
-Bronze entrypoint nằm tại [main.py](../src/storage_layer/MinIO_S3/layer/bronze/main.py). Module này đọc bucket name từ [bucket.yml](../src/storage_layer/MinIO_S3/config/bucket.yml), sau đó gọi load_to_bronze trong [loader.py](../src/crawl_layer/utils/loader.py).
+Bronze entrypoint nằm tại [main.py](../src/storage_layer/MinIO_S3/layer/bronze/main.py). Module này đọc bucket name từ biến môi trường `S3_BRONZE_BUCKET`, sau đó gọi load_to_bronze trong [loader.py](../src/crawl_layer/utils/loader.py).
 
 Quy trình Bronze:
 
