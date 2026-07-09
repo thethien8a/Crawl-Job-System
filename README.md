@@ -1,10 +1,10 @@
 # Lakehouse-Lite
 
-A lightweight data lakehouse that crawls job postings from three Vietnamese recruitment platforms — **TopCV**, **ITviec**, and **VietnamWorks** — with a focus on data roles (Data Engineer, Data Analyst, Data Scientist, AI/ML, BI).
+Một data lakehouse nhẹ (lightweight) thu thập (crawl) tin tuyển dụng từ ba nền tảng tuyển dụng của Việt Nam — **TopCV**, **ITviec**, và **VietnamWorks** — tập trung vào các vị trí liên quan đến dữ liệu (Data Engineer, Data Analyst, Data Scientist, AI/ML, BI).
 
-The pipeline follows the **medallion architecture** (Bronze → Silver → Gold) on AWS S3, serves cleaned data to **Supabase** (OLTP, for a job-search frontend) and **MotherDuck** (OLAP, for BI), and is orchestrated end-to-end by **Apache Airflow** running every task inside Docker containers.
+Pipeline tuân theo **medallion architecture** (kiến trúc phân lớp: Bronze → Silver → Gold) trên AWS S3, cung cấp dữ liệu đã làm sạch cho **Supabase** (OLTP, dùng cho frontend tìm kiếm việc làm) và **MotherDuck** (OLAP, dùng cho BI), được điều phối toàn bộ bởi **Apache Airflow** chạy mọi tác vụ bên trong Docker container.
 
-## Architecture
+## Kiến trúc hệ thống
 
 ```
 ╭──────────────────────────── Crawl Layer ────────────────────────────╮
@@ -37,68 +37,68 @@ The pipeline follows the **medallion architecture** (Bronze → Silver → Gold)
                                                           Power BI dashboard
 ```
 
-Everything is scheduled by **Airflow** (`DockerOperator`) — DAGs never import business logic; they only run `python -m …` commands inside the `lakehouse-crawler` image.
+Mọi thứ được lên lịch bởi **Airflow** (`DockerOperator`) — DAG không bao giờ import business logic; chúng chỉ chạy lệnh `python -m …` bên trong image `lakehouse-crawler`.
 
-## Tech stack
+## Công nghệ sử dụng
 
-| Layer | Technology |
+| Lớp | Công nghệ |
 |---|---|
-| Crawling | [nodriver](https://github.com/ultrafunkamsterdam/nodriver) (headless Chrome), `curl_cffi`, `aiohttp`, `parsel` |
-| Validation | Great Expectations |
+| Thu thập dữ liệu | [nodriver](https://github.com/ultrafunkamsterdam/nodriver) (headless Chrome), `curl_cffi`, `aiohttp`, `parsel` |
+| Kiểm tra dữ liệu | Great Expectations |
 | Bronze / Silver | AWS S3 (`boto3`), Polars, FlashText, RapidFuzz |
-| Gold | MotherDuck (DuckDB) — reads S3 parquet via hive partitioning |
-| Serving | Supabase (PostgreSQL, `psycopg2`) |
-| Taxonomy seeds | Google Sheets (`gspread`) with local CSV fallback |
-| Orchestration | Apache Airflow 2.10 + DockerOperator |
-| Monitoring | Prometheus, Grafana, StatsD exporter, Caddy, Nginx, Altair dashboards |
+| Gold | MotherDuck (DuckDB) — đọc S3 parquet qua hive partitioning |
+| Phục vụ dữ liệu | Supabase (PostgreSQL, `psycopg2`) |
+| Seed phân loại | Google Sheets (`gspread`) với fallback CSV cục bộ |
+| Điều phối | Apache Airflow 2.10 + DockerOperator |
+| Giám sát | Prometheus, Grafana, StatsD exporter, Caddy, Nginx, Altair dashboards |
 | BI | Power BI (`src/bi_report_layer/analysis_dashboard.pbix`) |
 
-## Project structure
+## Cấu trúc dự án
 
 ```
 Lakehouse-Lite/
 ├── Dockerfile                     # python:3.11-slim + Chrome + xvfb (pipeline image)
 ├── requirements.txt
-├── .env.example                   # copy to .env and fill in
-├── init.sh                        # start both stacks locally
-├── init_orchestration.sh          # deploy Airflow stack (EC2-A)
-├── init_monitoring.sh             # deploy monitoring stack (EC2-B)
-├── documents/                     # design docs, deployment & security guides
+├── .env.example                   # copy thành .env và điền thông tin
+├── init.sh                        # khởi động cả hai stack cục bộ
+├── init_orchestration.sh          # triển khai Airflow stack (EC2-A)
+├── init_monitoring.sh             # triển khai monitoring stack (EC2-B)
+├── documents/                     # tài liệu thiết kế, hướng dẫn triển khai & bảo mật
 └── src/
     ├── crawl_layer/
-    │   ├── crawler/{topcv,itviec,vietnamworks}/   # one module per site
-    │   ├── data_model/data_class.py               # JobItem + per-site dataclasses
-    │   └── temp_data/                             # local JSONL staging (git-ignored)
+    │   ├── crawler/{topcv,itviec,vietnamworks}/   # một module cho mỗi site
+    │   ├── data_model/data_class.py               # JobItem + dataclass cho từng site
+    │   └── temp_data/                             # JSONL staging cục bộ (git-ignored)
     ├── storage_layer/
-    │   ├── MinIO_S3/              # legacy name — talks to real AWS S3
+    │   ├── MinIO_S3/              # tên legacy — thực tế kết nối AWS S3 thật
     │   │   └── layer/
-    │   │       ├── local_temp/validation/         # Great Expectations checks
-    │   │       ├── bronze/main.py                 # gzip + upload + clear temp
+    │   │       ├── local_temp/validation/         # kiểm tra Great Expectations
+    │   │       ├── bronze/main.py                 # gzip + upload + xóa temp
     │   │       └── silver/
     │   │           ├── cleaning/{common,clean_topcv,clean_itviec,clean_vnworks}/
-    │   │           ├── data_model/data_class.py   # SilverJobItem = source of truth
-    │   │           └── seeds/                     # taxonomy CSVs (skills, industries…)
+    │   │           ├── data_model/data_class.py   # SilverJobItem = nguồn sự thật
+    │   │           └── seeds/                     # CSV phân loại (skills, industries…)
     │   ├── Supabase/scripts/load_silver_to_supabase.py
     │   └── MotherDuck/scripts/{load_silver_to_gold,load_taxonomy_to_gold}.py
     ├── orchestration_layer/
-    │   ├── dags/                  # Airflow DAGs (pure orchestrators)
+    │   ├── dags/                  # Airflow DAGs (chỉ điều phối, không có logic)
     │   └── docker-compose.yaml    # Airflow + Postgres + statsd-exporter
     ├── monitoring_layer/
     │   ├── docker-compose.yaml    # Caddy + Prometheus + Grafana + Nginx
-    │   ├── business/              # Bronze/Silver HTML dashboard generators (Altair)
+    │   ├── business/              # trình tạo dashboard HTML Bronze/Silver (Altair)
     │   └── grafana/ prometheus/ nginx/ Caddyfile
     └── bi_report_layer/analysis_dashboard.pbix
 ```
 
-## Getting started
+## Bắt đầu nhanh
 
-### Prerequisites
+### Yêu cầu trước
 
 - Python 3.11, Docker + Docker Compose v2
-- AWS S3 buckets (bronze + silver), Supabase project, MotherDuck token
-- Google Chrome (installed automatically inside the Docker image)
+- AWS S3 buckets (bronze + silver), dự án Supabase, token MotherDuck
+- Google Chrome (được cài tự động trong Docker image)
 
-### Setup
+### Cài đặt
 
 ```bash
 git clone https://github.com/thethien8a/Crawl-Job-System.git
@@ -108,28 +108,28 @@ python -m venv venv
 venv/Scripts/activate        # Windows  (Linux/macOS: source venv/bin/activate)
 pip install -r requirements.txt
 
-cp .env.example .env         # then fill in credentials
+cp .env.example .env         # sau đó điền thông tin đăng nhập
 ```
 
-Key variables in `.env` (see `.env.example` for the full annotated list):
+Biến quan trọng trong `.env` (xem `.env.example` để có danh sách đầy đủ):
 
-| Variable | Purpose |
+| Biến | Mục đích |
 |---|---|
-| `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | S3 access |
-| `S3_BRONZE_BUCKET` / `S3_SILVER_BUCKET` | bucket names (must be globally unique) |
-| `ITVIEC_USERNAME` / `ITVIEC_PASSWORD` | ITviec crawler auto-login |
-| `SUPABASE_*` | Supabase Postgres connection |
-| `MOTHERDUCK_TOKEN` / `MOTHERDUCK_DATABASE` | Gold layer |
-| `GOOGLE_SHEETS_*` | taxonomy seeds source (optional, falls back to local CSV) |
+| `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | truy cập S3 |
+| `S3_BRONZE_BUCKET` / `S3_SILVER_BUCKET` | tên bucket (phải unique toàn cầu) |
+| `ITVIEC_USERNAME` / `ITVIEC_PASSWORD` | tự động đăng nhập ITviec crawler |
+| `SUPABASE_*` | kết nối Supabase Postgres |
+| `MOTHERDUCK_TOKEN` / `MOTHERDUCK_DATABASE` | lớp Gold |
+| `GOOGLE_SHEETS_*` | nguồn seed phân loại (tùy chọn, fallback về CSV cục bộ) |
 | `FERNET_KEY`, `WEBSERVER_SECRET_KEY`, `_AIRFLOW_WWW_USER_*` | Airflow |
 
-> **Note:** all `python -m` commands must run from the repo root — `src/` has no `__init__.py` and imports are absolute (`src.*`).
+> **Lưu ý:** mọi lệnh `python -m` phải chạy từ thư mục gốc repo — `src/` không có `__init__.py` và import dùng đường dẫn tuyệt đối (`src.*`).
 
-## Running the pipeline manually
+## Chạy pipeline thủ công
 
-The stages must run in order:
+Các giai đoạn phải chạy theo thứ tự:
 
-**1. Crawl** → appends to `src/crawl_layer/temp_data/<source>_jobs_YYYYMMDD.jsonl`
+**1. Crawl (thu thập)** → ghi thêm vào `src/crawl_layer/temp_data/<source>_jobs_YYYYMMDD.jsonl`
 
 ```bash
 python -m src.crawl_layer.crawler.topcv        --keyword "data" --max-pages 2
@@ -137,7 +137,7 @@ python -m src.crawl_layer.crawler.itviec       --keyword "data" --max-pages 2
 python -m src.crawl_layer.crawler.vietnamworks --keyword "data" --max-pages 2
 ```
 
-**2. Validate** (optional) — Great Expectations checks on temp JSONL
+**2. Validate (kiểm tra — tùy chọn)** — Great Expectations kiểm tra trên file JSONL tạm
 
 ```bash
 python -m src.storage_layer.MinIO_S3.layer.local_temp.validation.topcv_validate
@@ -145,92 +145,92 @@ python -m src.storage_layer.MinIO_S3.layer.local_temp.validation.itviec_validate
 python -m src.storage_layer.MinIO_S3.layer.local_temp.validation.vnworks_validate
 ```
 
-**3. Bronze** — gzip temp JSONL → upload to S3 → clear local temp files
+**3. Bronze** — nén gzip JSONL tạm → upload lên S3 → xóa file tạm cục bộ
 
 ```bash
 python -m src.storage_layer.MinIO_S3.layer.bronze.main --source topcv
-# omit --source to upload all sources
+# bỏ --source để upload tất cả nguồn
 ```
 
-**4. Silver** — per-site cleaning (Polars), writes parquet partitioned by `source_site=/year=/month=/day=`
+**4. Silver** — làm sạch theo từng site (Polars), ghi parquet phân vùng theo `source_site=/year=/month=/day=`
 
 ```bash
 python -m src.storage_layer.MinIO_S3.layer.silver.cleaning.clean_topcv.main_process   --from_date 2026-01-01 --to_date 2026-01-07
 python -m src.storage_layer.MinIO_S3.layer.silver.cleaning.clean_itviec.main_process  --from_date 2026-01-01 --to_date 2026-01-07
 python -m src.storage_layer.MinIO_S3.layer.silver.cleaning.clean_vnworks.main_process --from_date 2026-01-01 --to_date 2026-01-07
-# add --no_save for a dry run, --export_parquet to dump local debug parquet
+# thêm --no_save để chạy thử, --export_parquet để xuất parquet cục bộ dùng debug
 ```
 
-**5. Supabase** — UPSERT cleaned jobs into Postgres (conflict key: `job_url`)
+**5. Supabase** — UPSERT jobs đã làm sạch vào Postgres (khóa xung đột: `job_url`)
 
 ```bash
 python -m src.storage_layer.Supabase.scripts.load_silver_to_supabase --from_date 2026-01-01 --to_date 2026-01-07
 ```
 
-**6. Gold (MotherDuck)** — DuckDB reads Silver parquet straight from S3 and builds fact/dim tables
+**6. Gold (MotherDuck)** — DuckDB đọc trực tiếp Silver parquet từ S3 và xây dựng bảng fact/dim
 
 ```bash
 python -m src.storage_layer.MotherDuck.scripts.load_silver_to_gold
-python -m src.storage_layer.MotherDuck.scripts.load_taxonomy_to_gold   # seed dimension tables
+python -m src.storage_layer.MotherDuck.scripts.load_taxonomy_to_gold   # seed các bảng dimension
 ```
 
-## Running with Airflow (production)
+## Chạy với Airflow (production)
 
-Build the pipeline image and start everything:
+Build pipeline image và khởi động mọi thứ:
 
 ```bash
-./init_orchestration.sh   # builds lakehouse-crawler:latest + starts Airflow stack
-./init_monitoring.sh      # starts Caddy + Prometheus + Grafana + dashboards
-# or, for a single local machine:
+./init_orchestration.sh   # build lakehouse-crawler:latest + khởi động Airflow stack
+./init_monitoring.sh      # khởi động Caddy + Prometheus + Grafana + dashboards
+# hoặc, cho một máy cục bộ:
 ./init.sh
 ```
 
 - Airflow UI: `http://localhost:8080`
-- Monitoring (via Caddy, Basic Auth): `http://<MONITORING_DOMAIN>/business/` and `/grafana/`
+- Giám sát (qua Caddy, Basic Auth): `http://<MONITORING_DOMAIN>/business/` và `/grafana/`
 
-### DAG overview
+### Tổng quan DAG
 
-| DAG | Schedule | What it does |
+| DAG | Lịch trình | Chức năng |
 |---|---|---|
-| `crawl_topcv` / `crawl_itviec` / `crawl_vietnamworks` | every 3h (staggered :00/:15/:30) | crawl → trigger validate+bronze DAG |
-| `validate_bronze_<site>` | triggered | Great Expectations validate → upload to Bronze |
-| `silver_<site>` | every 8h | clean Bronze → Silver parquet |
-| `supabase_load_all` | every 6h | Silver → Supabase UPSERT |
-| `load_silver_to_gold` | every 6h | Silver → MotherDuck Gold tables |
-| `load_taxonomy_to_gold` | manual | seed CSVs → Gold dimension tables |
-| `cluster_company_name` | manual | RapidFuzz clustering for company-name canonicalization review |
-| `generate_bronze_dashboard` / `generate_silver_dashboard` | daily | render static HTML data-quality dashboards |
+| `crawl_topcv` / `crawl_itviec` / `crawl_vietnamworks` | mỗi 3 giờ (lệch nhau :00/:15/:30) | crawl → trigger DAG validate+bronze |
+| `validate_bronze_<site>` | được trigger | Great Expectations validate → upload lên Bronze |
+| `silver_<site>` | mỗi 8 giờ | làm sạch Bronze → Silver parquet |
+| `supabase_load_all` | mỗi 6 giờ | Silver → Supabase UPSERT |
+| `load_silver_to_gold` | mỗi 6 giờ | Silver → bảng Gold MotherDuck |
+| `load_taxonomy_to_gold` | manual | seed CSV → bảng Gold dimension |
+| `cluster_company_name` | manual | RapidFuzz clustering để chuẩn hóa tên công ty |
+| `generate_bronze_dashboard` / `generate_silver_dashboard` | hằng ngày | render dashboard chất lượng dữ liệu HTML tĩnh |
 
-DAG params can be overridden per-run via Airflow UI *Trigger DAG w/ config*, e.g. `{"keyword": "python", "max_pages": 5}` for crawls or `{"from_date": "...", "to_date": "..."}` for silver/supabase.
+Tham số DAG có thể override theo từng lần chạy qua Airflow UI *Trigger DAG w/ config*, ví dụ `{"keyword": "python", "max_pages": 5}` cho crawl hoặc `{"from_date": "...", "to_date": "..."}` cho silver/supabase.
 
-## Deployment
+## Triển khai
 
-The production setup splits across two EC2 instances sharing an EFS volume:
+Hệ thống production phân tán trên hai EC2 chia sẻ volume EFS:
 
-- **EC2-A (orchestration):** Airflow + Postgres + statsd-exporter + pipeline containers — needs more CPU/RAM (headless Chrome).
-- **EC2-B (monitoring):** Caddy (TLS + Basic Auth) + Prometheus + Grafana + Nginx static dashboards.
+- **EC2-A (điều phối):** Airflow + Postgres + statsd-exporter + pipeline containers — cần nhiều CPU/RAM hơn (headless Chrome).
+- **EC2-B (giám sát):** Caddy (TLS + Basic Auth) + Prometheus + Grafana + Nginx static dashboards.
 
-See [`documents/deploy-two-ec2-efs.md`](documents/deploy-two-ec2-efs.md) and [`documents/security-group-guide.md`](documents/security-group-guide.md) for the full runbook.
+Xem [`documents/deploy-two-ec2-efs.md`](documents/deploy-two-ec2-efs.md) và [`documents/security-group-guide.md`](documents/security-group-guide.md) để có hướng dẫn đầy đủ.
 
-## Documentation
+## Tài liệu
 
-| Document | Content |
+| Tài liệu | Nội dung |
 |---|---|
-| [`documents/system-design-report.md`](documents/system-design-report.md) | full architecture & layer design |
-| [`documents/system-analysis-report.md`](documents/system-analysis-report.md) | requirements, data sources, data models |
-| [`documents/technology-stack-documentation.md`](documents/technology-stack-documentation.md) | every technology used and why |
-| [`documents/build-crawl-module-guide.md`](documents/build-crawl-module-guide.md) | how to add a new site crawler |
-| [`documents/cv-recommendation-feature.md`](documents/cv-recommendation-feature.md) | planned CV → job recommendation feature (Qdrant) |
-| [`AGENTS.md`](AGENTS.md) | pipeline gotchas & notes for AI coding agents |
+| [`documents/system-design-report.md`](documents/system-design-report.md) | kiến trúc đầy đủ & thiết kế các lớp |
+| [`documents/system-analysis-report.md`](documents/system-analysis-report.md) | yêu cầu, nguồn dữ liệu, mô hình dữ liệu |
+| [`documents/technology-stack-documentation.md`](documents/technology-stack-documentation.md) | mọi công nghệ được dùng và lý do |
+| [`documents/build-crawl-module-guide.md`](documents/build-crawl-module-guide.md) | cách thêm crawler cho site mới |
+| [`documents/cv-recommendation-feature.md`](documents/cv-recommendation-feature.md) | tính năng gợi ý CV → việc làm dự kiến (Qdrant) |
+| [`AGENTS.md`](AGENTS.md) | lưu ý & gotchas pipeline cho AI coding agents |
 
-## Notes & gotchas
+## Lưu ý & gotchas
 
-- The `MinIO_S3` folder name is **legacy** — it talks to real AWS S3 via `boto3`.
-- Bronze upload is **destructive** locally: it deletes the source's temp JSONL after a successful upload.
-- The Silver schema is generated from the `SilverJobItem` dataclass — add/remove fields there, never in hand-written schema strings.
-- ITviec and VietnamWorks crawlers patch a Windows-only `ProactorEventLoop` teardown bug for nodriver — don't remove it.
-- No pytest/CI yet — verify changes with `--no_save` (silver) or `--max-pages 1` (crawlers).
+- Tên thư mục `MinIO_S3` là **legacy** — thực tế kết nối tới AWS S3 thật qua `boto3`.
+- Upload Bronze **xóa dữ liệu cục bộ**: xóa file JSONL tạm của nguồn sau khi upload thành công.
+- Schema Silver được sinh từ dataclass `SilverJobItem` — thêm/xóa field ở đó, không bao giờ sửa string schema thủ công.
+- Crawler ITviec và VietnamWorks patch lỗi teardown `ProactorEventLoop` chỉ dành cho Windows của nodriver — đừng xóa.
+- Chưa có pytest/CI — kiểm tra thay đổi bằng `--no_save` (silver) hoặc `--max-pages 1` (crawlers).
 
-## License
+## Giấy phép
 
 [Apache 2.0](LICENSE)
