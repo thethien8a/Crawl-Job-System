@@ -443,7 +443,7 @@
         <h1>User submit CV PDF thì backend làm gì?</h1>
         <p class="lead">
           File này mô tả luồng request thật phía sau nút submit: browser gửi CV, backend parse toàn bộ nội dung CV,
-          extract skill kể cả trong project cá nhân, gọi Gemini embedding, search Qdrant, fallback nếu filter quá hẹp,
+          extract skill kể cả trong project cá nhân, gọi OpenRouter embedding, search Qdrant, fallback nếu filter quá hẹp,
           rồi re-rank bằng semantic + skill + experience + location.
         </p>
         <div class="legend">
@@ -526,10 +526,10 @@
 
           <rect x="502" y="446" width="276" height="78" rx="18" fill="rgba(255,255,255,0.11)" stroke="rgba(255,255,255,0.2)" />
           <text x="526" y="478" class="svg-label">Embed CV query</text>
-          <text x="526" y="502" class="svg-code">Gemini · RETRIEVAL_QUERY · 768d</text>
+          <text x="526" y="502" class="svg-code">OpenRouter · search_query · 768d</text>
 
           <rect x="912" y="118" width="276" height="84" rx="18" fill="url(#qdrantGrad)" />
-          <text x="936" y="150" fill="#0b1020" font-size="18" font-weight="900" font-family="Segoe UI, sans-serif">jobs_v1 có sẵn</text>
+          <text x="936" y="150" fill="#0b1020" font-size="18" font-weight="900" font-family="Segoe UI, sans-serif">jobs_v2 có sẵn</text>
           <text x="936" y="176" fill="#172033" font-size="12" font-family="Segoe UI, sans-serif">Silver → job text → embedding document</text>
 
           <rect x="912" y="252" width="276" height="92" rx="18" fill="rgba(255,255,255,0.11)" stroke="rgba(255,255,255,0.2)" />
@@ -632,7 +632,7 @@
           <div class="number">7</div>
           <div>
             <h2>Embed CV query</h2>
-            <p>Gọi Gemini <code>gemini-embedding-001</code> với task type <code>RETRIEVAL_QUERY</code>, output 768 chiều và L2-normalize.</p>
+            <p>Gọi OpenRouter <code>openai/text-embedding-3-small</code> với input type <code>search_query</code>, output 768 chiều và L2-normalize.</p>
           </div>
         </article>
 
@@ -665,7 +665,7 @@
           <div class="number">0</div>
           <div>
             <h2>Job đã được index trước</h2>
-            <p>Lakehouse-Lite đọc Silver parquet, build job text, embed bằng <code>RETRIEVAL_DOCUMENT</code>, upsert vào collection <code>jobs_v1</code>.</p>
+            <p>Lakehouse-Lite đọc Silver parquet, build job text, embed bằng <code>search_document</code>, upsert vào collection <code>jobs_v2</code>.</p>
           </div>
         </article>
 

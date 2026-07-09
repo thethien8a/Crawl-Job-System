@@ -263,6 +263,42 @@ def create_supabase_dag() -> DAG:
 
     return dag
 
+
+def create_qdrant_index_dag() -> DAG:
+    """Return a DAG that indexes recent Silver data into Qdrant."""
+    dag_id = "qdrant_index"
+    today = datetime.now().strftime("%Y-%m-%d")
+    default_from_date = (datetime.now() - timedelta(days=2)).strftime("%Y-%m-%d")
+
+    with DAG(
+        dag_id=dag_id,
+        description="Index recent Silver job vectors into Qdrant (DockerOperator)",
+        schedule=MID_NIGHT_SCHEDULE,
+        start_date=START_DATE,
+        catchup=False,
+        max_active_runs=1,
+        default_args=DEFAULT_ARGS,
+        params={
+            "from_date": default_from_date,
+            "to_date": today,
+            "retention_days": 30,
+        },
+        tags=["lakehouse", "qdrant", "recommendation"],
+    ) as dag:
+
+        qdrant_index = DockerOperator(
+            task_id="qdrant_index",
+            command=(
+                "python -m src.storage_layer.Qdrant.scripts.index_silver_to_qdrant "
+                "--from_date {{ params.from_date }} --to_date {{ params.to_date }} "
+                "--retention_days {{ params.retention_days }}"
+            ),
+            **COMMON_DOCKER_KWARGS,
+        )
+
+    return dag
+
+
 def create_load_silver_to_gold_dag() -> DAG:
     """Return a DAG that loads all Silver data into MotherDuck Gold layer.
 
