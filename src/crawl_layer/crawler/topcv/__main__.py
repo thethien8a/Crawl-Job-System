@@ -26,6 +26,8 @@ async def _run(keyword: str, max_pages: int, headless: bool) -> None:
     )
     
     items = await crawler.crawl()
+    if not items:
+        raise RuntimeError(f"{crawler.__class__.__name__} produced no items")
 
     logging.info("Exported %d items to topcv_jobs.jsonl", len(items))
 
