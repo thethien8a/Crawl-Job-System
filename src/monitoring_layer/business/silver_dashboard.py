@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import logging
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 from html import escape
 from pathlib import Path
 
@@ -15,9 +15,9 @@ from src.monitoring_layer.business.dashboard_common import (
     DEFAULT_MAX_TABLE_ROWS,
     DEFAULT_SOURCE_SITES,
     DateRange,
+    S3ObjectInfo,
     dashboard_css,
     discover_silver_sources,
-    first_or_default,
     last_or_default,
     list_silver_objects,
     ordered_unique,
@@ -39,6 +39,7 @@ from src.storage_layer.MinIO_S3.utils.minio_connect import get_s3_client
 logger = logging.getLogger(__name__)
 
 DEFAULT_OUTPUT_PATH = Path("src/monitoring_layer/business/reports/silver_dashboard.html")
+DEFAULT_REVIEW_WINDOW_DAYS = 7
 BENEFIT_SAMPLE_SIZE = 50
 REQUIREMENT_SAMPLE_SIZE = 50
 CLUSTERS_REVIEW_FILE_NAME = "clusters_review.csv"
@@ -94,11 +95,15 @@ def resolve_sources(client: object, bucket_name: str, config: SilverDashboardCon
     return ordered_unique((*DEFAULT_SOURCE_SITES, *discovered))
 
 
-def resolve_date_range(config: SilverDashboardConfig, silver_objects: list[object]) -> DateRange:
+def resolve_date_range(config: SilverDashboardConfig, silver_objects: list[S3ObjectInfo]) -> DateRange:
     discovered_dates = sorted({item.collection_date for item in silver_objects})
-    today = date.today()
-    from_date = date.fromisoformat(config.from_date) if config.from_date else first_or_default(discovered_dates, today)
-    to_date = date.fromisoformat(config.to_date) if config.to_date else last_or_default(discovered_dates, today)
+    latest_date = last_or_default(discovered_dates, date.today())
+    to_date = date.fromisoformat(config.to_date) if config.to_date else latest_date
+    from_date = (
+        date.fromisoformat(config.from_date)
+        if config.from_date
+        else to_date - timedelta(days=DEFAULT_REVIEW_WINDOW_DAYS - 1)
+    )
     if from_date > to_date:
         raise ValueError("Resolved Silver dashboard date range is invalid")
     return DateRange(from_date=from_date, to_date=to_date)
