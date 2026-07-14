@@ -43,7 +43,7 @@ SITE_CONFIGS: dict[str, dict[str, str]] = {
     },
 }
 
-MID_NIGHT_SCHEDULE = "0 0 * * *"
+DASHBOARD_SCHEDULE = "0 1 * * *"
 CLEAN_SCHEDULE = "0 */8 * * *"
 LOAD_SUPABASE_SCHEDULE = "0 */6 * * *"
 CRAWL_SCHEDULES = {
@@ -390,14 +390,14 @@ def create_cluster_company_name_dag() -> DAG:
 def create_bronze_dashboard_dag() -> DAG:
     """Return a DAG that generates the Bronze business dashboard.
 
-    Runs at midnight to generate a static HTML report from S3 Bronze objects.
+    Runs at 01:00 to generate a static HTML report from S3 Bronze objects.
     """
     dag_id = "generate_bronze_dashboard"
 
     with DAG(
         dag_id=dag_id,
         description="Generate Bronze business dashboard HTML (DockerOperator)",
-        schedule=MID_NIGHT_SCHEDULE,
+        schedule=DASHBOARD_SCHEDULE,
         start_date=START_DATE,
         catchup=False,
         max_active_runs=1,
@@ -417,14 +417,14 @@ def create_bronze_dashboard_dag() -> DAG:
 def create_silver_dashboard_dag() -> DAG:
     """Return a DAG that generates the Silver business dashboard.
 
-    Runs at midnight to generate a static HTML report from S3 Silver data.
+    Runs at 01:00 to generate a static HTML report from S3 Silver data.
     """
     dag_id = "generate_silver_dashboard"
 
     with DAG(
         dag_id=dag_id,
         description="Generate Silver business dashboard HTML (DockerOperator)",
-        schedule=MID_NIGHT_SCHEDULE,
+        schedule=DASHBOARD_SCHEDULE,
         start_date=START_DATE,
         catchup=False,
         max_active_runs=1,
