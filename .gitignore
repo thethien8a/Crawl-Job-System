@@ -13,7 +13,7 @@ __pycache__/
 venv/
 env/
 .venv/
-
+.kilo/
 # Build / Distribution
 build/
 dist/
