@@ -251,7 +251,7 @@ def load_unique_company_names_from_silver(
 
     return (
         pl.concat(frames, how="diagonal_relaxed")
-        .select(pl.col(SOURCE_COLUMN).str.to_uppercase().str.strip_chars())
+        .select(pl.col(SOURCE_COLUMN))
         .unique()
         .drop_nulls()
         .collect()

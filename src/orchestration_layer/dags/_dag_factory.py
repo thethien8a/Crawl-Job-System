@@ -42,7 +42,7 @@ SITE_CONFIGS: dict[str, dict[str, str]] = {
         "supabase_site": "itviec",
     },
 }
-
+MID_NIGHT_SCHEDULE = "0 0 * * *"
 DASHBOARD_SCHEDULE = "0 1 * * *"
 CLEAN_SCHEDULE = "0 */8 * * *"
 LOAD_SUPABASE_SCHEDULE = "0 */6 * * *"
