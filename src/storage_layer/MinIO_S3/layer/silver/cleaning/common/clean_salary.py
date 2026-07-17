@@ -51,7 +51,7 @@ def clean_salary(
     has_week = salary.str.contains(r"tuần")
     has_year = salary.str.contains(r"năm|year")
 
-    has_upto = salary.str.contains(r"(tới|đến|upto)")
+    has_upto = salary.str.contains(r"(tới|đến|upto|up to)")
     has_from = salary.str.contains(r"(từ|trên)")
     has_dash = salary.str.contains(r"-")
 
