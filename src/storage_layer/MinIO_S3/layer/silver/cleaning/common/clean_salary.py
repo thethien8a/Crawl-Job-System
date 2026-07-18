@@ -39,13 +39,15 @@ def clean_salary(
     
     # Dùng cho bước normalize: chỉ những đơn vị "lớn" (tr/triệu/tỷ) thì giữ dấu thập phân
     has_decimal_unit = salary.str.contains(r"(tr|triệu|tỷ)")
-    has_thousand_text = salary.str.contains(r"(nghìn|k)")
+    has_thousand_text = salary.str.contains(r"(nghìn|\d+(?:[.,]\d+)?\s*k\b)")
 
     # Bản gốc SQL dùng (tr|triệu|m) cho hệ số *1.000.000 — giữ nguyên (kể cả ký tự 'm' lẻ)
     has_million_text = salary.str.contains(r"(tr|triệu|m)")
     has_billion_text = salary.str.contains(r"tỷ")
-    has_any_unit = salary.str.contains(r"(usd|\$|nghìn|k|tr|triệu|tỷ)")
-    has_usd_k = salary.str.contains(r"\d+k")
+    has_any_unit = salary.str.contains(
+        r"(usd|\$|nghìn|\d+(?:[.,]\d+)?\s*k\b|tr|triệu|tỷ)"
+    )
+    has_usd_k = salary.str.contains(r"\d+(?:[.,]\d+)?\s*k\b")
 
     has_day = salary.str.contains(r"ngày")
     has_week = salary.str.contains(r"tuần")
@@ -78,14 +80,15 @@ def clean_salary(
     # 3. Hệ số đơn vị tiền tệ / độ lớn (thứ tự CASE phải khớp SQL gốc)
     unit_mult = (
         pl
-        .when(has_thousand_text).then(pl.lit(1_000.0))
-        .when(has_million_text).then(pl.lit(1_000_000.0))
-        .when(has_billion_text).then(pl.lit(1_000_000_000.0)).when(is_usd)
+        .when(is_usd)
         .then(
             pl.when(has_usd_k)
             .then(pl.lit(1_000.0 * USD_TO_VND_RATE))
             .otherwise(pl.lit(float(USD_TO_VND_RATE)))
-        )   
+        )
+        .when(has_thousand_text).then(pl.lit(1_000.0))
+        .when(has_million_text).then(pl.lit(1_000_000.0))
+        .when(has_billion_text).then(pl.lit(1_000_000_000.0))
         .otherwise(pl.lit(1.0))
     )
 
