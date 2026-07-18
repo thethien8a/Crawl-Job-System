@@ -8,7 +8,8 @@ Per-site flow:
     4. Stream rows in `BATCH_SIZE` chunks and UPSERT them on the conflict key.
 
 Per-site commits give partial progress on failure: a broken site rolls back
-its own batch but does not block the remaining sites.
+its own batch without blocking the remaining sites, then the process reports
+failure after every site has been attempted.
 
 Run:
     python -m src.storage_layer.Supabase.scripts.load_silver_to_supabase \
@@ -181,6 +182,7 @@ def main() -> None:
 
     sites_to_load = SITES
     grand_total = 0
+    failures: list[tuple[str, Exception]] = []
     with closing(get_connection()) as conn:
         # Ensure target table exists (idempotent)
         with conn.cursor() as cur:
@@ -192,12 +194,18 @@ def main() -> None:
         for site in sites_to_load:
             try:
                 grand_total += _load_site(conn, site, args.from_date, args.to_date)
-            except Exception:
+            except Exception as exc:
                 # Rollback the aborted transaction so the next site starts clean.
                 conn.rollback()
-                logger.exception("Failed loading site %s; skipping", site)
+                logger.exception("Failed loading site %s", site)
+                failures.append((site, exc))
 
     logger.info("Total upserted across all sites: %d", grand_total)
+    if failures:
+        failed_sites = ", ".join(site for site, _ in failures)
+        raise RuntimeError(
+            f"Supabase load failed for {len(failures)} site(s): {failed_sites}"
+        ) from failures[0][1]
 
 
 if __name__ == "__main__":
