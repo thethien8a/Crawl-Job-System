@@ -3,7 +3,7 @@ import json
 import os
 import sys
 from dataclasses import asdict
-
+from datetime import datetime
 # Thêm đường dẫn gốc vào sys.path để có thể import từ src
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")))
 
@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
 async def get_html():
-    url = "https://www.topcv.vn/brand/vus-etsc/tuyen-dung/nhan-vien-tu-van-tuyen-sinh-sales-data-san-thu-viec-full-luong-pc-an-trua-ho-tro-may-tinh-dien-thoai-tai-quan-9-thu-duc-j2226201.html?ta_source=JobSearchList_LinkDetail&u_sr_id=WvMJQ0qmcdEB7qGtgA9Z8L6XqVft3jGPss6V590W_1784357043"
+    url = "https://www.topcv.vn/brand/vus-etsc/tuyen-dung/nhan-vien-tu-van-tuyen-sinh-sales-data-san-thu-viec-full-luong-pc-an-trua-ho-tro-may-tinh-dien-thoai-tai-quan-9-thu-duc-j2226201.html?ta_source=JobSearchList_LinkDetail&u_sr_id=M87JskPRJwUM6DuV71PkcQutrrZLMXGICUFMSby8_1784365205"
 
     logger.info("Đang tải dữ liệu từ: %s", url)
     logger.info("Sử dụng TopcvHttpClient (curl_cffi với impersonate) để vượt qua chặn bot...")
@@ -24,7 +24,9 @@ async def get_html():
     async with TopcvHttpClient(concurrency=1, max_retries=3, request_delay=(1.0, 2.0)) as client:
         html = await client.fetch(url)
 
-        with open("sample_topcv_job.html", "w", encoding="utf-8") as f:
+        now_time = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+        with open(f"sample_topcv_job_{now_time}.html", "w", encoding="utf-8") as f:
             f.write(html)
 
         parser = TopcvParser()
@@ -35,7 +37,8 @@ async def get_html():
             job_dict = asdict(a)
             json_str = json.dumps(job_dict, ensure_ascii=False, indent=2)
             
-            output_file = "sample_topcv_job.json"
+            
+            output_file = f"sample_topcv_job_{now_time}.json"
             with open(output_file, "w", encoding="utf-8") as f:
                 f.write(json_str)
             logger.info("Đã lưu kết quả vào: %s", output_file)
