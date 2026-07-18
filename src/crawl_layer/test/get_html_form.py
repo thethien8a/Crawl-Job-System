@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
 async def get_html():
-    url = "https://www.topcv.vn/brand/fptis/tuyen-dung/lead-bi-engineer-j2150962.html"
+    url = "https://www.topcv.vn/brand/vus-etsc/tuyen-dung/nhan-vien-tu-van-tuyen-sinh-sales-data-san-thu-viec-full-luong-pc-an-trua-ho-tro-may-tinh-dien-thoai-tai-quan-9-thu-duc-j2226201.html?ta_source=JobSearchList_LinkDetail&u_sr_id=WvMJQ0qmcdEB7qGtgA9Z8L6XqVft3jGPss6V590W_1784357043"
 
     logger.info("Đang tải dữ liệu từ: %s", url)
     logger.info("Sử dụng TopcvHttpClient (curl_cffi với impersonate) để vượt qua chặn bot...")
