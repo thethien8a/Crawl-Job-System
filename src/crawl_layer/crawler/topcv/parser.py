@@ -67,18 +67,17 @@ class TopcvParser:
         item.job_deadline = self._extract_deadline(sel, is_brand)
         item.job_description = self._extract_paragraph(sel, "Mô tả công việc")
         item.requirements = self._extract_paragraph(sel, "Yêu cầu ứng viên")
-        item.benefits = self._extract_paragraph(sel, "Quyền lợi")
+        item.benefits = self._extract_paragraph(sel, "Quyền lợi ứng viên")
 
         return item
 
     # -- field extractors ---------------------------------------------------
     def _extract_title(self, sel: Selector, is_brand: bool) -> str | None:
-        title = self._extract_from_js(sel, "job_title")
-        if title:
-            return title.strip()
-
         if is_brand:
-            # Lấy chính xác h2 chứa title của job để không bị nhầm lẫn với các thẻ khác
+            parts = sel.css("h1.box-header-job__title ::text").getall()
+            title = join_clean(parts)
+            if title:
+                return title
             title = sel.css('h2.job-title::text').get()
             if not title:
                 title = sel.css('div.job-detail__info--title h1::text').get()
@@ -87,14 +86,23 @@ class TopcvParser:
                 title = join_clean(parts)
             return title
 
+        title = self._extract_from_js(sel, "job_title")
+        if title:
+            return title.strip()
         parts = sel.css("h1.box-header-job__title ::text").getall()
         return join_clean(parts)
 
     def _extract_company(self, sel: Selector, is_brand: bool) -> str | None:
         if is_brand:
-            company = sel.css(
-                'div[class="footer-info-content footer-info-company-name"]::text'
-            ).get()
+            company = sel.css("footer p.company-name::text").get()
+            if not company:
+                company = sel.css(
+                    "img.footer-logo + p.company-name::text"
+                ).get()
+            if not company:
+                company = sel.css(
+                    'div[class="footer-info-content footer-info-company-name"]::text'
+                ).get()
             if not company:
                 company = sel.css(
                     'h1[class="company-content__title--name"]::text'
@@ -127,6 +135,9 @@ class TopcvParser:
 
     def _extract_salary(self, sel: Selector, is_brand: bool) -> str | None:
         if is_brand:
+            salary = sel.css("span.box-header-job__salary--title::text").get()
+            if salary:
+                return salary.strip()
             return self._extract_label(sel, "Mức lương", True) or self._extract_label(
                 sel, "Thu nhập", True
             )
@@ -171,6 +182,12 @@ class TopcvParser:
 
     def _extract_deadline(self, sel: Selector, is_brand: bool) -> str | None:
         if is_brand:
+            deadline = sel.xpath(
+                '//p[contains(normalize-space(), "Hạn ứng tuyển")]'
+                '/span[contains(@class, "date")]/text()'
+            ).get()
+            if deadline:
+                return deadline.strip()
             deadline = self._extract_label(sel, "Hạn nộp hồ sơ", True)
             if deadline:
                 return deadline
@@ -204,10 +221,19 @@ class TopcvParser:
 
     def _extract_paragraph(self, sel: Selector, label_text: str) -> str | None:
         xp = (
-            f'//*[contains(text(), "{label_text}")]'
-            "/following-sibling::div[position()<=2]//text()"
+            '//div[contains(@class, "box-job-information-detail-item__title")]'
+            f'[.//h2[normalize-space()="{label_text}"]]'
+            '/following-sibling::div[contains(@class, '
+            '"box-job-information-detail-item__text")][1]//text()'
         )
-        return join_clean(sel.xpath(xp).getall())
+        parts = sel.xpath(xp).getall()
+        if not parts:
+            fallback_xp = (
+                f'//*[contains(text(), "{label_text}")]'
+                "/following-sibling::div[position()<=2]//text()"
+            )
+            parts = sel.xpath(fallback_xp).getall()
+        return join_clean(parts)
 
     @staticmethod
     def _extract_from_js(sel: Selector, field_name: str) -> str | None:

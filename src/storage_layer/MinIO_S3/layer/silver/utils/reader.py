@@ -47,8 +47,9 @@ def get_jobs_data_from_bronze(site: str, entity_name: str, from_date: str, to_da
                 s3_path = bucket_paths.get_files_path_json_gz()
                 valid_s3_paths.append(s3_path)
 
-        except Exception as e:
-            logger.error(f"Error checking S3 prefix {prefix}: {e}")
+        except Exception:
+            logger.exception("Error checking S3 prefix %s", prefix)
+            raise
             
         current_date += timedelta(days=1)
 
@@ -63,9 +64,9 @@ def get_jobs_data_from_bronze(site: str, entity_name: str, from_date: str, to_da
             ignore_errors=True
         )
         return df_lazy
-    except Exception as e:
-        logger.error(f"Error reading from MinIO: {e}")
-        return None
+    except Exception:
+        logger.exception("Error reading Bronze data from S3")
+        raise
 
 
 def get_jobs_silver_by_site(site: str, entity_name: str, from_date: str, to_date: str) -> pl.LazyFrame | None:
@@ -116,8 +117,9 @@ def get_jobs_silver_by_site(site: str, entity_name: str, from_date: str, to_date
                 latest_path = f"s3://{bucket_paths.silver_bucket_name}/{latest['Key']}"
                 valid_s3_paths.append(latest_path)
 
-        except Exception as e:
-            logger.error(f"Error checking S3 prefix {prefix}: {e}")
+        except Exception:
+            logger.exception("Error checking S3 prefix %s", prefix)
+            raise
 
         current_date += timedelta(days=1)
 
@@ -134,6 +136,6 @@ def get_jobs_silver_by_site(site: str, entity_name: str, from_date: str, to_date
             extra_columns="ignore",
         )
         return df_lazy
-    except Exception as e:
-        logger.error(f"Error reading from MinIO: {e}")
-        return None
+    except Exception:
+        logger.exception("Error reading Silver data from S3")
+        raise

@@ -7,6 +7,7 @@ crawler / storage / Supabase modules directly.
 
 from __future__ import annotations
 from airflow import DAG
+from airflow.models.param import Param
 from airflow.providers.docker.operators.docker import DockerOperator
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from dotenv import load_dotenv
@@ -121,24 +122,37 @@ def create_crawl_dag(site: str) -> DAG:
         max_active_runs=1,
         default_args=DEFAULT_ARGS,
         params={
-            "keyword": CRAWL_KEYWORD,
-            "max_pages": CRAWL_MAX_PAGES,
+            "keyword": Param(
+                CRAWL_KEYWORD,
+                type="string",
+                minLength=1,
+                maxLength=100,
+            ),
+            "max_pages": Param(
+                CRAWL_MAX_PAGES,
+                type="integer",
+                minimum=1,
+                maximum=100,
+            ),
         },
         tags=["lakehouse", "crawl", site],
     ) as dag:
 
         crawl = DockerOperator(
             task_id=f"crawl_{site}",
-            # Wrap with `sh -c` so xvfb-run isn't PID 1 inside the container.
+            # Keep xvfb-run away from PID 1, but pass user values as quoted
+            # positional args so the shell never parses their contents.
             command=[
                 "sh",
                 "-c",
                 (
                     "xvfb-run --server-args='-screen 0 1280x1024x24' "
                     f"python -m src.crawl_layer.crawler.{cfg['crawl_module']} "
-                    "--keyword {{ params.keyword }} "
-                    "--max-pages {{ params.max_pages }}"
+                    '--keyword "$1" --max-pages "$2"'
                 ),
+                "crawler",
+                "{{ params.keyword }}",
+                "{{ params.max_pages }}",
             ],
             **COMMON_DOCKER_KWARGS,
         )

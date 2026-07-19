@@ -51,9 +51,18 @@ def execute_gold_statements(
     client: MotherDuckClient,
     statements: list[GoldStatement],
 ) -> None:
-    for description, sql in statements:
-        logger.info("Executing: %s", description)
-        client.execute_statement(sql)
+    client.execute_statement("BEGIN TRANSACTION")
+    try:
+        for description, sql in statements:
+            logger.info("Executing: %s", description)
+            client.execute_statement(sql)
+        client.execute_statement("COMMIT")
+    except Exception:
+        try:
+            client.execute_statement("ROLLBACK")
+        except Exception:
+            logger.exception("Failed to roll back Gold refresh transaction")
+        raise
 
 
 def log_gold_row_counts(client: MotherDuckClient) -> None:

@@ -42,7 +42,7 @@ BLOCK_STATUS: frozenset[int] = frozenset({403, 429})
 
 # Pin a single curl_cffi profile that matches the Chromium nodriver bundles.
 # Rotating would invalidate cf_clearance, which CF binds to (UA + JA3 + IP).
-IMPERSONATE_PROFILE = "chrome131"
+IMPERSONATE_PROFILE = "chrome124"
 
 # Cookie names that prove CF granted us clearance — checked after warm-up.
 CF_COOKIE_NAMES: frozenset[str] = frozenset(
