@@ -43,26 +43,61 @@ def delete_expired_points(client: QdrantClient, settings: IndexSettings):
     cutoff_date = datetime.now(timezone.utc).date() - timedelta(days=settings.retention_days)
     cutoff_ts = timestamp_from_date(cutoff_date)
     if cutoff_ts is None:
-        return None
+        return {}
 
-    return client.delete(
+    operations = {
+        "default": client.delete(
+            collection_name=settings.collection_name,
+            points_selector=models.FilterSelector(
+                filter=models.Filter(
+                    should=[
+                        models.FieldCondition(
+                            key=SILVER_DATE_TS_FIELD,
+                            range=models.Range(lt=cutoff_ts),
+                        ),
+                        models.FieldCondition(
+                            key=INDEXED_AT_TS_FIELD,
+                            range=models.Range(lt=cutoff_ts),
+                        ),
+                    ],
+                ),
+            ),
+            wait=True,
+        )
+    }
+
+    vietnamworks_cutoff_date = datetime.now(timezone.utc).date() - timedelta(
+        days=settings.vietnamworks_retention_days - 1
+    )
+    vietnamworks_cutoff_ts = timestamp_from_date(vietnamworks_cutoff_date)
+    if vietnamworks_cutoff_ts is None:
+        return operations
+
+    operations["vietnamworks"] = client.delete(
         collection_name=settings.collection_name,
         points_selector=models.FilterSelector(
             filter=models.Filter(
+                must=[
+                    models.FieldCondition(
+                        key="source_site",
+                        match=models.MatchValue(value="vietnamworks"),
+                    )
+                ],
                 should=[
                     models.FieldCondition(
                         key=SILVER_DATE_TS_FIELD,
-                        range=models.Range(lt=cutoff_ts),
+                        range=models.Range(lt=vietnamworks_cutoff_ts),
                     ),
                     models.FieldCondition(
                         key=INDEXED_AT_TS_FIELD,
-                        range=models.Range(lt=cutoff_ts),
+                        range=models.Range(lt=vietnamworks_cutoff_ts),
                     ),
                 ],
             ),
         ),
         wait=True,
     )
+    return operations
 
 
 def _existing_payload_indexes(client: QdrantClient, settings: IndexSettings) -> set[str]:

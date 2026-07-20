@@ -295,7 +295,8 @@ def create_qdrant_index_dag() -> DAG:
         params={
             "from_date": default_from_date,
             "to_date": today,
-            "retention_days": 30,
+            "retention_days": Param(30, type="integer", minimum=1),
+            "vietnamworks_retention_days": Param(3, type="integer", minimum=1),
         },
         tags=["lakehouse", "qdrant", "recommendation"],
     ) as dag:
@@ -305,7 +306,9 @@ def create_qdrant_index_dag() -> DAG:
             command=(
                 "python -m src.storage_layer.Qdrant.scripts.index_silver_to_qdrant "
                 "--from_date {{ params.from_date }} --to_date {{ params.to_date }} "
-                "--retention_days {{ params.retention_days }}"
+                "--retention_days {{ params.retention_days }} "
+                "--vietnamworks_retention_days "
+                "{{ params.vietnamworks_retention_days }}"
             ),
             **COMMON_DOCKER_KWARGS,
         )

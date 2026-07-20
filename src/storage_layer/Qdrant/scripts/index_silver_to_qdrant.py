@@ -18,6 +18,7 @@ from src.storage_layer.Qdrant.config import (
     QDRANT_BATCH_SIZE,
     QDRANT_COLLECTION,
     QDRANT_RETENTION_DAYS,
+    QDRANT_VIETNAMWORKS_RETENTION_DAYS,
     SITES,
 )
 from src.storage_layer.Qdrant.embedder import embed_documents, get_embedding_client
@@ -39,10 +40,18 @@ def main() -> None:
         default=QDRANT_RETENTION_DAYS,
         help="Keep only Qdrant points from the most recent N Silver days",
     )
+    parser.add_argument(
+        "--vietnamworks_retention_days",
+        type=int,
+        default=QDRANT_VIETNAMWORKS_RETENTION_DAYS,
+        help="Keep only VietnamWorks points from the most recent N Silver calendar days",
+    )
     args = parser.parse_args()
 
     if args.retention_days <= 0:
         raise ValueError("--retention_days must be greater than 0")
+    if args.vietnamworks_retention_days <= 0:
+        raise ValueError("--vietnamworks_retention_days must be greater than 0")
 
     settings = IndexSettings(
         collection_name=QDRANT_COLLECTION,
@@ -50,6 +59,7 @@ def main() -> None:
         embedding_dim=EMBEDDING_DIM,
         batch_size=QDRANT_BATCH_SIZE,
         retention_days=args.retention_days,
+        vietnamworks_retention_days=args.vietnamworks_retention_days,
     )
     context = IndexContext(
         qdrant_client=get_qdrant_client(),
@@ -67,11 +77,11 @@ def main() -> None:
         except Exception:
             logger.exception("Failed indexing site %s; skipping", site)
 
-    deleted = delete_expired_points(context.qdrant_client, context.settings)
+    cleanup_operations = delete_expired_points(context.qdrant_client, context.settings)
     logger.info(
-        "Qdrant indexing finished: upserted=%d, expired_delete_operation=%s",
+        "Qdrant indexing finished: upserted=%d, cleanup_operations=%s",
         total_upserted,
-        deleted,
+        cleanup_operations,
     )
 
 

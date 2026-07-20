@@ -71,6 +71,7 @@ class IndexSettings:
     embedding_dim: int
     batch_size: int
     retention_days: int
+    vietnamworks_retention_days: int
 
 
 class EmbeddingClient(Protocol):

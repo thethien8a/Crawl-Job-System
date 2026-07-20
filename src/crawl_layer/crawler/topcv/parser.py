@@ -127,6 +127,15 @@ class TopcvParser:
             )
             return join_clean(sel.xpath(xp).getall())
 
+        parts = sel.xpath(
+            '//div[contains(@class, "box-company-info-detail__list--item-title")]'
+            '[contains(normalize-space(), "Quy mô")]'
+            '/following-sibling::div[contains(@class, '
+            '"box-company-info-detail__list--item-desc")][1]//text()'
+        ).getall()
+        if parts:
+            return join_clean(parts)
+
         xp = (
             '//*[contains(@class, "company-title") and contains(normalize-space(), "Quy mô")]'
             '/following-sibling::*[contains(@class, "company-value")]//text()'
@@ -198,6 +207,15 @@ class TopcvParser:
                     return (datetime.now() + timedelta(days=days)).strftime("%d/%m/%Y")
             return None
 
+        deadline = sel.xpath(
+            '//div[contains(@class, "list-info__content__title")]'
+            '[normalize-space()="Hạn ứng tuyển"]'
+            '/following-sibling::div[contains(@class, '
+            '"list-info__content__desc")][1]//text()'
+        ).get()
+        if deadline:
+            return deadline.strip()
+
         deadline = sel.css('div[class="job-detail__info--deadline-date"]::text').get()
         return deadline.strip() if deadline else None
 
@@ -212,6 +230,17 @@ class TopcvParser:
                 "/following-sibling::*[position()<=2]//text()"
             )
         else:
+            parts = sel.xpath(
+                '//div[contains(@class, '
+                '"box-job-information-general-info-list__item--content-title")]'
+                f'[normalize-space()="{label_text}"]'
+                '/following-sibling::div[contains(@class, '
+                '"box-job-information-general-info-list__item--content-desc")][1]'
+                "//text()"
+            ).getall()
+            if parts:
+                return join_clean(parts)
+
             xp = (
                 f'//*[contains(text(), "{label_text}") and '
                 'contains(@class, "box-general-group-info-title")]'

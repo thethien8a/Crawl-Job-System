@@ -31,7 +31,7 @@ async def get_html():
 
         parser = TopcvParser()
 
-        a = parser.parse_job_detail(html, "brand", "test")
+        a = parser.parse_job_detail(html, "no", "test")
 
         if a is not None:
             job_dict = asdict(a)
